@@ -16,6 +16,7 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': path.join(__dirname, '.'),
+      '@payload-config': path.join(__dirname, 'payload.config.ts'),
     }
     return config
   },
