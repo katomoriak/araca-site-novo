@@ -198,6 +198,5 @@ export const liquidGlassTextStyles: CSSProperties = {
  * Utility: Logo/SVG styling for Liquid Glass
  */
 export const liquidGlassLogoStyles: CSSProperties = {
-  filter: 'brightness(0) invert(1)',
-  dropShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
+  filter: 'brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
 }
