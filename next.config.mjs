@@ -12,6 +12,13 @@ const nextConfig = {
   experimental: {
     reactCompiler: false,
   },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.join(__dirname, '.'),
+    }
+    return config
+  },
   images: {
     remotePatterns: [
       {
