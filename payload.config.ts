@@ -2,7 +2,9 @@ import sharp from 'sharp'
 import { createRequire } from 'node:module'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import type { CollectionConfig } from 'payload'
 import { buildConfig } from 'payload'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
@@ -11,11 +13,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // Node 24: evita ERR_REQUIRE_CYCLE_MODULE carregando collections só quando acessadas (getter)
 const req = typeof require !== 'undefined' ? require : createRequire(import.meta.url)
-function getCollections() {
+function getCollections(): CollectionConfig[] {
   return [
-    (req('./payload/collections/Posts') as { Posts: unknown }).Posts,
-    (req('./payload/collections/Media') as { Media: unknown }).Media,
-    (req('./payload/collections/Users') as { Users: unknown }).Users,
+    (req('./payload/collections/Posts') as { Posts: CollectionConfig }).Posts,
+    (req('./payload/collections/Media') as { Media: CollectionConfig }).Media,
+    (req('./payload/collections/Users') as { Users: CollectionConfig }).Users,
   ]
 }
 
@@ -69,8 +71,32 @@ export default buildConfig({
     } : false,
   },
   plugins: [
-    // Vercel Blob Storage (configurar BLOB_READ_WRITE_TOKEN no .env / Vercel)
-    ...(process.env.BLOB_READ_WRITE_TOKEN
+    // Supabase Storage (S3-compatible) — prioridade quando S3_* estiverem definidas
+    ...(process.env.S3_BUCKET && process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY && process.env.S3_ENDPOINT
+      ? [
+          s3Storage({
+            collections: {
+              media: {
+                signedDownloads: {
+                  shouldUseSignedURL: ({ filename }) => filename?.endsWith('.mp4') ?? false,
+                },
+              },
+            },
+            bucket: process.env.S3_BUCKET,
+            config: {
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID,
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+              },
+              region: process.env.S3_REGION || 'auto',
+              endpoint: process.env.S3_ENDPOINT,
+              forcePathStyle: true,
+            },
+          }),
+        ]
+      : []),
+    // Vercel Blob Storage — fallback se S3 não configurado (BLOB_READ_WRITE_TOKEN)
+    ...(!process.env.S3_BUCKET && process.env.BLOB_READ_WRITE_TOKEN
       ? [
           vercelBlobStorage({
             collections: { media: true },

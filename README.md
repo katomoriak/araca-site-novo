@@ -11,7 +11,8 @@ Blog com **Next.js 15**, **Payload CMS 3**, TypeScript (strict), Tailwind CSS, F
 - **Framer Motion**
 - **Lucide React**
 - **Supabase (Postgres)** — banco de dados
-- **Vercel Blob Storage** — opcional, para uploads no admin
+- **Supabase Storage (S3-compatible)** — opcional, para uploads de imagens/vídeos no admin
+- **Vercel Blob Storage** — fallback alternativo para uploads
 
 ## Estrutura
 
@@ -50,9 +51,10 @@ lib/
    - `PAYLOAD_SECRET` — string segura para sessões (gere com `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
    - `DATABASE_URL` — connection string do **Supabase**: Project Settings → Database → Connection string (URI). Use **Session mode** (porta 6543) para deploy na Vercel.
 
-   Opcional para uploads na nuvem:
+   Opcional para uploads na nuvem (ver `docs/SUPABASE_STORAGE.md`):
 
-   - `BLOB_READ_WRITE_TOKEN` — token do Vercel Blob
+   - **Supabase Storage:** `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET`, `S3_REGION`
+   - **Vercel Blob** (fallback): `BLOB_READ_WRITE_TOKEN`
 
 3. **Rodar em desenvolvimento**
 
@@ -77,7 +79,7 @@ lib/
 - Conecte o repositório no Vercel.
 - **Banco:** use **Supabase**. Crie um projeto em [supabase.com](https://supabase.com), pegue a connection string (Session mode, porta 6543) e defina `DATABASE_URL` nas variáveis de ambiente do Vercel.
 - Defina `PAYLOAD_SECRET` (obrigatório).
-- Opcional: adicione **Vercel Blob** no projeto e defina `BLOB_READ_WRITE_TOKEN` para uploads no admin.
+- Opcional: configure **Supabase Storage** (S3) ou **Vercel Blob** para uploads no admin. Ver `docs/SUPABASE_STORAGE.md`.
 
 ## Design System Lab
 
