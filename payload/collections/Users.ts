@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
     useAPIKey: false,
     cookies: {
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'Lax',
     },
   },
   admin: {

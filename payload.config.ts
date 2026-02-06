@@ -1,13 +1,23 @@
 import sharp from 'sharp'
+import { createRequire } from 'node:module'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { buildConfig } from 'payload'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
+import { fileURLToPath } from 'node:url'
 
-import { Posts } from './payload/collections/Posts'
-import { Media } from './payload/collections/Media'
-import { Users } from './payload/collections/Users'
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+// Node 24: evita ERR_REQUIRE_CYCLE_MODULE carregando collections só quando acessadas (getter)
+const req = typeof require !== 'undefined' ? require : createRequire(import.meta.url)
+function getCollections() {
+  return [
+    (req('./payload/collections/Posts') as { Posts: unknown }).Posts,
+    (req('./payload/collections/Media') as { Media: unknown }).Media,
+    (req('./payload/collections/Users') as { Users: unknown }).Users,
+  ]
+}
 
 // Fallback para desenvolvimento/build sem banco
 const rawUrl = process.env.DATABASE_URL || 'postgresql://user:pass@localhost:5432/payload'
@@ -37,7 +47,9 @@ if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
 
 export default buildConfig({
   editor: lexicalEditor(),
-  collections: [Posts, Media, Users],
+  get collections() {
+    return getCollections()
+  },
   secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
