@@ -1,0 +1,10 @@
+# Large media files
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Development files
+*.md
+docs/
+test-*.html
