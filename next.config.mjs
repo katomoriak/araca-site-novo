@@ -11,6 +11,7 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   experimental: {
     reactCompiler: false,
+    proxyClientMaxBodySize: '4mb', // compatível com Vercel serverless
   },
   webpack: (config) => {
     config.resolve.alias = {

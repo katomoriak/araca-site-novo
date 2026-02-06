@@ -49,6 +49,11 @@ if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
 
 export default buildConfig({
   editor: lexicalEditor(),
+  upload: {
+    limits: {
+      fileSize: 4194304, // 4 MB — limite compatível com Vercel serverless
+    },
+  },
   get collections() {
     return getCollections()
   },
