@@ -10,11 +10,11 @@
 /* ============================================
    DESIGN SYSTEM ARACÁ INTERIORES
    Paleta natural e terrosa | Glassmorphism premium
+   Não aplicado ao admin Payload (/admin, /api)
    ============================================ */
 
 :root {
-  /* ---- PALETA DE CORES OFICIAL ---- */
-  /* Cores Principais */
+  /* ---- PALETA DE CORES OFICIAL (apenas nomes Aracá) ---- */
   --araca-cafe-escuro: #30160C;
   --araca-laranja-queimado: #944B20;
   --araca-chocolate-amargo: #473018;
@@ -25,8 +25,6 @@
   --araca-ameixa: #502632;
   --araca-rifle-green: #444340;
   --araca-bege-claro: #ECE5DB;
-
-  /* Cores Estendidas */
   --araca-cafe-medio: #5A3020;
   --araca-laranja-medio: #B86938;
   --araca-dourado-claro: #E8B56F;
@@ -35,8 +33,21 @@
   --araca-ameixa-medio: #6D3D4C;
   --araca-bege-medio: #D4C8BA;
   --araca-creme: #F5F1ED;
+  /* Tipografia (usada pelo frontend) */
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Rubik', sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-primary: 'Rubik', sans-serif;
+  --font-secondary: 'Cormorant Garamond', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
 
-  /* ---- MAPEAMENTO LIGHT MODE ---- */
+/* Design system só no frontend (não no admin Payload) */
+body:not([data-payload-admin]) {
   --background: var(--araca-creme);
   --foreground: var(--araca-cafe-escuro);
   --primary: var(--araca-mineral-green);
@@ -49,8 +60,6 @@
   --muted-foreground: var(--araca-chocolate-amargo);
   --border: rgba(48, 22, 12, 0.15);
   --input-background: rgba(255, 255, 255, 0.5);
-
-  /* ---- GLASSMORPHISM LIGHT MODE ---- */
   --glass-background: rgba(255, 255, 255, 0.4);
   --glass-border: rgba(255, 255, 255, 0.3);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -58,35 +67,17 @@
   --glass-inset-top: rgba(255, 255, 255, 0.5);
   --glass-inset-bottom: rgba(255, 255, 255, 0.1);
   --glass-inset-glow: rgba(255, 255, 255, 0.18);
-
-  /* ---- TIPOGRAFIA ---- */
-  --font-display: 'Cormorant Garamond', serif;
-  --font-body: 'Rubik', sans-serif;
-  --font-weight-light: 300;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* ---- OUTRAS VARIÁVEIS ---- */
   --radius: 1.25rem;
   --ring: var(--araca-mineral-green);
-
-  /* ---- CHARTS (opcional) ---- */
   --chart-1: var(--araca-mineral-green);
   --chart-2: var(--araca-dourado-ocre);
   --chart-3: var(--araca-ameixa);
   --chart-4: var(--araca-laranja-queimado);
   --chart-5: var(--araca-bege-claro);
-
-  /* Fontes legadas (compatibilidade) */
-  --font-primary: var(--font-body);
-  --font-secondary: var(--font-display);
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-/* ---- DARK MODE ---- */
-.dark {
+/* ---- DARK MODE (apenas frontend) ---- */
+body:not([data-payload-admin]).dark {
   --background: var(--araca-cafe-escuro);
   --foreground: var(--araca-bege-claro);
   --primary: var(--araca-dourado-ocre);
@@ -99,15 +90,12 @@
   --muted-foreground: var(--araca-bege-claro);
   --border: rgba(236, 229, 219, 0.2);
   --input-background: rgba(48, 22, 12, 0.5);
-
-  /* Glassmorphism Dark Mode */
   --glass-background: rgba(48, 22, 12, 0.4);
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   --glass-inset-top: rgba(255, 255, 255, 0.3);
   --glass-inset-bottom: rgba(255, 255, 255, 0.05);
   --glass-inset-glow: rgba(255, 255, 255, 0.1);
-
   --ring: var(--araca-dourado-ocre);
 }
 
@@ -273,12 +261,13 @@
   @apply bg-transparent p-0;
 }
 
-/* Smooth scroll */
+/* Smooth scroll (apenas frontend) */
 html {
   scroll-behavior: smooth;
 }
 
-body {
+/* Estilos de body só no site; admin Payload não é afetado */
+body:not([data-payload-admin]) {
   font-family: var(--font-body);
   background: var(--background);
   color: var(--foreground);

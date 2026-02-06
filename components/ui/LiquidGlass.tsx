@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode } from 'react'
+import type { CSSProperties, ElementType, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 interface LiquidGlassProps {
@@ -17,7 +17,7 @@ interface LiquidGlassProps {
   size?: 'sm' | 'lg'
   className?: string
   style?: CSSProperties
-  as?: keyof JSX.IntrinsicElements
+  as?: ElementType
 }
 
 /**

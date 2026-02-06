@@ -25,13 +25,14 @@ c850e358cdcecc632853a035554281918e413d77582bdd221d66c5449ab725a9
 5. Selecione todos os ambientes (Production, Preview, Development)
 6. Salve
 
-#### 2. DATABASE_URL (obrigatório)
-**Como adicionar Vercel Postgres:**
-1. Acesse: https://vercel.com/denialofkatos-projects/araca-site-novo/stores
-2. Clique em "Create Database" ou "Create"
-3. Escolha "Postgres"
-4. Clique em "Continue"
-5. A variável `DATABASE_URL` será criada automaticamente
+#### 2. DATABASE_URL (obrigatório) — Supabase
+**Como obter a connection string do Supabase:**
+1. Crie um projeto em [supabase.com](https://supabase.com) (free tier disponível)
+2. No projeto: **Project Settings** → **Database**
+3. Em **Connection string**, escolha **URI**
+4. Use **Session mode** (porta **6543**) para deploy na Vercel — recomendado para serverless
+5. Copie a URL (formato: `postgresql://postgres.[ref]:[senha]@...pooler.supabase.com:6543/postgres`)
+6. No Vercel: **Settings** → **Environment Variables** → adicione `DATABASE_URL` com essa URL
 
 #### 3. BLOB_READ_WRITE_TOKEN (opcional - para uploads)
 **Como adicionar Vercel Blob Storage:**
@@ -68,7 +69,7 @@ O arquivo `FJO__VIDEOFACHADA_01_R00.mp4` (110MB) foi removido porque excede:
 - `.gitignore` - ignora node_modules, .env, etc.
 - `.vercelignore` - ignora arquivos grandes no deploy
 - `vercel.json` - configuração de build com `--legacy-peer-deps`
-- `.env.example` - template de variáveis de ambiente
+- `.env.example` - template de variáveis de ambiente (DATABASE_URL = Supabase)
 
 ## 🎯 Próxima Ação
 1. Configure as variáveis de ambiente no Vercel

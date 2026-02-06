@@ -1,1 +1,9 @@
 /* Customizações do admin Payload (opcional) */
+
+/* Garante que o admin não herde estilos do site: body recebe data-payload-admin via BodyScope */
+[data-payload-admin] {
+  font-family: inherit;
+  background: transparent;
+  color: inherit;
+  min-height: 100vh;
+}

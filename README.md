@@ -10,8 +10,8 @@ Blog com **Next.js 15**, **Payload CMS 3**, TypeScript (strict), Tailwind CSS, F
 - **Tailwind CSS**
 - **Framer Motion**
 - **Lucide React**
-- **Vercel Postgres** — configurar depois
-- **Vercel Blob Storage** — configurar depois
+- **Supabase (Postgres)** — banco de dados
+- **Vercel Blob Storage** — opcional, para uploads no admin
 
 ## Estrutura
 
@@ -47,8 +47,8 @@ lib/
 
    Copie `.env.example` para `.env` e preencha:
 
-   - `PAYLOAD_SECRET` — string segura para sessões
-   - `DATABASE_URL` — connection string do Postgres (ex.: Vercel Postgres)
+   - `PAYLOAD_SECRET` — string segura para sessões (gere com `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
+   - `DATABASE_URL` — connection string do **Supabase**: Project Settings → Database → Connection string (URI). Use **Session mode** (porta 6543) para deploy na Vercel.
 
    Opcional para uploads na nuvem:
 
@@ -72,11 +72,12 @@ lib/
    pnpm start
    ```
 
-## Vercel
+## Deploy (Vercel)
 
 - Conecte o repositório no Vercel.
-- Adicione **Vercel Postgres** e **Vercel Blob** (opcional) no projeto.
-- Defina `PAYLOAD_SECRET` e use as variáveis de `DATABASE_URL` e `BLOB_READ_WRITE_TOKEN` geradas pelo Vercel.
+- **Banco:** use **Supabase**. Crie um projeto em [supabase.com](https://supabase.com), pegue a connection string (Session mode, porta 6543) e defina `DATABASE_URL` nas variáveis de ambiente do Vercel.
+- Defina `PAYLOAD_SECRET` (obrigatório).
+- Opcional: adicione **Vercel Blob** no projeto e defina `BLOB_READ_WRITE_TOKEN` para uploads no admin.
 
 ## Design System Lab
 

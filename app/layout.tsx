@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Rubik } from 'next/font/google'
-import { LiquidGlassCursor } from '@/components/ui'
+import { BodyScope } from '@/components/layout/BodyScope'
 import '@/styles/globals.css'
 
 const cormorantGaramond = Cormorant_Garamond({
@@ -32,9 +32,8 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${cormorantGaramond.variable} ${rubik.variable}`}
     >
-      <body className="min-h-screen font-body antialiased">
-        <LiquidGlassCursor />
-        {children}
+      <body>
+        <BodyScope>{children}</BodyScope>
       </body>
     </html>
   )

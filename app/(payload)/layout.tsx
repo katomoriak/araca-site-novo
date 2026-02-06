@@ -21,14 +21,21 @@ const serverFunction: ServerFunctionClient = async function (args) {
   })
 }
 
-const Layout = ({ children }: Args) => (
-  <RootLayout
-    config={config}
-    importMap={importMap}
-    serverFunction={serverFunction}
-  >
-    {children}
-  </RootLayout>
-)
+const Layout = ({ children }: Args) => {
+  if (!config) {
+    throw new Error(
+      'Payload config não carregou. Verifique DATABASE_URL e PAYLOAD_SECRET no .env.local e se o payload.config.ts está correto.',
+    )
+  }
+  return (
+    <RootLayout
+      config={Promise.resolve(config)}
+      importMap={importMap}
+      serverFunction={serverFunction}
+    >
+      {children}
+    </RootLayout>
+  )
+}
 
 export default Layout
