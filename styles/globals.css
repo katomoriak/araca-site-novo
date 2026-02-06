@@ -1,0 +1,286 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Rubik:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Liquid Glass Design System (Apple WWDC 2025) */
+@import './liquid-glass.css';
+
+/* ============================================
+   DESIGN SYSTEM ARACÁ INTERIORES
+   Paleta natural e terrosa | Glassmorphism premium
+   ============================================ */
+
+:root {
+  /* ---- PALETA DE CORES OFICIAL ---- */
+  /* Cores Principais */
+  --araca-cafe-escuro: #30160C;
+  --araca-laranja-queimado: #944B20;
+  --araca-chocolate-amargo: #473018;
+  --araca-dourado-ocre: #DB9847;
+  --araca-verde-pinho-escuro: #111913;
+  --araca-mineral-green: #3C5945;
+  --araca-vinho-escuro: #26161B;
+  --araca-ameixa: #502632;
+  --araca-rifle-green: #444340;
+  --araca-bege-claro: #ECE5DB;
+
+  /* Cores Estendidas */
+  --araca-cafe-medio: #5A3020;
+  --araca-laranja-medio: #B86938;
+  --araca-dourado-claro: #E8B56F;
+  --araca-verde-medio: #4A6B54;
+  --araca-verde-claro: #658972;
+  --araca-ameixa-medio: #6D3D4C;
+  --araca-bege-medio: #D4C8BA;
+  --araca-creme: #F5F1ED;
+
+  /* ---- MAPEAMENTO LIGHT MODE ---- */
+  --background: var(--araca-creme);
+  --foreground: var(--araca-cafe-escuro);
+  --primary: var(--araca-mineral-green);
+  --primary-foreground: #ffffff;
+  --secondary: var(--araca-dourado-ocre);
+  --secondary-foreground: var(--araca-cafe-escuro);
+  --accent: var(--araca-ameixa);
+  --accent-foreground: #ffffff;
+  --muted: var(--araca-bege-medio);
+  --muted-foreground: var(--araca-chocolate-amargo);
+  --border: rgba(48, 22, 12, 0.15);
+  --input-background: rgba(255, 255, 255, 0.5);
+
+  /* ---- GLASSMORPHISM LIGHT MODE ---- */
+  --glass-background: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-blur: 5px;
+  --glass-inset-top: rgba(255, 255, 255, 0.5);
+  --glass-inset-bottom: rgba(255, 255, 255, 0.1);
+  --glass-inset-glow: rgba(255, 255, 255, 0.18);
+
+  /* ---- TIPOGRAFIA ---- */
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'Rubik', sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---- OUTRAS VARIÁVEIS ---- */
+  --radius: 1.25rem;
+  --ring: var(--araca-mineral-green);
+
+  /* ---- CHARTS (opcional) ---- */
+  --chart-1: var(--araca-mineral-green);
+  --chart-2: var(--araca-dourado-ocre);
+  --chart-3: var(--araca-ameixa);
+  --chart-4: var(--araca-laranja-queimado);
+  --chart-5: var(--araca-bege-claro);
+
+  /* Fontes legadas (compatibilidade) */
+  --font-primary: var(--font-body);
+  --font-secondary: var(--font-display);
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ---- DARK MODE ---- */
+.dark {
+  --background: var(--araca-cafe-escuro);
+  --foreground: var(--araca-bege-claro);
+  --primary: var(--araca-dourado-ocre);
+  --primary-foreground: var(--araca-cafe-escuro);
+  --secondary: var(--araca-mineral-green);
+  --secondary-foreground: #ffffff;
+  --accent: var(--araca-dourado-ocre);
+  --accent-foreground: var(--araca-cafe-escuro);
+  --muted: var(--araca-ameixa);
+  --muted-foreground: var(--araca-bege-claro);
+  --border: rgba(236, 229, 219, 0.2);
+  --input-background: rgba(48, 22, 12, 0.5);
+
+  /* Glassmorphism Dark Mode */
+  --glass-background: rgba(48, 22, 12, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --glass-inset-top: rgba(255, 255, 255, 0.3);
+  --glass-inset-bottom: rgba(255, 255, 255, 0.05);
+  --glass-inset-glow: rgba(255, 255, 255, 0.1);
+
+  --ring: var(--araca-dourado-ocre);
+}
+
+/* ---- GLASS CARD BASE (premium glassmorphism) ---- */
+.glass-card-base {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-background);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-inset-top),
+    inset 0 -1px 0 var(--glass-inset-bottom),
+    inset 0 0 36px 18px var(--glass-inset-glow);
+}
+
+.glass-card-base::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+}
+
+.glass-card-base::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), transparent, rgba(255, 255, 255, 0.3));
+  pointer-events: none;
+}
+
+/* Scroll animation keyframes */
+@keyframes scroll-down {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(8px);
+    opacity: 0.5;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+}
+
+/* Glass effect utilities */
+@layer utilities {
+  .glass {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+  }
+  .glass-card {
+    @apply glass rounded-[1.25rem];
+  }
+}
+
+/* Prose styles para blog content */
+.prose {
+  @apply leading-relaxed;
+  color: var(--muted-foreground);
+}
+.prose h1 {
+  font-family: var(--font-display);
+  @apply text-3xl font-bold mt-8 mb-4;
+  color: var(--foreground);
+}
+.prose h2 {
+  font-family: var(--font-display);
+  @apply text-2xl font-semibold mt-6 mb-3;
+  color: var(--foreground);
+}
+.prose h3 {
+  font-family: var(--font-body);
+  @apply text-xl font-semibold mt-4 mb-2;
+  color: var(--foreground);
+}
+.prose p {
+  @apply mb-4;
+}
+.prose ul,
+.prose ol {
+  @apply mb-4 pl-6;
+}
+.prose li {
+  @apply mb-1;
+}
+.prose a {
+  color: var(--primary);
+  @apply hover:opacity-90 underline;
+}
+.prose img {
+  @apply rounded-[1.25rem] my-4;
+}
+.prose blockquote {
+  border-left-color: var(--primary);
+  @apply border-l-4 pl-4 italic my-4;
+  color: var(--muted-foreground);
+}
+.prose code {
+  @apply text-sm px-1.5 py-0.5 rounded;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.prose pre {
+  @apply p-4 overflow-x-auto my-4 rounded-[1.25rem];
+  background: var(--araca-cafe-escuro);
+  color: var(--araca-bege-claro);
+}
+.prose pre code {
+  @apply bg-transparent p-0;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--background);
+  color: var(--foreground);
+  @apply antialiased;
+}

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liquid Glass Cursor - Apple Style</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 80px 40px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 600;
+            margin: 3rem 0 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Cards estilo Apple */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 30px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Botões estilo Apple */
+        .button-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        button, .btn {
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 100px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e3c72;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover::before {
+            opacity: 1;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Grid de features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Links estilo Apple */
+        a {
+            color: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.2s ease;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* Input fields */
+        input, textarea {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Liquid Glass Cursor Styles */
+        body.has-liquid-cursor,
+        body.has-liquid-cursor * {
+            cursor: none !important;
+        }
+
+        .liquid-cursor-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 32px;
+            height: 32px;
+            margin: -16px 0 0 -16px;
+            pointer-events: none;
+            z-index: 99999;
+            will-change: transform;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .liquid-cursor-container.is-pointer {
+            width: 48px;
+            height: 48px;
+            margin: -24px 0 0 -24px;
+        }
+
+        .liquid-cursor-container.is-pressed {
+            width: 28px;
+            height: 28px;
+            margin: -14px 0 0 -14px;
+        }
+
+        .liquid-cursor-inner {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(3px) saturate(180%);
+            -webkit-backdrop-filter: blur(3px) saturate(180%);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                0 8px 40px rgba(0, 0, 0, 0.08);
+            will-change: transform;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .liquid-cursor-container.is-pointer .liquid-cursor-inner {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .liquid-cursor-container.is-pressed .liquid-cursor-inner {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Brilho superior (característico do glass da Apple) */
+        .liquid-cursor-inner::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 35%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.6) 0%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            border-radius: 50%;
+            filter: blur(4px);
+        }
+
+        /* Reflexo inferior */
+        .liquid-cursor-inner::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 25%;
+            background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15) 0%,
+                rgba(0, 0, 0, 0) 100%
+            );
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        /* Desabilita em dispositivos touch */
+        @media (pointer: coarse) {
+            .liquid-cursor-container {
+                display: none !important;
+            }
+            
+            body.has-liquid-cursor,
+            body.has-liquid-cursor * {
+                cursor: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Liquid Glass Cursor</h1>
+        <p style="font-size: 1.5rem; opacity: 0.8;">Estética Apple. Design minimalista. Movimento fluido.</p>
+
+        <div class="card">
+            <h2>Movimento com Mola</h2>
+            <p>
+                Este cursor usa física de mola para criar um movimento suave e orgânico. 
+                Move o mouse rapidamente e observe como ele espicha sutilmente na direção do movimento,
+                criando um efeito elástico natural, exatamente como nos dispositivos Apple.
+            </p>
+        </div>
+
+        <div class="button-group">
+            <button>Botão Principal</button>
+            <button class="btn-secondary">Botão Secundário</button>
+            <button>Clique Aqui</button>
+            <a href="#" class="btn">Link Estilizado</a>
+        </div>
+
+        <h2>Características</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌊</div>
+                <div class="feature-title">Efeito de Mola</div>
+                <div class="feature-description">
+                    Física de mola com espichar sutil ao movimentar (sem rotação)
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <div class="feature-title">Glass Morphism</div>
+                <div class="feature-description">
+                    Transparência com blur e saturação, característico do design da Apple
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Alta Performance</div>
+                <div class="feature-description">
+                    Usa requestAnimationFrame e will-change para animação suave a 60fps
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Hover Inteligente</div>
+                <div class="feature-description">
+                    Aumenta automaticamente ao passar sobre elementos interativos
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">Reflexos Realistas</div>
+                <div class="feature-description">
+                    Brilhos e sombras que criam profundidade e realismo
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">Touch Friendly</div>
+                <div class="feature-description">
+                    Desabilita automaticamente em dispositivos touch
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Interaja com Elementos</h2>
+            <p>Passe o cursor sobre <a href="#">links</a>, botões e campos de formulário para ver as transições.</p>
+            
+            <input type="text" placeholder="Digite seu nome">
+            <input type="email" placeholder="Digite seu email">
+            <textarea rows="4" placeholder="Deixe sua mensagem"></textarea>
+            
+            <div class="button-group">
+                <button>Enviar</button>
+                <button class="btn-secondary">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Características Técnicas</h2>
+            <ul style="list-style: none; padding: 0; opacity: 0.9;">
+                <li style="margin: 12px 0;">✓ Física de mola para movimento natural</li>
+                <li style="margin: 12px 0;">✓ Efeito de espichar sutil ao movimentar (sem rotação)</li>
+                <li style="margin: 12px 0;">✓ Backdrop filter blur 3px (bem sutil) e saturação (180%)</li>
+                <li style="margin: 12px 0;">✓ Transições cubic-bezier suaves</li>
+                <li style="margin: 12px 0;">✓ Estados hover e pressed</li>
+                <li style="margin: 12px 0;">✓ Otimizado para GPU (will-change)</li>
+                <li style="margin: 12px 0;">✓ Desabilita em touch devices</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Liquid Glass Cursor -->
+    <div class="liquid-cursor-container" aria-hidden="true">
+        <div class="liquid-cursor-inner"></div>
+    </div>
+
+    <script>
+        class LiquidGlassCursor {
+            constructor() {
+                this.cursor = document.querySelector('.liquid-cursor-container')
+                this.inner = document.querySelector('.liquid-cursor-inner')
+                this.mousePos = { x: 0, y: 0 }
+                this.cursorPos = { x: 0, y: 0 }
+                this.velocity = { x: 0, y: 0 }
+                this.isPointer = false
+                this.isPressed = false
+                this.rafId = null
+
+                this.init()
+            }
+
+            init() {
+                document.addEventListener('mousemove', this.onMouseMove.bind(this), { passive: true })
+                document.addEventListener('mousedown', this.onMouseDown.bind(this))
+                document.addEventListener('mouseup', this.onMouseUp.bind(this))
+                document.body.classList.add('has-liquid-cursor')
+
+                this.animate()
+            }
+
+            onMouseMove(e) {
+                this.mousePos.x = e.clientX
+                this.mousePos.y = e.clientY
+
+                // Detecta elementos clicáveis
+                const target = e.target
+                const isClickable = 
+                    target.tagName === 'A' ||
+                    target.tagName === 'BUTTON' ||
+                    target.tagName === 'INPUT' ||
+                    target.tagName === 'TEXTAREA' ||
+                    target.tagName === 'SELECT' ||
+                    target.closest('a, button, input, textarea, select, [role="button"], [data-cursor-hover]')
+
+                if (isClickable !== this.isPointer) {
+                    this.isPointer = isClickable
+                    this.cursor.classList.toggle('is-pointer', this.isPointer)
+                }
+            }
+
+            onMouseDown() {
+                this.isPressed = true
+                this.cursor.classList.add('is-pressed')
+            }
+
+            onMouseUp() {
+                this.isPressed = false
+                this.cursor.classList.remove('is-pressed')
+            }
+
+            animate() {
+                // Física de mola suave
+                const spring = 0.15
+                const friction = 0.7
+
+                // Calcula diferença
+                const dx = this.mousePos.x - this.cursorPos.x
+                const dy = this.mousePos.y - this.cursorPos.y
+
+                // Aplica velocidade
+                this.velocity.x += dx * spring
+                this.velocity.y += dy * spring
+
+                // Aplica fricção
+                this.velocity.x *= friction
+                this.velocity.y *= friction
+
+                // Atualiza posição
+                this.cursorPos.x += this.velocity.x
+                this.cursorPos.y += this.velocity.y
+
+                // Calcula velocidade para efeito de mola (espichar)
+                const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2)
+                const maxSpeed = 20
+                const stretch = Math.min(speed / maxSpeed, 1)
+
+                // Aplica transformação na posição
+                this.cursor.style.transform = `translate(${this.cursorPos.x}px, ${this.cursorPos.y}px)`
+                
+                // Efeito de mola sutil - espicha horizontal/vertical sem rotação
+                const scaleX = 1 + stretch * 0.15
+                const scaleY = 1 - stretch * 0.08
+                
+                this.inner.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`
+
+                this.rafId = requestAnimationFrame(() => this.animate())
+            }
+
+            destroy() {
+                if (this.rafId) cancelAnimationFrame(this.rafId)
+                document.body.classList.remove('has-liquid-cursor')
+            }
+        }
+
+        // Inicializa apenas em dispositivos com mouse
+        if (window.matchMedia('(pointer: fine)').matches) {
+            const cursor = new LiquidGlassCursor()
+        }
+    </script>
+</body>
+</html>
