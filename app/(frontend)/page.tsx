@@ -136,7 +136,7 @@ export default function HomePage() {
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src="https://trghyjzhxfyjgoitzfzh.supabase.co/storage/v1/object/public/media/FJO__VIDEOFACHADA_01_R00.mp4" type="video/mp4" />
+          <source src={`${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://trghyjzhxfyjgoitzfzh.supabase.co'}/storage/v1/object/public/media/FJO__VIDEOFACHADA_01_R00.mp4`} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
         <div className="absolute inset-0 bg-gradient-to-br from-araca-mineral-green/20 via-transparent to-araca-ameixa/15" />
