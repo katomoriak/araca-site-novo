@@ -9,9 +9,10 @@ const __dirname = path.dirname(__filename)
 const nextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: __dirname,
+  reactCompiler: false, // Payload: desativado para compatibilidade (Next 16: chave no nível raiz)
+  transpilePackages: ['swiper'],
   experimental: {
-    reactCompiler: false,
-    proxyClientMaxBodySize: '4mb', // compatível com Vercel serverless
+    proxyClientMaxBodySize: '4mb',
   },
   webpack: (config) => {
     config.resolve.alias = {

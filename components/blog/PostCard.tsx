@@ -10,8 +10,8 @@ interface PostCardProps {
 
 export function PostCard({ post }: PostCardProps) {
   return (
-    <Link href={`/blog/${post.slug}`} className="block transition hover:opacity-95">
-      <Card className="h-full overflow-hidden">
+    <Card className="h-full overflow-hidden transition hover:opacity-95">
+      <Link href={`/blog/${post.slug}`} className="block">
         {post.coverImage && (
           <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
             <Image
@@ -34,13 +34,22 @@ export function PostCard({ post }: PostCardProps) {
             {post.excerpt}
           </p>
         </CardContent>
-        <CardFooter className="flex items-center justify-between border-t border-neutral-100 p-6 pt-0">
+      </Link>
+      <CardFooter className="flex items-center justify-between border-t border-neutral-100 p-6 pt-0">
+        {post.author.id ? (
+          <Link
+            href={`/blog/autor/${post.author.id}`}
+            className="text-sm text-neutral-500 hover:underline"
+          >
+            {post.author.name}
+          </Link>
+        ) : (
           <span className="text-sm text-neutral-500">{post.author.name}</span>
-          <time className="text-sm text-neutral-500" dateTime={post.publishedAt}>
-            {formatDate(post.publishedAt)}
-          </time>
-        </CardFooter>
-      </Card>
-    </Link>
+        )}
+        <time className="text-sm text-neutral-500" dateTime={post.publishedAt}>
+          {formatDate(post.publishedAt)}
+        </time>
+      </CardFooter>
+    </Card>
   )
 }

@@ -62,7 +62,7 @@ export default function HomePage() {
       {/* Seção Hero Inicial */}
       <section className="flex h-screen items-center justify-center px-4 bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-800">
         <div className="mx-auto max-w-4xl text-center">
-          <h1 className="font-display text-5xl font-bold tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
+          <h1 className="font-display text-5xl font-bold text-white sm:text-6xl md:text-7xl lg:text-8xl">
             Aracá Interiores
           </h1>
           <p className="mt-6 font-primary text-xl text-white/90 sm:text-2xl md:text-3xl">

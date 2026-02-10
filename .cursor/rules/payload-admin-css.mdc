@@ -1,0 +1,25 @@
+---
+description: Regras para estilização do admin Payload CMS (custom.scss e tema)
+globs: app/(payload)/**/*.scss, app/(payload)/**/*.tsx, app/(payload)/custom.scss
+alwaysApply: false
+---
+
+# Estilização do Admin Payload CMS
+
+Ao customizar o painel admin do Payload (`app/(payload)/custom.scss` ou layout), seguir estas regras para evitar que os campos deixem de exibir ou quebrem.
+
+## 1. Usar apenas variáveis de tema documentadas
+
+- Alterar **somente** as variáveis CSS que o Payload documenta e expõe (ex.: [Customizing CSS](https://payloadcms.com/docs/admin/customizing-css)).
+- Exemplos seguros: `--theme-bg`, `--theme-text`, `--theme-elevation-*`, `--color-base-*`, `--color-success-*`, `--theme-border-color`, `--font-body`.
+- **Não** reescrever estilos de inputs, selects, react-select, textarea, botões etc. com regras próprias; o Payload já consome as variáveis.
+
+## 2. Evitar !important e seletores genéricos
+
+- **Não** usar `!important` em larga escala.
+- **Não** usar seletores genéricos como `[class*='input']`, `[class*='field']`, `[class*='panel']` etc.; eles quebram o layout interno dos componentes e podem esconder campos.
+
+## 3. Testar após qualquer mudança de CSS
+
+- Depois de alterar o `custom.scss` (ou qualquer CSS do admin), **sempre** testar a tela de edição de um post com todos os tipos de campo: text, relationship, select, array, date, richText.
+- Confirmar que cada campo continua visível e utilizável antes de dar por concluída a estilização.

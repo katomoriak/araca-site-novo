@@ -7,16 +7,28 @@ import { cn } from '@/lib/utils'
 const glassCardVariants = cva(
   [
     'relative overflow-hidden rounded-[1.25rem]',
-    'backdrop-blur-[5px]',
     'border transition-all duration-300',
-    '[box-shadow:var(--glass-shadow),inset_0_1px_0_var(--glass-inset-top),inset_0_-1px_0_var(--glass-inset-bottom),inset_0_0_36px_18px_var(--glass-inset-glow)]',
   ].join(' '),
   {
     variants: {
       variant: {
-        default: 'bg-white/40 border-white/30 dark:bg-[rgba(48,22,12,0.4)] dark:border-white/20',
-        strong: 'bg-white/40 border-white/60 dark:bg-[rgba(48,22,12,0.5)] dark:border-white/30',
-        subtle: 'bg-white/15 border-white/25 dark:bg-[rgba(48,22,12,0.25)] dark:border-white/15',
+        default: [
+          'backdrop-blur-[5px]',
+          '[box-shadow:var(--glass-shadow),inset_0_1px_0_var(--glass-inset-top),inset_0_-1px_0_var(--glass-inset-bottom),inset_0_0_36px_18px_var(--glass-inset-glow)]',
+          'bg-white/40 border-white/30 dark:bg-[rgba(48,22,12,0.4)] dark:border-white/20',
+        ].join(' '),
+        strong: [
+          'backdrop-blur-[5px]',
+          '[box-shadow:var(--glass-shadow),inset_0_1px_0_var(--glass-inset-top),inset_0_-1px_0_var(--glass-inset-bottom),inset_0_0_36px_18px_var(--glass-inset-glow)]',
+          'bg-white/40 border-white/60 dark:bg-[rgba(48,22,12,0.5)] dark:border-white/30',
+        ].join(' '),
+        subtle: [
+          'backdrop-blur-[5px]',
+          '[box-shadow:var(--glass-shadow),inset_0_1px_0_var(--glass-inset-top),inset_0_-1px_0_var(--glass-inset-bottom),inset_0_0_36px_18px_var(--glass-inset-glow)]',
+          'bg-white/15 border-white/25 dark:bg-[rgba(48,22,12,0.25)] dark:border-white/15',
+        ].join(' '),
+        flat: 'bg-white/40 border-white/30 dark:bg-[rgba(48,22,12,0.4)] dark:border-white/20',
+        ghost: 'bg-transparent border-white/20 dark:border-white/10 [box-shadow:none]',
       },
     },
     defaultVariants: {

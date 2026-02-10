@@ -1,16 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import Image from 'next/image'
+
+export type GalleryMediaItem = { type: 'image' | 'video'; url: string }
 
 export interface ProjectGalleryItem {
   id: string
   title: string
   description: string
   coverImage: string
-  images: string[]
+  /** Lista de mídias na ordem da galeria (imagens e/ou vídeos). */
+  media: GalleryMediaItem[]
   tag?: string
 }
 
@@ -104,17 +107,17 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
               </button>
             </div>
             
-            {/* Indicador de mais imagens */}
+            {/* Indicador de mais mídias */}
             <div className="absolute bottom-8 right-8 flex items-center gap-1.5">
-              {project.images.slice(0, 3).map((_, idx) => (
+              {project.media.slice(0, 3).map((_, idx) => (
                 <div 
                   key={idx} 
                   className={`h-2 w-2 rounded-full backdrop-blur-sm ${idx === 0 ? 'bg-white/80' : 'bg-white/40'}`} 
                 />
               ))}
-              {project.images.length > 3 && (
+              {project.media.length > 3 && (
                 <span className="ml-1 text-sm font-medium text-white/80 drop-shadow-lg">
-                  +{project.images.length - 3}
+                  +{project.media.length - 3}
                 </span>
               )}
             </div>
@@ -125,26 +128,38 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
   )
 }
 
-// Modal de galeria com navegação horizontal
+// Modal de galeria com navegação horizontal (imagens e vídeos)
 export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState<'left' | 'right'>('right')
-  const totalImages = project.images.length
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const totalMedia = project.media.length
+  const currentItem = project.media[currentIndex]
 
   const goToNext = () => {
     setDirection('right')
-    setCurrentImageIndex((prev) => (prev + 1) % totalImages)
+    setCurrentIndex((prev) => (prev + 1) % totalMedia)
   }
 
   const goToPrevious = () => {
     setDirection('left')
-    setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages)
+    setCurrentIndex((prev) => (prev - 1 + totalMedia) % totalMedia)
   }
 
-  const goToImage = (index: number) => {
-    setDirection(index > currentImageIndex ? 'right' : 'left')
-    setCurrentImageIndex(index)
+  const goToItem = (index: number) => {
+    setDirection(index > currentIndex ? 'right' : 'left')
+    setCurrentIndex(index)
   }
+
+  // Pausar vídeo ao trocar de slide
+  useEffect(() => {
+    if (currentItem?.type === 'video' && videoRef.current) {
+      videoRef.current.play().catch(() => {})
+    }
+    return () => {
+      videoRef.current?.pause()
+    }
+  }, [currentIndex, currentItem?.type])
 
   // Navegação por teclado
   useEffect(() => {
@@ -231,10 +246,10 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
               <ChevronLeft className="h-7 w-7" />
             </motion.button>
 
-            {/* Imagem */}
+            {/* Mídia atual (imagem ou vídeo) */}
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
-                key={currentImageIndex}
+                key={currentIndex}
                 custom={direction}
                 initial={{ 
                   opacity: 0, 
@@ -271,13 +286,24 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                 className="absolute inset-0 h-full w-full overflow-hidden rounded-3xl"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                <Image
-                  src={project.images[currentImageIndex]}
-                  alt={`${project.title} - Imagem ${currentImageIndex + 1}`}
-                  fill
-                  className="object-contain"
-                  priority
-                />
+                {currentItem.type === 'video' ? (
+                  <video
+                    ref={videoRef}
+                    src={currentItem.url}
+                    controls
+                    playsInline
+                    className="h-full w-full object-contain"
+                    onEnded={() => videoRef.current?.pause()}
+                  />
+                ) : (
+                  <Image
+                    src={currentItem.url}
+                    alt={`${project.title} - ${currentIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -308,28 +334,34 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
           <div className="mt-6 flex items-center justify-center gap-4">
             {/* Thumbnails */}
             <div className="flex gap-2 overflow-x-auto pb-2">
-              {project.images.map((image, index) => (
+              {project.media.map((item, index) => (
                 <motion.button
                   key={index}
-                  onClick={() => goToImage(index)}
+                  onClick={() => goToItem(index)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   animate={{
-                    scale: index === currentImageIndex ? 1.05 : 1,
+                    scale: index === currentIndex ? 1.05 : 1,
                   }}
                   transition={{ duration: 0.2 }}
                   className={`relative h-16 w-20 flex-shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${
-                    index === currentImageIndex
+                    index === currentIndex
                       ? 'ring-2 ring-araca-dourado-ocre ring-offset-2 ring-offset-araca-cafe-escuro'
                       : 'opacity-50 hover:opacity-100'
                   }`}
                 >
-                  <Image
-                    src={image}
-                    alt={`Miniatura ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  {item.type === 'video' ? (
+                    <div className="flex h-full w-full items-center justify-center bg-black/40">
+                      <Play className="h-6 w-6 text-white" fill="currentColor" />
+                    </div>
+                  ) : (
+                    <Image
+                      src={item.url}
+                      alt={`Miniatura ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  )}
                 </motion.button>
               ))}
             </div>
@@ -344,7 +376,7 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                 border: '1px solid rgba(255, 255, 255, 0.18)',
               }}
             >
-              {currentImageIndex + 1} / {totalImages}
+              {currentIndex + 1} / {totalMedia}
             </div>
           </div>
         </motion.div>

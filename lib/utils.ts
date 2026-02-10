@@ -1,24 +1,22 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-/**
- * Combina classNames com Tailwind merge (evita conflitos de classes)
- */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/**
- * Formata data para exibição (locale pt-BR)
- */
+/** Formata data para exibição em pt-BR. */
 export function formatDate(
-  date: string | Date,
-  options: Intl.DateTimeFormatOptions = {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }
+  value: string | Date | number | null | undefined,
+  options?: Intl.DateTimeFormatOptions
 ): string {
-  const d = typeof date === 'string' ? new Date(date) : date
-  return d.toLocaleDateString('pt-BR', options)
+  if (value == null) return ''
+  const d = typeof value === 'object' && 'getTime' in value ? value : new Date(value)
+  if (Number.isNaN(d.getTime())) return ''
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    ...options,
+  }).format(d)
 }

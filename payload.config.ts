@@ -1,24 +1,34 @@
+/**
+ * Configuração Payload CMS 3.
+ * Imports estáticos para o Next (webpack); evita require/require.context que quebram no bundle.
+ * Migrate no Node 24 falha (Lexical usa top-level await). Use: npm run migrate (roda com Node 20).
+ */
 import sharp from 'sharp'
-import { createRequire } from 'node:module'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import type { CollectionConfig } from 'payload'
 import { buildConfig } from 'payload'
+import { en } from '@payloadcms/translations/languages/en'
+import { pt } from '@payloadcms/translations/languages/pt'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 import { fileURLToPath } from 'node:url'
 
+import { Posts } from './payload/collections/Posts'
+import { Media } from './payload/collections/Media'
+import { Users } from './payload/collections/Users'
+import { Subscribers } from './payload/collections/Subscribers'
+import { Newsletters } from './payload/collections/Newsletters'
+import { Leads } from './payload/collections/Leads'
+import { Negociacoes } from './payload/collections/Negociacoes'
+import { Transactions } from './payload/collections/Transactions'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// Node 24: evita ERR_REQUIRE_CYCLE_MODULE carregando collections só quando acessadas (getter)
-const req = typeof require !== 'undefined' ? require : createRequire(import.meta.url)
 function getCollections(): CollectionConfig[] {
-  return [
-    (req('./payload/collections/Posts') as { Posts: CollectionConfig }).Posts,
-    (req('./payload/collections/Media') as { Media: CollectionConfig }).Media,
-    (req('./payload/collections/Users') as { Users: CollectionConfig }).Users,
-  ]
+  return [Posts, Media, Users, Subscribers, Newsletters, Leads, Negociacoes, Transactions]
 }
 
 // Fallback para desenvolvimento/build sem banco
@@ -48,6 +58,26 @@ if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
 }
 
 export default buildConfig({
+  email: nodemailerAdapter({
+    defaultFromAddress: process.env.SMTP_FROM_EMAIL || 'newsletter@example.com',
+    defaultFromName: process.env.SMTP_FROM_NAME || 'Aracá Interiores',
+    transportOptions:
+      process.env.SMTP_HOST && process.env.SMTP_USER
+        ? {
+            host: process.env.SMTP_HOST,
+            port: Number(process.env.SMTP_PORT) || 587,
+            secure: process.env.SMTP_SECURE === 'true',
+            auth: {
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASS || '',
+            },
+          }
+        : undefined,
+  }),
+  i18n: {
+    supportedLanguages: { pt, en },
+    fallbackLanguage: 'pt',
+  },
   editor: lexicalEditor(),
   upload: {
     limits: {
@@ -74,6 +104,23 @@ export default buildConfig({
       password: 'test',
       prefillOnly: true,
     } : false,
+    meta: {
+      title: 'Aracá Interiores',
+      titleSuffix: ' – Aracá',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/logotipos/LOGOTIPO%20REDONDO@300x.png',
+        },
+      ],
+    },
+    components: {
+      graphics: {
+        Icon: '/components/admin/AracaIcon#AracaIcon',
+        Logo: '/components/admin/AracaLogo#AracaLogo',
+      },
+    },
   },
   plugins: [
     // Supabase Storage (S3-compatible) — prioridade quando S3_* estiverem definidas

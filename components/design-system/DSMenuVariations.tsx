@@ -11,6 +11,7 @@ import {
   Code,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { SiteNav } from '@/components/layout/SiteNav'
 
 export function DSMenuVariations() {
   const [megaOpen, setMegaOpen] = useState(false)
@@ -20,13 +21,33 @@ export function DSMenuVariations() {
     <section id="menu-variations" className="scroll-mt-24">
       <h2 className="font-display text-2xl font-bold text-neutral-900">Menu Variations</h2>
       <p className="mt-1 text-neutral-600">
-        Cinco exemplos funcionais: Liquid Glass Navbar, Minimal Clean, Sidebar, Floating Action Menu, Mega Menu.
+        Menu oficial do site (Site Nav Liquid Glass) + exemplos alternativos: Minimal Clean, Sidebar, Floating Action Menu, Mega Menu.
       </p>
 
       <div className="mt-8 space-y-12">
-        {/* 1. Liquid Glass Navbar */}
+        {/* 0. Site Nav — componente oficial (design system) */}
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">1. Liquid Glass Navbar</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">
+            0. Site Nav — Liquid Glass (oficial)
+          </h3>
+          <p className="mt-1 text-sm text-neutral-600">
+            Componente <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono">SiteNav</code> em{' '}
+            <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono">@/components/layout/SiteNav</code>.
+            Temas: <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono">dark-bg</code> (sobre vídeo/hero) e{' '}
+            <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono">light-bg</code> (sobre fundo claro). Links e{' '}
+            <code className="rounded bg-neutral-100 px-1 py-0.5 font-mono">extraLinks</code> configuráveis.
+          </p>
+          <div className="mt-3 rounded-2xl border border-neutral-200 bg-neutral-100/50 p-6">
+            <SiteNav theme="light-bg" noEnterAnimation />
+          </div>
+          <div className="mt-4 rounded-2xl bg-araca-cafe-escuro p-6">
+            <SiteNav theme="dark-bg" noEnterAnimation />
+          </div>
+        </div>
+
+        {/* 1. Liquid Glass Navbar (exemplo genérico) */}
+        <div>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-500">1. Liquid Glass Navbar (exemplo)</h3>
           <div className="mt-3 rounded-2xl bg-gradient-to-r from-primary-500/80 to-secondary-500/80 p-6">
             <nav className="flex items-center justify-between rounded-2xl border border-white/20 bg-white/10 px-6 py-3 backdrop-blur-xl">
               <span className="font-display font-semibold text-white">Brand</span>

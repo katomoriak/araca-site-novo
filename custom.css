@@ -1,0 +1,578 @@
+@charset "UTF-8";
+/* ============================================
+   ADMIN PAYLOAD - IDENTIDADE ARACÁ INTERIORES
+   Fundo creme, paleta terrosa, inputs e botões
+   ============================================
+   Fontes: Bellamora (display) via @font-face em globals.css; Rubik via <link> no layout.
+
+   Documentação: https://payloadcms.com/docs/admin/customizing-css
+   - Estilos aplicados em @layer payload para ter prioridade sobre os defaults.
+   - Tema atual é apenas light; dark mode do Payload não é customizado (usuário
+     pode trocar no painel e ver o tema escuro padrão).
+   ============================================ */
+@layer payload {
+  /* Seletor: quando estamos no admin (body tem data-payload-admin) */
+  html:has(body[data-payload-admin]) {
+    /* Escala base terrosa Aracá (claro → escuro) – contraste claro para não misturar */
+    --color-base-0: #f5f1ed; /* creme - background */
+    --color-base-50: #ebe3d8; /* bege claro – distinto do fundo */
+    --color-base-100: #e0d6c8;
+    --color-base-150: #d4c8ba; /* bege médio - bordas */
+    --color-base-200: #c4b5a5;
+    --color-base-250: #b3a090;
+    --color-base-300: #9a8a78;
+    --color-base-350: #817261;
+    --color-base-400: #6b5a4a;
+    --color-base-450: #5a4939;
+    --color-base-500: #4a3c2e;
+    --color-base-550: #3d3226;
+    --color-base-600: #352a20;
+    --color-base-650: #2e251c;
+    --color-base-700: #2a2018;
+    --color-base-750: #261c16;
+    --color-base-800: #30160c; /* café escuro - texto principal */
+    --color-base-850: #28140a;
+    --color-base-900: #1f1008;
+    --color-base-950: #170c06;
+    --color-base-1000: #111913;
+    /* Payload usa --theme-elevation-* em todo o UI – forçar paleta Aracá (evita cinza misturando) */
+    --theme-elevation-0: var(--color-base-0);
+    --theme-elevation-50: var(--color-base-50);
+    --theme-elevation-100: var(--color-base-100);
+    --theme-elevation-150: var(--color-base-150);
+    --theme-elevation-200: var(--color-base-200);
+    --theme-elevation-250: var(--color-base-250);
+    --theme-elevation-300: var(--color-base-300);
+    --theme-elevation-350: var(--color-base-350);
+    --theme-elevation-400: var(--color-base-400);
+    --theme-elevation-450: var(--color-base-450);
+    --theme-elevation-500: var(--color-base-500);
+    --theme-elevation-550: var(--color-base-550);
+    --theme-elevation-600: var(--color-base-600);
+    --theme-elevation-650: var(--color-base-650);
+    --theme-elevation-700: var(--color-base-700);
+    --theme-elevation-750: var(--color-base-750);
+    --theme-elevation-800: var(--color-base-800);
+    --theme-elevation-850: var(--color-base-850);
+    --theme-elevation-900: var(--color-base-900);
+    --theme-elevation-950: var(--color-base-950);
+    --theme-elevation-1000: var(--color-base-1000);
+    /* Tema Payload */
+    --theme-bg: #f5f1ed;
+    --theme-input-bg: #ffffff;
+    --theme-text: #30160c;
+    --theme-border-color: #d4c8ba;
+    /* Design system Aracá – tokens para admin (campos e botões) */
+    --araca-radius-sm: 0.375rem;
+    --araca-radius-md: 0.5rem;
+    --araca-radius-lg: 0.75rem;
+    --araca-radius-glass: 1.25rem;
+    --araca-input-padding-x: 1rem;
+    --araca-input-padding-y: 0.75rem;
+    --araca-focus-ring: 2px;
+    --araca-focus-ring-offset: 2px;
+    --araca-primary: #3c5945;
+    --araca-primary-ring: rgba(60, 89, 69, 0.3);
+    --araca-mineral-green: #3c5945;
+    --araca-creme: #f5f1ed;
+    /* Tipografia Aracá – Bellamora = principal (como no logo) */
+    --font-body: "Rubik", system-ui, -apple-system, sans-serif;
+    --font-display: "Bellamora", Georgia, serif;
+    /* Success – verde mineral Aracá (escala usada em botões, toasts, focus) */
+    --color-success-100: #e8efe9;
+    --color-success-250: #9bb5a1;
+    --color-success-500: #3c5945;
+    --color-success-600: #2d4535;
+    --color-success-800: #1e2e22;
+    --theme-success-100: var(--color-success-100);
+    --theme-success-250: var(--color-success-250);
+    --theme-success-500: var(--color-success-500);
+    --theme-success-600: var(--color-success-600);
+    --theme-success-800: var(--color-success-800);
+  }
+  html:has(body[data-payload-admin]),
+  html:has(body[data-payload-admin]) html {
+    background: #f5f1ed !important;
+    color: #30160c;
+  }
+  html:has(body[data-payload-admin]) body {
+    font-family: "Rubik", system-ui, sans-serif;
+    font-weight: 400;
+    background: transparent;
+    color: #30160c;
+    min-height: 100vh;
+  }
+  /* Containers principais */
+  html:has(body[data-payload-admin]) #app,
+  html:has(body[data-payload-admin]) .payload__app,
+  html:has(body[data-payload-admin]) [class*=template-default] {
+    background: #f5f1ed !important;
+  }
+  html:has(body[data-payload-admin]) .template-default__wrap {
+    background: var(--araca-creme) !important;
+  }
+  /* Sidebar / Nav – exclui step-nav do header (breadcrumb/logo) para não aplicar fundo bege */
+  html:has(body[data-payload-admin]) [class*=sidebar],
+  html:has(body[data-payload-admin]) .nav:not(.step-nav):not([class*=step-nav]) {
+    background: #ece5db !important;
+    border-right-color: #d4c8ba !important;
+  }
+  /* Header: step-nav (logo + breadcrumb) com fundo transparente/branco */
+  html:has(body[data-payload-admin]) .app-header .step-nav,
+  html:has(body[data-payload-admin]) .app-header [class*=step-nav] {
+    background: transparent !important;
+  }
+  /* Nav aberto acima do header (header usa --z-modal: 30) */
+  html:has(body[data-payload-admin]) .nav.nav--nav-open,
+  html:has(body[data-payload-admin]) .template-default--nav-open .nav {
+    z-index: 35 !important;
+  }
+  /* Header */
+  html:has(body[data-payload-admin]) [class*=app-header],
+  html:has(body[data-payload-admin]) [class*=header] {
+    background: #ffffff !important;
+    border-bottom: 1px solid #d4c8ba !important;
+  }
+  /* StepNav (breadcrumb no header) – sem fundo bege nos textos */
+  html:has(body[data-payload-admin]) .step-nav,
+  html:has(body[data-payload-admin]) [class*=step-nav] {
+    background: transparent !important;
+  }
+  html:has(body[data-payload-admin]) .step-nav span,
+  html:has(body[data-payload-admin]) .step-nav a,
+  html:has(body[data-payload-admin]) [class*=step-nav] span,
+  html:has(body[data-payload-admin]) [class*=step-nav] a {
+    background: transparent !important;
+  }
+  /* Cards e painéis */
+  html:has(body[data-payload-admin]) [class*=card],
+  html:has(body[data-payload-admin]) [class*=panel],
+  html:has(body[data-payload-admin]) [class*=elevation] {
+    background: #ffffff !important;
+    border-color: #d4c8ba !important;
+  }
+  /* Inputs e campos – design system Aracá (GlassInput: radius glass, padding, focus ring)
+     Exclui checkbox/radio e o wrapper do Payload (.checkbox-input__input) para não quebrar
+     seleção na lista e toggle "Autenticado" na view API. */
+  html:has(body[data-payload-admin]) input:not([type=checkbox]):not([type=radio]),
+  html:has(body[data-payload-admin]) textarea,
+  html:has(body[data-payload-admin]) select,
+  html:has(body[data-payload-admin]) [class*=input]:not([class*=checkbox-input__input]),
+  html:has(body[data-payload-admin]) [class*=field] input:not([type=checkbox]):not([type=radio]),
+  html:has(body[data-payload-admin]) [class*=field] textarea,
+  html:has(body[data-payload-admin]) [class*=field] select,
+  html:has(body[data-payload-admin]) .react-select__control,
+  html:has(body[data-payload-admin]) [class*=search] input {
+    background: #ffffff !important;
+    border: 1px solid #d4c8ba !important;
+    color: #30160c !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.875rem !important;
+    border-radius: var(--araca-radius-glass) !important;
+    padding: var(--araca-input-padding-y) var(--araca-input-padding-x) !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+  }
+  html:has(body[data-payload-admin]) input:not([type=checkbox]):not([type=radio])::placeholder,
+  html:has(body[data-payload-admin]) textarea::placeholder,
+  html:has(body[data-payload-admin]) select::placeholder,
+  html:has(body[data-payload-admin]) [class*=input]:not([class*=checkbox-input__input])::placeholder,
+  html:has(body[data-payload-admin]) [class*=field] input:not([type=checkbox]):not([type=radio])::placeholder,
+  html:has(body[data-payload-admin]) [class*=field] textarea::placeholder,
+  html:has(body[data-payload-admin]) [class*=field] select::placeholder,
+  html:has(body[data-payload-admin]) .react-select__control::placeholder,
+  html:has(body[data-payload-admin]) [class*=search] input::placeholder {
+    color: #6b5a4a;
+  }
+  html:has(body[data-payload-admin]) input:not([type=checkbox]):not([type=radio]):focus,
+  html:has(body[data-payload-admin]) textarea:focus,
+  html:has(body[data-payload-admin]) select:focus,
+  html:has(body[data-payload-admin]) [class*=input]:not([class*=checkbox-input__input]):focus,
+  html:has(body[data-payload-admin]) [class*=field] input:not([type=checkbox]):not([type=radio]):focus,
+  html:has(body[data-payload-admin]) [class*=field] textarea:focus,
+  html:has(body[data-payload-admin]) [class*=field] select:focus,
+  html:has(body[data-payload-admin]) .react-select__control:focus,
+  html:has(body[data-payload-admin]) [class*=search] input:focus {
+    outline: none !important;
+    border-color: var(--araca-primary) !important;
+    box-shadow: 0 0 0 var(--araca-focus-ring) var(--araca-primary-ring) !important;
+  }
+  /* Filtros e busca na listagem – mesmo estilo dos campos (design system) */
+  html:has(body[data-payload-admin]) [class*=list-controls] input:not([type=checkbox]):not([type=radio]),
+  html:has(body[data-payload-admin]) [class*=search-filter] input:not([type=checkbox]):not([type=radio]),
+  html:has(body[data-payload-admin]) [class*=filter] input:not([type=checkbox]):not([type=radio]) {
+    background: #ffffff !important;
+    border: 1px solid #d4c8ba !important;
+    color: #30160c !important;
+    border-radius: var(--araca-radius-glass) !important;
+    padding: var(--araca-input-padding-y) var(--araca-input-padding-x) !important;
+  }
+  html:has(body[data-payload-admin]) [class*=list-controls] input:not([type=checkbox]):not([type=radio])::placeholder,
+  html:has(body[data-payload-admin]) [class*=search-filter] input:not([type=checkbox]):not([type=radio])::placeholder,
+  html:has(body[data-payload-admin]) [class*=filter] input:not([type=checkbox]):not([type=radio])::placeholder {
+    color: #6b5a4a !important;
+  }
+  html:has(body[data-payload-admin]) [class*=list-controls] input:not([type=checkbox]):not([type=radio]):focus,
+  html:has(body[data-payload-admin]) [class*=search-filter] input:not([type=checkbox]):not([type=radio]):focus,
+  html:has(body[data-payload-admin]) [class*=filter] input:not([type=checkbox]):not([type=radio]):focus {
+    outline: none !important;
+    border-color: var(--araca-primary) !important;
+    box-shadow: 0 0 0 var(--araca-focus-ring) var(--araca-primary-ring) !important;
+  }
+  /* Search bar: input com lupa – espaço para ícone (36px) e texto não colar nas bordas */
+  html:has(body[data-payload-admin]) .search-bar .search-filter input,
+  html:has(body[data-payload-admin]) .search-bar [class*=search-filter] input,
+  html:has(body[data-payload-admin]) #search-filter-input {
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+  }
+  /* Botões – design system Aracá (GlassButton: radius glass, primary/secondary/pill, focus ring) */
+  html:has(body[data-payload-admin]) .btn {
+    font-family: var(--font-body) !important;
+    font-weight: 500 !important;
+    border-radius: var(--araca-radius-glass) !important;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, opacity 0.2s !important;
+  }
+  html:has(body[data-payload-admin]) .btn:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 var(--araca-focus-ring) var(--araca-primary-ring) !important;
+  }
+  html:has(body[data-payload-admin]) .btn--style-primary {
+    --bg-color: var(--araca-mineral-green) !important;
+    --color: var(--araca-creme) !important;
+    --hover-bg: #2d4535 !important;
+    --hover-color: var(--araca-creme) !important;
+    font-family: var(--font-body) !important;
+  }
+  html:has(body[data-payload-admin]) .btn--style-secondary {
+    --bg-color: transparent !important;
+    --color: #30160c !important;
+    --box-shadow: inset 0 0 0 1px #d4c8ba !important;
+    --hover-bg: #ece5db !important;
+    --hover-color: #30160c !important;
+    --hover-box-shadow: inset 0 0 0 1px #c4b5a5 !important;
+    font-family: var(--font-body) !important;
+  }
+  html:has(body[data-payload-admin]) .btn--style-pill {
+    --bg-color: #ece5db !important;
+    --color: #30160c !important;
+    --hover-bg: #e5ddd2 !important;
+    --hover-color: #30160c !important;
+    font-family: var(--font-body) !important;
+  }
+  /* Labels e títulos de campo – design system (text-sm font-medium) */
+  html:has(body[data-payload-admin]) [class*=field-label],
+  html:has(body[data-payload-admin]) [class*=field__label],
+  html:has(body[data-payload-admin]) [class*=render-fields] label,
+  html:has(body[data-payload-admin]) .field-type label,
+  html:has(body[data-payload-admin]) label {
+    color: #30160c !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+  }
+  /* Descrição/helper de campo – legível mas secundário */
+  html:has(body[data-payload-admin]) [class*=field-description],
+  html:has(body[data-payload-admin]) [class*=description] {
+    color: #6b5a4a !important;
+  }
+  /* ========== Tela de Login / Conta – alinhado à marca ========== */
+  html:has(body[data-payload-admin]) [class*=auth],
+  html:has(body[data-payload-admin]) .auth__form,
+  html:has(body[data-payload-admin]) [class*=login] {
+    background: #f5f1ed !important;
+  }
+  /* Container do formulário de login/conta: card branco, borda terrosa, boa leitura */
+  html:has(body[data-payload-admin]) .auth-fields {
+    background: #ffffff !important;
+    border: 1px solid #d4c8ba !important;
+    border-radius: 8px !important;
+    padding: calc(var(--base, 20px) * 2) !important;
+    box-shadow: 0 4px 12px rgba(48, 22, 12, 0.06) !important;
+  }
+  html:has(body[data-payload-admin]) .auth-fields label,
+  html:has(body[data-payload-admin]) .auth-fields [class*=field-label],
+  html:has(body[data-payload-admin]) .auth-fields [class*=label] {
+    color: #30160c !important;
+    font-weight: 500 !important;
+  }
+  html:has(body[data-payload-admin]) .auth-fields input[type=email],
+  html:has(body[data-payload-admin]) .auth-fields input[type=text],
+  html:has(body[data-payload-admin]) .auth-fields input[type=password] {
+    background: #ffffff !important;
+    border: 1px solid #d4c8ba !important;
+    color: #30160c !important;
+    border-radius: var(--araca-radius-glass) !important;
+    padding: var(--araca-input-padding-y) var(--araca-input-padding-x) !important;
+  }
+  html:has(body[data-payload-admin]) .auth-fields input[type=email]::placeholder,
+  html:has(body[data-payload-admin]) .auth-fields input[type=text]::placeholder,
+  html:has(body[data-payload-admin]) .auth-fields input[type=password]::placeholder {
+    color: #6b5a4a !important;
+  }
+  html:has(body[data-payload-admin]) .auth-fields input[type=email]:focus,
+  html:has(body[data-payload-admin]) .auth-fields input[type=text]:focus,
+  html:has(body[data-payload-admin]) .auth-fields input[type=password]:focus {
+    outline: none !important;
+    border-color: var(--araca-primary) !important;
+    box-shadow: 0 0 0 var(--araca-focus-ring) var(--araca-primary-ring) !important;
+  }
+  /* View de login (tela cheia): fundo creme, conteúdo centralizado */
+  html:has(body[data-payload-admin]) [class*=template-default][class*=auth],
+  html:has(body[data-payload-admin]) [class*=view] [class*=auth] {
+    background: #f5f1ed !important;
+  }
+  /* Tabelas e listas */
+  html:has(body[data-payload-admin]) [class*=table],
+  html:has(body[data-payload-admin]) [class*=list] {
+    background: #ffffff !important;
+  }
+  html:has(body[data-payload-admin]) [class*=table] th, html:has(body[data-payload-admin]) [class*=table] td,
+  html:has(body[data-payload-admin]) [class*=list] th,
+  html:has(body[data-payload-admin]) [class*=list] td {
+    border-color: #d4c8ba !important;
+  }
+  /* Drawer e modais */
+  html:has(body[data-payload-admin]) [class*=drawer],
+  html:has(body[data-payload-admin]) [class*=modal] {
+    background: #f5f1ed !important;
+  }
+  /* Dropdown / React-Select – menu e itens com fundo branco e borda terrosa */
+  html:has(body[data-payload-admin]) .react-select__menu,
+  html:has(body[data-payload-admin]) [class*=react-select__menu] {
+    background: #ffffff !important;
+    border: 1px solid #d4c8ba !important;
+    color: #30160c !important;
+  }
+  html:has(body[data-payload-admin]) .react-select__option {
+    color: #30160c !important;
+  }
+  html:has(body[data-payload-admin]) .react-select__option--is-focused {
+    background: #ece5db !important;
+  }
+  html:has(body[data-payload-admin]) .react-select__option--is-selected {
+    background: #e8efe9 !important;
+    color: #30160c !important;
+  }
+  /* Grupos de campos e painéis – bordas visíveis */
+  html:has(body[data-payload-admin]) [class*=group-field],
+  html:has(body[data-payload-admin]) [class*=collapsible] {
+    border-color: #d4c8ba !important;
+  }
+  html:has(body[data-payload-admin]) [class*=section-header] {
+    color: #30160c !important;
+    border-bottom-color: #d4c8ba !important;
+  }
+  /* Checkbox e radio – cor primária (mineral green), sem padding/radius que quebram layout
+     Payload usa .checkbox-input__input como caixa visível; o input nativo fica por cima (opacity 0). */
+  html:has(body[data-payload-admin]) input[type=checkbox],
+  html:has(body[data-payload-admin]) input[type=radio] {
+    accent-color: var(--araca-primary);
+    padding: 0 !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  /* Garantir que o wrapper do checkbox do Payload (seleção, Autenticado, etc.) não receba padding/radius de input */
+  html:has(body[data-payload-admin]) .checkbox-input__input,
+  html:has(body[data-payload-admin]) .select-row .checkbox-input__input,
+  html:has(body[data-payload-admin]) .select-all .checkbox-input__input {
+    padding: 0 !important;
+    border-radius: var(--araca-radius-sm) !important;
+  }
+  /* Tabs – aba ativa e inativa com contraste (seletor completo para evitar "can't have a suffix" do Sass com [class*=...]) */
+  html:has(body[data-payload-admin]) [class*=tabs] [class*=tab] {
+    color: #6b5a4a !important;
+  }
+  html:has(body[data-payload-admin]) [class*=tabs] [class*=tab][class*=active] {
+    color: #30160c !important;
+    border-color: #d4c8ba !important;
+  }
+  /* Links */
+  html:has(body[data-payload-admin]) a {
+    color: #3c5945;
+  }
+  html:has(body[data-payload-admin]) a:hover {
+    color: #2d4535;
+  }
+  /* ========== Doc controls – sem fundo (Última modificação / Criado) ========== */
+  html:has(body[data-payload-admin]) .doc-controls,
+  html:has(body[data-payload-admin]) .doc-control,
+  html:has(body[data-payload-admin]) .doc-control.__wrapper,
+  html:has(body[data-payload-admin]) .doc-control.__content,
+  html:has(body[data-payload-admin]) .doc-controls__meta,
+  html:has(body[data-payload-admin]) .doc-controls__meta li,
+  html:has(body[data-payload-admin]) .doc-controls__meta span {
+    background: transparent !important;
+  }
+  html:has(body[data-payload-admin]) .doc-controls::before, html:has(body[data-payload-admin]) .doc-controls::after {
+    display: none !important;
+  }
+  /* ========== Ajustes de layout dos campos (espaço à esquerda) ========== */
+  html:has(body[data-payload-admin]) .doc-drawer__content,
+  html:has(body[data-payload-admin]) [class*=document-drawer] [class*=content] {
+    padding-left: calc(var(--gutter-h, 24px) + 16px) !important;
+    padding-right: calc(var(--gutter-h, 24px) + 8px) !important;
+  }
+  html:has(body[data-payload-admin]) .render-fields {
+    padding-left: 8px !important;
+  }
+  /* Labels e valores dos campos – mais afastados da borda */
+  html:has(body[data-payload-admin]) [class*=field-type] label,
+  html:has(body[data-payload-admin]) [class*=field-label],
+  html:has(body[data-payload-admin]) .render-fields .field-type {
+    margin-left: 0;
+    padding-left: 2px;
+  }
+  /* ========== Array / Tags – evitar sobreposição ========== */
+  html:has(body[data-payload-admin]) .array-field {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    /* Recolher todos / Mostrar tudo – mais espaço entre os botões e entre o header e o conteúdo abaixo */
+  }
+  html:has(body[data-payload-admin]) .array-field .array-field__draggable-rows {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  html:has(body[data-payload-admin]) .array-field .array-field__header-actions {
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  html:has(body[data-payload-admin]) .array-field .array-field__header-action {
+    margin-left: 0;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field,
+  html:has(body[data-payload-admin]) .array-field .collapsible {
+    margin-bottom: 8px;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .collapsible__toggle-wrap,
+  html:has(body[data-payload-admin]) .array-field .collapsible .collapsible__toggle-wrap {
+    position: relative !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+    min-height: 36px !important;
+    padding: 10px 12px 10px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .collapsible__toggle,
+  html:has(body[data-payload-admin]) .array-field .collapsible .collapsible__toggle {
+    position: relative !important;
+    z-index: 2 !important;
+    pointer-events: auto !important;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .collapsible__header-wrap,
+  html:has(body[data-payload-admin]) .array-field .collapsible .collapsible__header-wrap {
+    position: relative !important;
+    z-index: 1;
+    max-width: 100%;
+    overflow: visible !important;
+    pointer-events: none;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .row-label,
+  html:has(body[data-payload-admin]) .array-field .collapsible .row-label {
+    position: relative !important;
+    z-index: 1;
+    color: #30160c !important;
+    font-weight: 500;
+    padding-right: 8px;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .collapsible__content,
+  html:has(body[data-payload-admin]) .array-field .collapsible .collapsible__content {
+    padding: 14px 16px !important;
+    margin-top: 0;
+    border-top: 1px solid #d4c8ba;
+  }
+  html:has(body[data-payload-admin]) .collapsible-field .field-type,
+  html:has(body[data-payload-admin]) .array-field .collapsible .field-type {
+    margin-bottom: 12px;
+  }
+  /* Select e Relationship – garantir que o valor selecionado apareça
+     O texto fica em .relationship--single-value__text (SingleValue do Payload).
+     Evitar colapso: min-width no container e overflow visível no texto. */
+  html:has(body[data-payload-admin]) .react-select .rs__single-value,
+  html:has(body[data-payload-admin]) .relationship--single-value.rs__single-value,
+  html:has(body[data-payload-admin]) .rs__single-value,
+  html:has(body[data-payload-admin]) .rs__single-value div {
+    color: #30160c !important;
+    font-weight: 500;
+  }
+  html:has(body[data-payload-admin]) .relationship--single-value__label,
+  html:has(body[data-payload-admin]) .relationship--single-value__label-text,
+  html:has(body[data-payload-admin]) .relationship--single-value__text {
+    min-width: 0;
+    overflow: visible;
+    color: #30160c !important;
+  }
+  html:has(body[data-payload-admin]) .rs__value-container {
+    color: #30160c !important;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  html:has(body[data-payload-admin]) .rs__control {
+    min-height: 36px !important;
+    color: #30160c !important;
+    border-radius: var(--araca-radius-glass) !important;
+    border-color: #d4c8ba !important;
+    padding: 2px 0 !important;
+  }
+  html:has(body[data-payload-admin]) .rs__control--is-focused {
+    border-color: var(--araca-primary) !important;
+    box-shadow: 0 0 0 var(--araca-focus-ring) var(--araca-primary-ring) !important;
+  }
+  /* Input interno do React Select (campo de busca/valor) */
+  html:has(body[data-payload-admin]) .rs__input,
+  html:has(body[data-payload-admin]) .rs__input-container input {
+    color: rgb(0, 0, 0) !important;
+    background-color: rgb(174, 55, 55) !important;
+    width: fit-content !important;
+  }
+  /* Ícones (X, seta, +) do React Select – centralizar verticalmente e afastar do canto direito */
+  html:has(body[data-payload-admin]) .rs__indicators {
+    align-items: center !important;
+    padding-right: 0.75rem !important;
+  }
+  html:has(body[data-payload-admin]) .rs__indicator {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 6px !important;
+  }
+  html:has(body[data-payload-admin]) select:not([multiple]) {
+    color: #30160c !important;
+    padding: var(--araca-input-padding-y) var(--araca-input-padding-x) !important;
+    border-radius: var(--araca-radius-glass) !important;
+    appearance: auto;
+  }
+  /* Date/time picker – ícones dentro do campo input */
+  html:has(body[data-payload-admin]) .date-time-picker {
+    position: relative;
+  }
+  html:has(body[data-payload-admin]) .date-time-picker__icon-wrap {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    width: 50px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    padding-right: 0.75rem;
+  }
+  html:has(body[data-payload-admin]) .date-time-picker__icon-wrap .icon--calendar,
+  html:has(body[data-payload-admin]) .date-time-picker__icon-wrap .date-time-picker__clear-button {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+  }
+  html:has(body[data-payload-admin]) .date-time-picker__icon-wrap .icon--calendar {
+    margin-left: 0.5rem;
+  }
+} /* fim @layer payload */

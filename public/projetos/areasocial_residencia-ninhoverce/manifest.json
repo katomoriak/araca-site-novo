@@ -1,0 +1,21 @@
+{
+  "title": "Área Social Residencial Ninho Verde",
+  "description": "Área social residencial com design sofisticado, paleta neutra e toques de madeira natural, transformando um espaço compacto em um refúgio de veraneio",
+  "tag": "Interiores",
+  "cover": "cover.png",
+  "media": [
+    { "type": "image", "file": "asocial_resninhoverde_ (1).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (2).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (3).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (4).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (5).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (6).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (7).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (8).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (9).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (10).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (12).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (13).png" },
+    { "type": "image", "file": "asocial_resninhoverde_ (14).png" }
+  ]
+}

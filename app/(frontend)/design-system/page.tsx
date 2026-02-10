@@ -25,8 +25,9 @@ const SECTIONS = [
 ]
 
 export const metadata = {
-  title: 'Design System Lab — Aracá Interiores',
-  description: 'Paleta Aracá, Cormorant Garamond, Rubik, GlassCard, GlassButton, GlassInput, glassmorphism premium.',
+  title: 'Design System Lab',
+  description:
+    'Paleta Aracá, Bellamora, Rubik, GlassCard, GlassButton, GlassInput, glassmorphism premium. Uso interno.',
 }
 
 export default function DesignSystemPage() {
@@ -40,7 +41,7 @@ export default function DesignSystemPage() {
             </h1>
             <p className="mt-2 font-body text-sm font-medium text-primary">Aracá Interiores</p>
             <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-              Paleta natural e terrosa, tipografia Cormorant Garamond + Rubik, componentes Glass
+              Paleta natural e terrosa, tipografia Bellamora + Rubik, componentes Glass
               (GlassCard, GlassButton, GlassInput), glassmorphism premium. Navegação por smooth scroll na sidebar.
             </p>
           </header>

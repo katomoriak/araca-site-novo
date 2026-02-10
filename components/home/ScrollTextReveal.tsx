@@ -14,6 +14,7 @@ interface ScrollTextRevealProps {
     gradient2: string // cor intermediária
     gradient3: string // cor final
   }
+  backgroundLogo?: string // URL do logo de fundo (ex.: SVG)
 }
 
 export function ScrollTextReveal({ 
@@ -25,7 +26,8 @@ export function ScrollTextReveal({
     gradient1: '#FFD700',
     gradient2: '#FFC800',
     gradient3: '#FFE55C'
-  }
+  },
+  backgroundLogo,
 }: ScrollTextRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)

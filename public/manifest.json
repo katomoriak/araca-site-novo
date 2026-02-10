@@ -1,0 +1,18 @@
+{
+  "name": "Aracá Interiores",
+  "short_name": "Aracá",
+  "description": "Projetos de interiores residenciais e comerciais. Projeto criativo, executivo, detalhamentos e acompanhamento de obra.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#1c1917",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/logotipos/LOGOTIPO%20REDONDO@300x.png",
+      "sizes": "300x300",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

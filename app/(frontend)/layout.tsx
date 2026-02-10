@@ -1,8 +1,10 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { ParallaxProvider } from 'react-scroll-parallax'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { PageGradientBackground } from '@/components/layout/PageGradientBackground'
 
 export default function FrontendLayout({
   children,
@@ -11,12 +13,18 @@ export default function FrontendLayout({
 }) {
   const pathname = usePathname()
   const isHomePage = pathname === '/'
+  const isBlogIndexPage = pathname === '/blog'
+  const showHeader = !isHomePage && !isBlogIndexPage
 
   return (
-    <div className="flex min-h-screen flex-col">
-      {!isHomePage && <Header />}
-      <main className="flex-1">{children}</main>
-      <Footer />
-    </div>
+    <ParallaxProvider>
+      <div className="flex min-h-screen flex-col">
+        {showHeader && <Header />}
+        <main className="flex-1">
+          <PageGradientBackground>{children}</PageGradientBackground>
+        </main>
+        <Footer />
+      </div>
+    </ParallaxProvider>
   )
 }

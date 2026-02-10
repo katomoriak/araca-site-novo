@@ -1,9 +1,156 @@
-/* Customizações do admin Payload (opcional) */
+/* ============================================
+   Admin Payload – Identidade Aracá (apenas variáveis de tema)
+   Documentação: https://payloadcms.com/docs/admin/customizing-css
+   Regras do projeto: .cursor/rules/payload-admin-css.mdc
+   ============================================ */
 
-/* Garante que o admin não herde estilos do site: body recebe data-payload-admin via BodyScope */
-[data-payload-admin] {
-  font-family: inherit;
-  background: transparent;
-  color: inherit;
-  min-height: 100vh;
+@layer payload {
+  :root {
+    /* Escala base terrosa Aracá (creme → café) – usada pelo Payload em --theme-elevation-* */
+    --color-base-0: #f5f1ed;
+    --color-base-50: #ebe3d8;
+    --color-base-100: #e0d6c8;
+    --color-base-150: #d4c8ba;
+    --color-base-200: #c4b5a5;
+    --color-base-250: #b3a090;
+    --color-base-300: #9a8a78;
+    --color-base-350: #817261;
+    --color-base-400: #6b5a4a;
+    --color-base-450: #5a4939;
+    --color-base-500: #4a3c2e;
+    --color-base-550: #3d3226;
+    --color-base-600: #352a20;
+    --color-base-650: #2e251c;
+    --color-base-700: #2a2018;
+    --color-base-750: #261c16;
+    --color-base-800: #30160c;
+    --color-base-850: #28140a;
+    --color-base-900: #1f1008;
+    --color-base-950: #170c06;
+    --color-base-1000: #111913;
+
+    /* Payload usa --theme-elevation-* em todo o UI */
+    --theme-elevation-0: var(--color-base-0);
+    --theme-elevation-50: var(--color-base-50);
+    --theme-elevation-100: var(--color-base-100);
+    --theme-elevation-150: var(--color-base-150);
+    --theme-elevation-200: var(--color-base-200);
+    --theme-elevation-250: var(--color-base-250);
+    --theme-elevation-300: var(--color-base-300);
+    --theme-elevation-350: var(--color-base-350);
+    --theme-elevation-400: var(--color-base-400);
+    --theme-elevation-450: var(--color-base-450);
+    --theme-elevation-500: var(--color-base-500);
+    --theme-elevation-550: var(--color-base-550);
+    --theme-elevation-600: var(--color-base-600);
+    --theme-elevation-650: var(--color-base-650);
+    --theme-elevation-700: var(--color-base-700);
+    --theme-elevation-750: var(--color-base-750);
+    --theme-elevation-800: var(--color-base-800);
+    --theme-elevation-850: var(--color-base-850);
+    --theme-elevation-900: var(--color-base-900);
+    --theme-elevation-950: var(--color-base-950);
+    --theme-elevation-1000: var(--color-base-1000);
+
+    /* Tema (Payload aplica esses valores) */
+    --theme-bg: var(--theme-elevation-0);
+    --theme-input-bg: #ffffff;
+    --theme-text: var(--theme-elevation-800);
+    --theme-border-color: var(--theme-elevation-150);
+
+    /* Success = verde mineral Aracá (botões positivos, toasts, focus) */
+    --color-success-100: #e8efe9;
+    --color-success-250: #9bb5a1;
+    --color-success-500: #3c5945;
+    --color-success-600: #2d4535;
+    --color-success-800: #1e2e22;
+    --theme-success-100: var(--color-success-100);
+    --theme-success-250: var(--color-success-250);
+    --theme-success-500: var(--color-success-500);
+    --theme-success-600: var(--color-success-600);
+    --theme-success-800: var(--color-success-800);
+
+    /* Laranja marca Aracá – acentos escuros (bordas, hover) no lugar de preto */
+    --araca-orange-400: #d97a4a;
+    --araca-orange-500: #c45c2a;
+    --araca-orange-600: #b84a1a;
+    --araca-orange-700: #a63d12;
+
+    /* Fonte (se o layout carregar Rubik) */
+    --font-body: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* Tokens Aracá para botões e fundos (persistir alterações do preview) */
+    --araca-mineral-green: #3c5945;
+    --araca-creme: #f5f1ed;
+  }
+
+  /* Campo de busca: padding para ícone e texto não colar nas bordas */
+  .search-bar {
+    --icon-width: 52px;
+  }
+  #search-filter-input,
+  .search-filter__input,
+  .search-bar .search-filter input {
+    padding-left: 36px !important;
+    padding-right: 36px !important;
+    background-color: #ffffff !important;
+  }
+
+  /* Botão primário = verde mineral; texto creme (variáveis + propriedades diretas para garantir override) */
+  .btn.btn--style-primary,
+  a.btn.btn--style-primary {
+    --bg-color: var(--araca-mineral-green);
+    --color: var(--araca-creme);
+    --hover-bg: var(--color-success-600);
+    --hover-color: var(--araca-creme);
+    background-color: var(--araca-mineral-green) !important;
+    color: var(--araca-creme) !important;
+  }
+  .btn.btn--style-primary:hover,
+  .btn.btn--style-primary:focus,
+  .btn.btn--style-primary:focus-visible,
+  a.btn.btn--style-primary:hover,
+  a.btn.btn--style-primary:focus,
+  a.btn.btn--style-primary:focus-visible {
+    background-color: var(--color-success-600) !important;
+    color: var(--araca-creme) !important;
+  }
+  .btn.btn--style-primary .btn__label,
+  a.btn.btn--style-primary .btn__label {
+    color: var(--araca-creme) !important;
+  }
+
+  /* Área principal do admin – fundo creme */
+  .template-default__wrap {
+    background: var(--araca-creme) !important;
+  }
+
+  /* Tabelas/listas – listras alternadas: branco e creme mais escuro que o fundo */
+  .table-wrap table tbody tr:nth-child(odd) td,
+  .table-wrap table tbody tr:nth-child(odd) th,
+  [class*='collection-list'] table tbody tr:nth-child(odd) td,
+  [class*='collection-list'] table tbody tr:nth-child(odd) th {
+    background-color: #ffffff !important;
+  }
+  .table-wrap table tbody tr:nth-child(even) td,
+  .table-wrap table tbody tr:nth-child(even) th,
+  [class*='collection-list'] table tbody tr:nth-child(even) td,
+  [class*='collection-list'] table tbody tr:nth-child(even) th {
+    background-color: var(--color-base-50) !important; /* #ebe3d8 – creme mais escuro que o fundo */
+  }
+
+  /* Botão secundário = borda e hover em laranja da marca (em vez de preto) */
+  .btn--style-secondary {
+    --box-shadow: inset 0 0 0 1px var(--araca-orange-600);
+    --hover-color: var(--araca-orange-700);
+    --hover-box-shadow: inset 0 0 0 1px var(--araca-orange-500);
+  }
+
+  /* Botão de ação negativa/destrutiva = vermelho (Payload usa --theme-error-*) */
+  .btn--style-error {
+    --bg-color: var(--theme-error-500);
+    --color: var(--theme-elevation-0);
+    --hover-bg: var(--theme-error-600);
+    --hover-color: var(--theme-elevation-0);
+  }
 }
