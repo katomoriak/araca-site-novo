@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename)
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: 'standalone', // necessário para o Dockerfile de produção (Coolify/VPS)
   outputFileTracingRoot: __dirname,
   reactCompiler: false, // Payload: desativado para compatibilidade (Next 16: chave no nível raiz)
   transpilePackages: ['swiper'],
