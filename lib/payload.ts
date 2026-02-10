@@ -1,4 +1,5 @@
 import { getPayload } from 'payload'
+import type { Where } from 'payload'
 import config from '@payload-config'
 
 /**
@@ -452,10 +453,10 @@ export async function getTransactions(
 ): Promise<PayloadTransaction[]> {
   try {
     const payload = await getPayloadClient()
-    const where: Record<string, unknown> = {}
-    if (filters.type) where.type = { equals: filters.type }
+    const where: Where = {}
+    if (filters.type) (where as Record<string, unknown>).type = { equals: filters.type }
     if (filters.from || filters.to) {
-      where.date = {
+      (where as Record<string, unknown>).date = {
         ...(filters.from && { greater_than_equal: filters.from }),
         ...(filters.to && { less_than_equal: filters.to }),
       }
