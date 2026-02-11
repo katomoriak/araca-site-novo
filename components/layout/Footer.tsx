@@ -132,7 +132,7 @@ export function Footer() {
       </section>
 
       {/* Seção principal - fundo bege claro + logo watermark */}
-      <section className="relative bg-araca-bege-claro px-4 py-12 sm:px-6">
+      <section className="relative bg-araca-bege-claro px-4 py-12 pr-20 sm:px-6 sm:pr-24">
         {/* Logo watermark - position absolute, opacity 0.1 */}
         <div
           className="pointer-events-none absolute inset-0 flex items-end justify-center overflow-hidden"
@@ -212,7 +212,7 @@ export function Footer() {
               <p className="text-sm text-araca-chocolate-amargo/80">
                 © {year} Aracá Interiores. Todos os direitos reservados.
               </p>
-              <div className="flex gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
                 <Link
                   href="/politica-privacidade"
                   className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
@@ -225,26 +225,23 @@ export function Footer() {
                 >
                   Termos de Uso
                 </Link>
+                <a
+                  href="https://naut.design"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-araca-chocolate-amargo/70 hover:text-araca-laranja-queimado transition"
+                  aria-label="Naut - Design e Desenvolvimento"
+                >
+                  <span className="text-sm text-araca-chocolate-amargo/60">Desenvolvido por</span>
+                  <Image
+                    src="/assets/naut-logotipo-mono-branco.svg"
+                    alt="Naut"
+                    width={120}
+                    height={40}
+                    className="h-6 w-auto"
+                  />
+                </a>
               </div>
-            </div>
-            {/* Assinatura Naut - desenvolvido por */}
-            <div className="flex flex-col items-center gap-2 border-t border-araca-cafe-medio/50 pt-6">
-              <span className="text-xs text-araca-chocolate-amargo/60">Desenvolvido por</span>
-              <a
-                href="https://naut.design"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-araca-chocolate-amargo/70 hover:text-araca-laranja-queimado transition"
-                aria-label="Naut - Design e Desenvolvimento"
-              >
-                <Image
-                  src="/naut-logo.svg"
-                  alt="Naut"
-                  width={80}
-                  height={24}
-                  className="h-6 w-auto"
-                />
-              </a>
             </div>
           </div>
         </Container>
