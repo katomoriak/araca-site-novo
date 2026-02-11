@@ -84,6 +84,15 @@ body:not([data-payload-admin]) {
   --chart-3: var(--araca-ameixa);
   --chart-4: var(--araca-laranja-queimado);
   --chart-5: var(--araca-bege-claro);
+  /* Sidebar do dashboard – marrom café da marca (HSL compatível com componentes shadcn) */
+  --sidebar-background: 30 25% 96%;
+  --sidebar-foreground: 20 60% 12%;
+  --sidebar-primary: 20 60% 12%;
+  --sidebar-primary-foreground: 30 25% 96%;
+  --sidebar-accent: 33 28% 92%;
+  --sidebar-accent-foreground: 20 60% 12%;
+  --sidebar-border: 30 28% 82%;
+  --sidebar-ring: 142 21% 28%;
 }
 
 /* ---- DARK MODE (apenas frontend) ---- */

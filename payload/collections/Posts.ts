@@ -75,12 +75,29 @@ export const Posts: CollectionConfig = {
       label: { en: 'Cover image', pt: 'Imagem de capa' },
       relationTo: 'media',
       required: false,
+      admin: {
+        description: 'Imagem de capa via Payload media. Se usar Supabase Storage (dashboard), será salva em coverImageUrl.',
+      },
+    },
+    {
+      name: 'coverImageUrl',
+      type: 'text',
+      label: { en: 'Cover image URL', pt: 'URL da imagem de capa' },
+      required: false,
+      admin: {
+        description: 'URL direta da imagem quando vem do Supabase Storage (preenchido automaticamente pelo dashboard).',
+        readOnly: true,
+        condition: (_, siblingData) => !siblingData?.coverImage,
+      },
     },
     {
       name: 'content',
-      type: 'richText',
+      type: 'textarea',
       required: true,
       label: { en: 'Content', pt: 'Conteúdo' },
+      admin: {
+        description: 'Conteúdo HTML do post (gerado pelo editor Lexical no dashboard).',
+      },
     },
     {
       name: 'author',
@@ -96,18 +113,12 @@ export const Posts: CollectionConfig = {
     },
     {
       name: 'category',
-      type: 'select',
+      type: 'relationship',
       label: { en: 'Category', pt: 'Categoria' },
-      options: [
-        { label: { en: 'Design', pt: 'Design' }, value: 'design' },
-        { label: { en: 'Dev', pt: 'Desenvolvimento' }, value: 'dev' },
-        { label: { en: 'Tutorial', pt: 'Tutorial' }, value: 'tutorial' },
-        { label: { en: 'News', pt: 'Notícias' }, value: 'news' },
-      ],
+      relationTo: 'categories',
       required: false,
       admin: {
         description: 'Categoria do post.',
-        // components: { Field: '/components/admin/CategorySelectField#CategorySelectField' },
       },
     },
     {

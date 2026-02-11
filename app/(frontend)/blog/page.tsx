@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Container } from '@/components/layout/Container'
 import { PostGrid } from '@/components/blog/PostGrid'
 import { SiteNav } from '@/components/layout/SiteNav'
@@ -6,6 +7,8 @@ import { getPosts, toBlogPostListItem } from '@/lib/payload'
 import { MOCK_POSTS } from '@/lib/blog-mock'
 import { formatDate } from '@/lib/utils'
 import type { Post } from '@/lib/blog-mock'
+
+export const revalidate = 60
 
 export const metadata = {
   title: 'Blog',
@@ -34,14 +37,18 @@ export default async function BlogPage() {
 
   return (
     <>
-      {/* Hero full-screen com imagem de capa do último post (igual à home com vídeo) */}
+      {/* Hero full-screen com imagem de capa do último post */}
       <section className="relative flex min-h-screen flex-col overflow-hidden text-white">
-        {/* Background image - preenche todo o fundo (object-cover igual ao vídeo da home) */}
-        <div
-          className="absolute inset-0 h-full w-full bg-neutral-800 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImageUrl})` }}
-          aria-hidden
-        />
+        <div className="absolute inset-0 h-full w-full bg-neutral-800" aria-hidden>
+          <Image
+            src={heroImageUrl}
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
         <div className="absolute inset-0 bg-gradient-to-br from-araca-mineral-green/20 via-transparent to-araca-ameixa/15" />
 
@@ -55,7 +62,9 @@ export default async function BlogPage() {
               <div className="group block max-w-2xl rounded-2xl bg-white/95 p-6 shadow-xl backdrop-blur-sm transition hover:bg-white md:p-8">
                 <Link href={`/blog/${heroPost.slug}`} className="block">
                   <span className="inline-block rounded-full bg-araca-mineral-green/90 px-4 py-1.5 text-xs font-medium text-white">
-                    {heroPost.category}
+                    {typeof heroPost.category === 'object' && heroPost.category?.name != null
+                      ? heroPost.category.name
+                      : String(heroPost.category ?? '')}
                   </span>
                   <h1 className="mt-4 font-display text-2xl font-bold leading-tight text-neutral-900 sm:text-3xl md:text-4xl">
                     {heroPost.title}

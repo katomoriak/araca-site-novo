@@ -1,4 +1,4 @@
-import type { CSSProperties, ElementType, ReactNode } from 'react'
+import React, { type CSSProperties, type ElementType, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 interface LiquidGlassProps {
@@ -107,10 +107,15 @@ export function LiquidGlass({
     ...style,
   }
 
+  const Wrapper = Component as React.ElementType<{
+    children?: ReactNode
+    className?: string
+    style?: CSSProperties
+  }>
   return (
-    <Component className={cn('liquid-glass', className)} style={baseStyle}>
+    <Wrapper className={cn('liquid-glass', className)} style={baseStyle}>
       {children}
-    </Component>
+    </Wrapper>
   )
 }
 

@@ -6,6 +6,7 @@
 import sharp from 'sharp'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import nodemailer from 'nodemailer'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import type { CollectionConfig } from 'payload'
 import { buildConfig } from 'payload'
@@ -17,6 +18,7 @@ import path from 'path'
 import { fileURLToPath } from 'node:url'
 
 import { Posts } from './payload/collections/Posts'
+import { Categories } from './payload/collections/Categories'
 import { Media } from './payload/collections/Media'
 import { Users } from './payload/collections/Users'
 import { Subscribers } from './payload/collections/Subscribers'
@@ -24,11 +26,13 @@ import { Newsletters } from './payload/collections/Newsletters'
 import { Leads } from './payload/collections/Leads'
 import { Negociacoes } from './payload/collections/Negociacoes'
 import { Transactions } from './payload/collections/Transactions'
+import { AuditLogs } from './payload/collections/AuditLogs'
+import { Projetos } from './payload/collections/Projetos'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 function getCollections(): CollectionConfig[] {
-  return [Posts, Media, Users, Subscribers, Newsletters, Leads, Negociacoes, Transactions]
+  return [Posts, Categories, Media, Users, Subscribers, Newsletters, Leads, Negociacoes, Transactions, AuditLogs, Projetos]
 }
 
 // Fallback para desenvolvimento/build sem banco
@@ -57,13 +61,24 @@ if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
   )
 }
 
+// Sem SMTP: usa transport noop (não envia e não usa Ethereal). Com SMTP: usa servidor real.
+const hasSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER)
+const emailTransport = hasSmtp
+  ? undefined
+  : ({
+      sendMail: async () => ({ messageId: '<no-smtp>' }),
+      close: () => {},
+      verify: async () => true,
+    } as unknown as nodemailer.Transporter)
+
 export default buildConfig({
   email: nodemailerAdapter({
     defaultFromAddress: process.env.SMTP_FROM_EMAIL || 'newsletter@example.com',
     defaultFromName: process.env.SMTP_FROM_NAME || 'Aracá Interiores',
-    transportOptions:
-      process.env.SMTP_HOST && process.env.SMTP_USER
-        ? {
+    skipVerify: !hasSmtp,
+    ...(hasSmtp
+      ? {
+          transportOptions: {
             host: process.env.SMTP_HOST,
             port: Number(process.env.SMTP_PORT) || 587,
             secure: process.env.SMTP_SECURE === 'true',
@@ -71,8 +86,9 @@ export default buildConfig({
               user: process.env.SMTP_USER,
               pass: process.env.SMTP_PASS || '',
             },
-          }
-        : undefined,
+          },
+        }
+      : { transport: emailTransport }),
   }),
   i18n: {
     supportedLanguages: { pt, en },
@@ -99,7 +115,10 @@ export default buildConfig({
   }),
   sharp,
   admin: {
-    autoLogin: process.env.NODE_ENV === 'development' ? {
+    // Auto-login apenas em desenvolvimento local (nunca em produção/Vercel)
+    autoLogin: (process.env.NODE_ENV === 'development' && 
+                !process.env.VERCEL && 
+                !process.env.PRODUCTION) ? {
       email: 'dev@payloadcms.com',
       password: 'test',
       prefillOnly: true,

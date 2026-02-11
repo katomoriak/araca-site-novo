@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,7 +14,9 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-async function getPost(slug: string) {
+export const revalidate = 60
+
+const getPost = cache(async (slug: string) => {
   const payloadPost = await getPostBySlug(slug)
   if (payloadPost) {
     const name =
@@ -34,12 +37,18 @@ async function getPost(slug: string) {
       category: payloadPost.category ?? 'news',
       author: { name: String(name), id: authorId },
       publishedAt: payloadPost.publishedAt ?? payloadPost.createdAt,
-      coverImage: payloadPost.coverImage?.url
-        ? {
-            url: payloadPost.coverImage.url,
-            alt: stringFromLocale(payloadPost.coverImage?.alt ?? payloadPost.title),
-          }
-        : null,
+      coverImage:
+        payloadPost.coverImage?.url
+          ? {
+              url: payloadPost.coverImage.url,
+              alt: stringFromLocale(payloadPost.coverImage?.alt ?? payloadPost.title),
+            }
+          : payloadPost.coverImageUrl
+            ? {
+                url: payloadPost.coverImageUrl,
+                alt: stringFromLocale(payloadPost.title),
+              }
+            : null,
       content: payloadPost.content,
     }
   }
@@ -56,18 +65,40 @@ async function getPost(slug: string) {
     }
   }
   return null
-}
+})
+
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const post = await getPost(slug)
   if (!post) return { title: 'Post não encontrado' }
+  const postUrl = `${baseUrl}/blog/${slug}`
   return {
     title: post.title,
     description: post.excerpt || undefined,
-    openGraph: post.excerpt
-      ? { description: post.excerpt, type: 'article' as const }
-      : undefined,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt || undefined,
+      type: 'article' as const,
+      url: postUrl,
+      ...(post.coverImage && {
+        images: [
+          {
+            url: post.coverImage.url.startsWith('http') ? post.coverImage.url : `${baseUrl}${post.coverImage.url.startsWith('/') ? '' : '/'}${post.coverImage.url}`,
+            width: 1200,
+            height: 630,
+            alt: post.coverImage.alt || post.title,
+          },
+        ],
+      }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt || undefined,
+      ...(post.coverImage && { images: [post.coverImage.url.startsWith('http') ? post.coverImage.url : `${baseUrl}${post.coverImage.url.startsWith('/') ? '' : '/'}${post.coverImage.url}`] }),
+    },
   }
 }
 
@@ -85,8 +116,52 @@ export default async function PostPage({ params }: PageProps) {
   const post = await getPost(slug)
   if (!post) notFound()
 
+  const postUrl = `${baseUrl}/blog/${slug}`
+  const coverAbsoluteUrl = post.coverImage?.url
+    ? (post.coverImage.url.startsWith('http') ? post.coverImage.url : `${baseUrl}${post.coverImage.url.startsWith('/') ? '' : '/'}${post.coverImage.url}`)
+    : undefined
+
+  const jsonLdArticle = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt || undefined,
+    url: postUrl,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    author: {
+      '@type': 'Person',
+      name: post.author.name,
+      ...(post.author.id && { url: `${baseUrl}/blog/autor/${post.author.id}` }),
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Aracá Interiores',
+      url: baseUrl,
+      logo: { '@type': 'ImageObject', url: `${baseUrl}/logotipos/LOGOTIPO%20REDONDO@300x.png` },
+    },
+    ...(coverAbsoluteUrl && { image: coverAbsoluteUrl }),
+  }
+
+  const jsonLdBreadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Blog', item: `${baseUrl}/blog` },
+      { '@type': 'ListItem', position: 2, name: post.title, item: postUrl },
+    ],
+  }
+
   return (
     <article className="py-10 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdArticle) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+      />
       <Container>
         <Link
           href="/blog"
@@ -98,7 +173,9 @@ export default async function PostPage({ params }: PageProps) {
 
         <header className="mt-6 max-w-3xl">
           <span className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
-            {post.category}
+            {typeof post.category === 'object' && post.category?.name != null
+              ? post.category.name
+              : String(post.category ?? '')}
           </span>
           <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-[2.5rem]">
             {post.title}

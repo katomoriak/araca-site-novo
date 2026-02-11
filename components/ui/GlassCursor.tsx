@@ -160,7 +160,10 @@ export function GlassCursor() {
       if (rafClone.current) cancelAnimationFrame(rafClone.current)
       rafClone.current = requestAnimationFrame(() => {
         try {
-          zoomEl.innerHTML = ''
+          // Limpar conteúdo de forma segura (evitar innerHTML = '')
+          while (zoomEl.firstChild) {
+            zoomEl.removeChild(zoomEl.firstChild)
+          }
           const bodyClone = deepCloneWithStyles(document.body, [
             '.glass-cursor',
             '[data-cursor-clone]',

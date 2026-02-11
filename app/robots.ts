@@ -4,7 +4,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: '*', allow: '/', disallow: ['/admin/', '/api/'] },
+    rules: { userAgent: '*', allow: '/', disallow: ['/admin/', '/api/', '/dashboard/', '/login/', '/design-system'], },
     sitemap: `${baseUrl}/sitemap.xml`,
   }
 }

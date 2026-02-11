@@ -24,8 +24,10 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         )}
         <CardContent className="p-6">
-          <Badge variant="primary" className="mb-2">
-            {post.category}
+          <Badge variant="default" className="mb-2">
+            {typeof post.category === 'object' && post.category?.name != null
+              ? post.category.name
+              : String(post.category ?? '')}
           </Badge>
           <h2 className="font-display text-xl font-semibold text-neutral-900 line-clamp-2">
             {post.title}

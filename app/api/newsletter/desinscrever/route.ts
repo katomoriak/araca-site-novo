@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
+import { emailSchema } from '@/lib/validation-schemas'
+import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
+import { handleApiError, validationError, rateLimitError } from '@/lib/error-handler'
 
 /**
  * POST /api/newsletter/desinscrever
@@ -9,15 +12,31 @@ import { getPayloadClient } from '@/lib/payload'
  */
 export async function POST(request: Request) {
   try {
-    const body = await request.json().catch(() => ({}))
-    const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : null
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { error: 'E-mail inválido.', ok: false },
-        { status: 400 },
+    // Rate limiting: 5 requisições por minuto por IP
+    const clientId = getClientIdentifier(request)
+    const rateLimitResult = checkRateLimit(clientId, 5, 60000)
+    
+    if (!rateLimitResult.success) {
+      const retryAfter = rateLimitResult.resetAt 
+        ? Math.ceil((rateLimitResult.resetAt.getTime() - Date.now()) / 1000)
+        : 60
+      
+      return rateLimitError(
+        'Muitas requisições. Tente novamente em alguns instantes.',
+        retryAfter,
+        'api/newsletter/desinscrever'
       )
     }
+    
+    const body = await request.json().catch(() => ({}))
+    
+    // Validação robusta com Zod
+    const validation = emailSchema.safeParse(body?.email)
+    if (!validation.success) {
+      return validationError('E-mail inválido.', undefined, 'api/newsletter/desinscrever')
+    }
+    
+    const email = validation.data
 
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -42,6 +61,8 @@ export async function POST(request: Request) {
         cancelado: true,
         status: 'unsubscribed',
       },
+      // overrideAccess necessário: rota pública de desinscrição
+      // Email já validado e não expõe dados sensíveis
       overrideAccess: true,
     })
 
@@ -50,10 +71,6 @@ export async function POST(request: Request) {
       ok: true,
     })
   } catch (e) {
-    console.error('[desinscrever]', e)
-    return NextResponse.json(
-      { error: 'Erro ao processar desinscrição.', ok: false },
-      { status: 500 },
-    )
+    return handleApiError(e, 'api/newsletter/desinscrever')
   }
 }

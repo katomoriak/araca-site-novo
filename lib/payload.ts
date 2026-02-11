@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
@@ -38,6 +39,8 @@ export interface PayloadPost {
     alt?: string | null
     filename?: string
   } | null
+  /** URL direta quando a capa vem do Supabase Storage (coverImage fica null). */
+  coverImageUrl?: string | null
   content: unknown // SerializedEditorState (Lexical)
   author: {
     id: string
@@ -52,11 +55,7 @@ export interface PayloadPost {
   createdAt: string
 }
 
-/**
- * Busca posts publicados do Payload, ordenados por publishedAt (mais recentes primeiro).
- * Retorna [] se o Payload/DB falhar (ex.: build sem DB).
- */
-export async function getPosts(): Promise<PayloadPost[]> {
+async function getPostsUncached(): Promise<PayloadPost[]> {
   try {
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -71,6 +70,13 @@ export async function getPosts(): Promise<PayloadPost[]> {
   } catch {
     return []
   }
+}
+
+/**
+ * Busca posts publicados do Payload (cache ISR 60s).
+ */
+export async function getPosts(): Promise<PayloadPost[]> {
+  return unstable_cache(getPostsUncached, ['payload-posts'], { revalidate: 60 })()
 }
 
 /**
@@ -131,11 +137,7 @@ export async function getPostsByCategory(
   }
 }
 
-/**
- * Busca um post publicado pelo slug.
- * Retorna null se não existir ou não estiver publicado.
- */
-export async function getPostBySlug(slug: string): Promise<PayloadPost | null> {
+async function getPostBySlugUncached(slug: string): Promise<PayloadPost | null> {
   try {
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -151,6 +153,17 @@ export async function getPostBySlug(slug: string): Promise<PayloadPost | null> {
   } catch {
     return null
   }
+}
+
+/**
+ * Busca um post publicado pelo slug (cache ISR 60s por slug).
+ */
+export async function getPostBySlug(slug: string): Promise<PayloadPost | null> {
+  return unstable_cache(
+    () => getPostBySlugUncached(slug),
+    ['payload-post', slug],
+    { revalidate: 60 }
+  )()
 }
 
 /** Autor (user) retornado pelo Payload com perfil para a página de autor. */
@@ -247,7 +260,9 @@ export function toBlogPostListItem(
     coverImage:
       p.coverImage?.url != null
         ? { url: p.coverImage.url, alt: stringFromLocale(p.coverImage?.alt ?? p.title) }
-        : undefined,
+        : p.coverImageUrl
+          ? { url: p.coverImageUrl, alt: stringFromLocale(p.title) }
+          : undefined,
     author: { name: String(name), id: authorId },
     category: (p.category ?? 'news') as PostCategory,
     tags: (p.tags ?? []).map((t) => t?.tag ?? '').filter(Boolean),
@@ -360,11 +375,7 @@ const KANBAN_STAGE_ORDER: NegociacaoStage[] = [
   'perdido',
 ]
 
-/**
- * Busca leads do Payload via Local API.
- * Usado no dashboard (rota já protegida pelo middleware); overrideAccess para leitura.
- */
-export async function getLeads(): Promise<PayloadLead[]> {
+async function getLeadsUncached(): Promise<PayloadLead[]> {
   try {
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -380,11 +391,12 @@ export async function getLeads(): Promise<PayloadLead[]> {
   }
 }
 
-/**
- * Busca negociações do Payload com lead populado (depth=1) via Local API.
- * Usado no pipeline de fechamento no dashboard (rota já protegida pelo middleware).
- */
-export async function getNegociacoes(): Promise<PayloadNegociacao[]> {
+/** Busca leads (cache 30s para o dashboard). */
+export async function getLeads(): Promise<PayloadLead[]> {
+  return unstable_cache(getLeadsUncached, ['payload-leads'], { revalidate: 30 })()
+}
+
+async function getNegociacoesUncached(): Promise<PayloadNegociacao[]> {
   try {
     const payload = await getPayloadClient()
     const result = await payload.find({
@@ -399,6 +411,11 @@ export async function getNegociacoes(): Promise<PayloadNegociacao[]> {
   } catch {
     return []
   }
+}
+
+/** Busca negociações (cache 30s para o dashboard). */
+export async function getNegociacoes(): Promise<PayloadNegociacao[]> {
+  return unstable_cache(getNegociacoesUncached, ['payload-negociacoes'], { revalidate: 30 })()
 }
 
 /**
@@ -443,12 +460,8 @@ export async function getCrmKanbanData(): Promise<CrmKanbanColumn[]> {
 
 export { NEGOCIACAO_STAGE_LABELS, KANBAN_STAGE_ORDER }
 
-/**
- * Busca transações do Payload via Local API (usado no dashboard; rota já protegida pelo middleware).
- * Filtros opcionais: type, from, to (datas ISO).
- */
-export async function getTransactions(
-  filters: TransactionFilters = {},
+async function getTransactionsUncached(
+  filters: TransactionFilters = {}
 ): Promise<PayloadTransaction[]> {
   try {
     const payload = await getPayloadClient()
@@ -462,13 +475,26 @@ export async function getTransactions(
     }
     const result = await payload.find({
       collection: 'transactions',
-      where: Object.keys(where).length ? where : undefined,
+      where: (Object.keys(where).length ? where : undefined) as import('payload').Where | undefined,
       sort: '-date',
       limit: 500,
       pagination: false,
+      overrideAccess: true,
     })
     return (result.docs ?? []) as PayloadTransaction[]
   } catch {
     return []
   }
+}
+
+/** Busca transações (cache 30s para o dashboard; key inclui filtros). */
+export async function getTransactions(
+  filters: TransactionFilters = {}
+): Promise<PayloadTransaction[]> {
+  const key = ['payload-transactions', filters.type ?? '', filters.from ?? '', filters.to ?? ''].join('-')
+  return unstable_cache(
+    () => getTransactionsUncached(filters),
+    [key],
+    { revalidate: 30 }
+  )()
 }

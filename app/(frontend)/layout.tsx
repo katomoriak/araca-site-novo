@@ -5,6 +5,7 @@ import { ParallaxProvider } from 'react-scroll-parallax'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { PageGradientBackground } from '@/components/layout/PageGradientBackground'
+import { WhatsAppButton } from '@/components/layout/WhatsAppButton'
 
 export default function FrontendLayout({
   children,
@@ -13,8 +14,7 @@ export default function FrontendLayout({
 }) {
   const pathname = usePathname()
   const isHomePage = pathname === '/'
-  const isBlogIndexPage = pathname === '/blog'
-  const showHeader = !isHomePage && !isBlogIndexPage
+  const showHeader = !isHomePage
 
   return (
     <ParallaxProvider>
@@ -24,6 +24,7 @@ export default function FrontendLayout({
           <PageGradientBackground>{children}</PageGradientBackground>
         </main>
         <Footer />
+        <WhatsAppButton />
       </div>
     </ParallaxProvider>
   )

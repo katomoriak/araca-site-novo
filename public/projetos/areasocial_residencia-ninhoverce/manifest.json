@@ -4,18 +4,18 @@
   "tag": "Interiores",
   "cover": "cover.png",
   "media": [
-    { "type": "image", "file": "asocial_resninhoverde_ (1).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (2).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (3).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (4).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (5).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (6).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (7).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (8).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (9).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (10).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (12).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (13).png" },
-    { "type": "image", "file": "asocial_resninhoverde_ (14).png" }
+    { "type": "image", "file": "asocial_resninhoverde_ (1).png", "name": "Vista geral" },
+    { "type": "image", "file": "asocial_resninhoverde_ (11).png", "name": "Sala de convívio" },
+    { "type": "image", "file": "asocial_resninhoverde_ (14).png", "name": "Ambiente integrado" },
+    { "type": "image", "file": "asocial_resninhoverde_ (15).png", "name": "Living e circulação" },
+    { "type": "image", "file": "asocial_resninhoverde_ (16).png", "name": "Paleta neutra" },
+    { "type": "image", "file": "asocial_resninhoverde_ (17).png", "name": "Detalhe de acabamento" },
+    { "type": "image", "file": "asocial_resninhoverde_ (18).png", "name": "Perspectiva do ambiente" },
+    { "type": "image", "file": "asocial_resninhoverde_ (19).png", "name": "Toques de madeira" },
+    { "type": "image", "file": "asocial_resninhoverde_ (20).png", "name": "Canto aconchegante" },
+    { "type": "image", "file": "asocial_resninhoverde_ (21).png", "name": "Área de estar" },
+    { "type": "image", "file": "asocial_resninhoverde_ (22).png", "name": "Iluminação natural" },
+    { "type": "image", "file": "asocial_resninhoverde_ (23).png", "name": "Visão integrada" },
+    { "type": "image", "file": "asocial_resninhoverde_ (24).png", "name": "Refúgio de veraneio" }
   ]
 }

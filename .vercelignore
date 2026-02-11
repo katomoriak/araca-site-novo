@@ -2,3 +2,6 @@
 *.md
 docs/
 test-*.html
+
+# Legacy app (Next usa app/ na raiz; src/app é legado)
+src/

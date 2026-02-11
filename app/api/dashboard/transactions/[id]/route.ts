@@ -1,21 +1,19 @@
 import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
-import { cookies } from 'next/headers'
-
-const PAYLOAD_TOKEN_COOKIE = 'payload-token'
+import { getDashboardUser } from '@/lib/dashboard-auth'
 
 /**
  * PATCH /api/dashboard/transactions/[id]
  * Body: { executada?: boolean } — atualiza o campo executada da transação.
- * Requer autenticação.
+ * Requer admin/editor.
  */
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const cookieStore = await cookies()
-    if (!cookieStore.get(PAYLOAD_TOKEN_COOKIE)?.value) {
+    const user = await getDashboardUser()
+    if (!user) {
       return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
     }
     const { id } = await params
@@ -32,6 +30,7 @@ export async function PATCH(
       collection: 'transactions',
       id,
       data: { executada },
+      // overrideAccess necessário: rota já protegida por proxy + cookie check
       overrideAccess: true,
     })
     return NextResponse.json({ ok: true, executada })
@@ -48,15 +47,15 @@ export async function PATCH(
  * DELETE /api/dashboard/transactions/[id]?deleteFutureFixed=true
  * Remove a transação. Se deleteFutureFixed=true e a transação tiver fixedExpenseGroupId,
  * remove também todas as transações do mesmo grupo com data >= desta.
- * Requer autenticação.
+ * Requer admin/editor.
  */
 export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const cookieStore = await cookies()
-    if (!cookieStore.get(PAYLOAD_TOKEN_COOKIE)?.value) {
+    const user = await getDashboardUser()
+    if (!user) {
       return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
     }
 
@@ -68,6 +67,7 @@ export async function DELETE(
     const doc = await payload.findByID({
       collection: 'transactions',
       id,
+      // overrideAccess necessário: rota já protegida por proxy + cookie check
       overrideAccess: true,
     })
 
@@ -89,6 +89,7 @@ export async function DELETE(
         },
         limit: 500,
         pagination: false,
+        // overrideAccess necessário: rota já protegida por proxy + cookie check
         overrideAccess: true,
       })
       const toDelete = all.docs ?? []
@@ -96,6 +97,7 @@ export async function DELETE(
         await payload.delete({
           collection: 'transactions',
           id: t.id,
+          // overrideAccess necessário: rota já protegida por proxy + cookie check
           overrideAccess: true,
         })
       }
@@ -105,6 +107,7 @@ export async function DELETE(
     await payload.delete({
       collection: 'transactions',
       id,
+      // overrideAccess necessário: rota já protegida por proxy + cookie check
       overrideAccess: true,
     })
     return NextResponse.json({ deleted: 1 })

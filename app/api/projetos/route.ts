@@ -1,68 +1,36 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs/promises'
-import path from 'path'
-import type { ProjectGalleryItem, GalleryMediaItem } from '@/components/home/ProjectGallery'
+import { getProjetosFromManifests } from '@/lib/projetos-server'
+import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 
-interface ManifestMedia { type: 'image' | 'video'; file: string }
-interface Manifest {
-  title: string
-  description: string
-  tag?: string
-  cover: string
-  media: ManifestMedia[]
-}
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const baseDir = path.join(process.cwd(), 'public', 'projetos')
-    let dirs: string[] = []
-    try {
-      dirs = await fs.readdir(baseDir, { withFileTypes: true })
-        .then(entries => entries.filter(e => e.isDirectory()).map(e => e.name))
-    } catch {
-      return NextResponse.json([])
+    const clientId = getClientIdentifier(request)
+    const rateLimitResult = checkRateLimit(clientId, 30, 60000)
+
+    if (!rateLimitResult.success) {
+      const retryAfter = rateLimitResult.resetAt
+        ? Math.ceil((rateLimitResult.resetAt.getTime() - Date.now()) / 1000)
+        : 60
+
+      return NextResponse.json(
+        { error: 'Muitas requisições. Tente novamente em alguns instantes.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Remaining': '0',
+          },
+        },
+      )
     }
 
-    const projects: ProjectGalleryItem[] = []
+    const projects = await getProjetosFromManifests()
 
-    for (const slug of dirs) {
-      const manifestPath = path.join(baseDir, slug, 'manifest.json')
-      let raw: string
-      try {
-        raw = await fs.readFile(manifestPath, 'utf-8')
-      } catch {
-        continue
-      }
-
-      let manifest: Manifest
-      try {
-        manifest = JSON.parse(raw) as Manifest
-      } catch {
-        continue
-      }
-
-      if (!manifest.title || !manifest.cover || !Array.isArray(manifest.media)) continue
-
-      const baseUrl = `/projetos/${slug}`
-      const coverImage = `${baseUrl}/${manifest.cover}`
-      const media: GalleryMediaItem[] = manifest.media.map((m) => ({
-        type: m.type === 'video' ? 'video' : 'image',
-        url: `${baseUrl}/${m.file}`,
-      }))
-
-      projects.push({
-        id: slug,
-        title: manifest.title,
-        description: manifest.description ?? '',
-        tag: manifest.tag,
-        coverImage,
-        media,
-      })
-    }
-
-    // Ordenar por id para manter ordem estável
-    projects.sort((a, b) => a.id.localeCompare(b.id))
-    return NextResponse.json(projects)
+    return NextResponse.json(projects, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+      },
+    })
   } catch (e) {
     console.error('[api/projetos]', e)
     return NextResponse.json([], { status: 500 })

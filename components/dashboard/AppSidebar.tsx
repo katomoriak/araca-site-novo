@@ -7,6 +7,9 @@ import {
   LayoutDashboard,
   Users,
   Wallet,
+  ImageIcon,
+  BookOpen,
+  ChevronDown,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -18,7 +21,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+import { SidebarUser } from './SidebarUser'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 
 const navItems = [
   { href: '/dashboard', label: 'Visão geral', icon: LayoutDashboard },
@@ -26,8 +38,22 @@ const navItems = [
   { href: '/dashboard/finance', label: 'Financeiro', icon: Wallet },
 ]
 
+const projetoItems = [
+  { href: '/dashboard/projetos', label: 'Projetos' },
+  { href: '/dashboard/projetos/midias', label: 'Mídias' },
+]
+
+const blogItems = [
+  { href: '/dashboard/blog/posts', label: 'Posts' },
+  { href: '/dashboard/blog/categories', label: 'Categorias' },
+  { href: '/dashboard/blog/authors', label: 'Autores' },
+  { href: '/dashboard/blog/media', label: 'Mídias' },
+]
+
 export function AppSidebar() {
   const pathname = usePathname()
+  const isBlogActive = pathname.startsWith('/dashboard/blog')
+  
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="border-b border-sidebar-border px-4 py-3">
@@ -40,7 +66,7 @@ export function AppSidebar() {
             className="h-8 w-auto object-contain"
             priority
           />
-          <span className="text-muted-foreground text-sm font-medium">Dashboard</span>
+          <span className="text-araca-cafe-escuro text-sm font-semibold">Dashboard</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>
@@ -62,10 +88,67 @@ export function AppSidebar() {
                   </SidebarMenuItem>
                 )
               })}
+
+              <Collapsible defaultOpen={pathname.startsWith('/dashboard/projetos')} className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton isActive={pathname.startsWith('/dashboard/projetos')}>
+                      <ImageIcon className="size-4" />
+                      <span>Gestão de Projetos</span>
+                      <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {projetoItems.map((item) => {
+                        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+                        return (
+                          <SidebarMenuSubItem key={item.href}>
+                            <SidebarMenuSubButton asChild isActive={isActive}>
+                              <Link href={item.href}>
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        )
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+              
+              <Collapsible defaultOpen={isBlogActive} className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton isActive={isBlogActive}>
+                      <BookOpen className="size-4" />
+                      <span>Gestão do Blog</span>
+                      <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      {blogItems.map((item) => {
+                        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+                        return (
+                          <SidebarMenuSubItem key={item.href}>
+                            <SidebarMenuSubButton asChild isActive={isActive}>
+                              <Link href={item.href}>
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        )
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarUser />
     </Sidebar>
   )
 }

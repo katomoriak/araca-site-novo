@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import Image from 'next/image'
 
-export type GalleryMediaItem = { type: 'image' | 'video'; url: string }
+export type GalleryMediaItem = { type: 'image' | 'video'; url: string; name?: string }
 
 export interface ProjectGalleryItem {
   id: string
@@ -47,6 +47,7 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
           src={project.coverImage}
           alt={project.title}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 85vw, 1200px"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           priority
         />
@@ -206,10 +207,10 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
           {/* Cabeçalho */}
           <div className="mb-6 flex items-start justify-between">
             <div>
-              <h2 className="font-display text-3xl font-bold text-araca-bege-claro sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold text-araca-creme sm:text-4xl">
                 {project.title}
               </h2>
-              <p className="mt-2 text-araca-bege-claro/70">
+              <p className="mt-2 text-araca-bege-claro">
                 {project.description}
               </p>
             </div>
@@ -223,7 +224,8 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
           </div>
 
           {/* Área da Imagem Principal */}
-          <div className="relative flex h-[calc(100%-12rem)] items-center justify-center" style={{ perspective: '1500px' }}>
+          <div className="relative flex h-[calc(100%-12rem)] flex-col" style={{ perspective: '1500px' }}>
+            <div className="relative flex flex-1 items-center justify-center min-h-0">
             {/* Botão Anterior */}
             <motion.button
               onClick={goToPrevious}
@@ -286,24 +288,28 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                 className="absolute inset-0 h-full w-full overflow-hidden rounded-3xl"
                 style={{ transformStyle: 'preserve-3d' }}
               >
-                {currentItem.type === 'video' ? (
-                  <video
-                    ref={videoRef}
-                    src={currentItem.url}
-                    controls
-                    playsInline
-                    className="h-full w-full object-contain"
-                    onEnded={() => videoRef.current?.pause()}
-                  />
-                ) : (
-                  <Image
-                    src={currentItem.url}
-                    alt={`${project.title} - ${currentIndex + 1}`}
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                )}
+                {/* Wrapper para recortar imagem/vídeo às bordas arredondadas do container */}
+                <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                  {currentItem.type === 'video' ? (
+                    <video
+                      ref={videoRef}
+                      src={currentItem.url}
+                      controls
+                      playsInline
+                      className="h-full w-full object-contain rounded-3xl"
+                      onEnded={() => videoRef.current?.pause()}
+                    />
+                  ) : (
+                    <Image
+                      src={currentItem.url}
+                      alt={currentItem.name ?? `${project.title} - ${currentIndex + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 90vw"
+                      className="object-contain rounded-3xl"
+                      priority
+                    />
+                  )}
+                </div>
               </motion.div>
             </AnimatePresence>
 
@@ -328,6 +334,23 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
             >
               <ChevronRight className="h-7 w-7" />
             </motion.button>
+            </div>
+
+            {/* Nome da imagem (editável no manifest.json) */}
+            <AnimatePresence mode="wait" initial={false}>
+              {currentItem.name ? (
+                <motion.p
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="mb-[30px] text-center px-4 py-2 rounded-lg bg-araca-cafe-escuro/90 text-araca-creme text-sm font-medium backdrop-blur-sm"
+                >
+                  {currentItem.name}
+                </motion.p>
+              ) : null}
+            </AnimatePresence>
           </div>
 
           {/* Navegação de Miniaturas + Indicadores */}
@@ -359,6 +382,7 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                       src={item.url}
                       alt={`Miniatura ${index + 1}`}
                       fill
+                      sizes="120px"
                       className="object-cover"
                     />
                   )}

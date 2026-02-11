@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
 import type { PayloadTransaction } from '@/lib/payload'
-import { cookies } from 'next/headers'
-
-const PAYLOAD_TOKEN_COOKIE = 'payload-token'
+import { getDashboardUser } from '@/lib/dashboard-auth'
+import { transactionSchema, validateWithSchema } from '@/lib/validation-schemas'
+import { handleApiError, authenticationError, validationError } from '@/lib/error-handler'
 
 /**
  * GET /api/dashboard/transactions
- * Retorna todas as transações (para o dashboard financeiro). Requer autenticação.
+ * Retorna todas as transações (para o dashboard financeiro). Requer admin/editor.
  */
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    if (!cookieStore.get(PAYLOAD_TOKEN_COOKIE)?.value) {
+    const user = await getDashboardUser()
+    if (!user) {
       return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
     }
     const payload = await getPayloadClient()
@@ -21,16 +21,14 @@ export async function GET() {
       sort: '-date',
       limit: 500,
       pagination: false,
+      // overrideAccess necessário: rota já protegida por proxy + cookie check
+      // Precisa acessar todas as transações para o dashboard financeiro
       overrideAccess: true,
     })
     const docs = (result.docs ?? []) as PayloadTransaction[]
     return NextResponse.json(docs)
   } catch (e) {
-    console.error('[api/dashboard/transactions GET]', e)
-    return NextResponse.json(
-      { message: e instanceof Error ? e.message : 'Erro ao listar transações.' },
-      { status: 500 },
-    )
+    return handleApiError(e, 'api/dashboard/transactions/GET')
   }
 }
 
@@ -48,29 +46,24 @@ function toISODate(d: Date): string {
  * POST /api/dashboard/transactions
  * Body: { type, description, amount, date, category?, fixedExpense?: boolean }
  * Se fixedExpense === true, cria esta transação + 11 parcelas mensais (mesmo grupo), para receita ou despesa.
- * Requer autenticação (cookie payload-token).
+ * Requer admin/editor (getDashboardUser).
  */
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies()
-    if (!cookieStore.get(PAYLOAD_TOKEN_COOKIE)?.value) {
-      return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
+    const user = await getDashboardUser()
+    if (!user) {
+      return authenticationError('Não autorizado.', 'api/dashboard/transactions/POST')
     }
 
     const body = await request.json().catch(() => ({}))
-    const type = body?.type === 'income' || body?.type === 'expense' ? body.type : null
-    const description = typeof body?.description === 'string' ? body.description.trim() : ''
-    const amount = Number(body?.amount)
-    const dateStr = typeof body?.date === 'string' ? body.date : null
-    const category = typeof body?.category === 'string' ? body.category.trim() || undefined : undefined
-    const fixedRecurring = body?.fixedExpense === true
-
-    if (!type || !description || Number.isNaN(amount) || amount <= 0 || !dateStr) {
-      return NextResponse.json(
-        { message: 'Dados inválidos. Envie type, description, amount e date.' },
-        { status: 400 },
-      )
+    
+    // Validação robusta com Zod
+    const validation = validateWithSchema(transactionSchema, body)
+    if (!validation.success) {
+      return validationError('Dados inválidos.', validation.errors, 'api/dashboard/transactions/POST')
     }
+
+    const { type, description, amount, date: dateStr, category, fixedExpense: fixedRecurring } = validation.data
 
     const payload = await getPayloadClient()
     const baseDate = new Date(dateStr)
@@ -93,6 +86,7 @@ export async function POST(request: Request) {
             category,
             fixedExpenseGroupId: groupId,
           },
+          // overrideAccess necessário: rota já protegida por proxy + cookie check
           overrideAccess: true,
         })
         docs.push({ id: String(doc.id) })
@@ -110,14 +104,11 @@ export async function POST(request: Request) {
         date: dateStr,
         category,
       },
+      // overrideAccess necessário: rota já protegida por proxy + cookie check
       overrideAccess: true,
     })
     return NextResponse.json({ doc: { id: String(doc.id) } })
   } catch (e) {
-    console.error('[api/dashboard/transactions]', e)
-    return NextResponse.json(
-      { message: e instanceof Error ? e.message : 'Erro ao criar transação.' },
-      { status: 500 },
-    )
+    return handleApiError(e, 'api/dashboard/transactions/POST')
   }
 }

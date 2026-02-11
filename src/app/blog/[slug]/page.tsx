@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MOCK_POSTS } from '@/lib/blog-mock'
 import { Card, CardContent } from '@/components/ui/Card'
+import DOMPurify from 'isomorphic-dompurify'
 
 const categoryLabels: Record<string, string> = {
   design: 'Design',
@@ -19,6 +20,15 @@ export default function BlogSlugPage({
   const { slug } = React.use(params)
   const post = MOCK_POSTS.find((p) => p.slug === slug)
   if (!post) notFound()
+
+  // Sanitizar HTML para prevenir XSS
+  const sanitizedContent = DOMPurify.sanitize(post.content, {
+    ALLOWED_TAGS: [
+      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'span', 'div',
+    ],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
+  })
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12 md:px-6">
@@ -43,7 +53,7 @@ export default function BlogSlugPage({
           </div>
           <div
             className="prose prose-neutral px-6 py-8"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
           />
         </CardContent>
       </Card>

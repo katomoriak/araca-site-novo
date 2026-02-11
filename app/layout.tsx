@@ -15,6 +15,25 @@ const siteDescription =
   'Aracá Interiores — projetos de interiores residenciais e comerciais. Projeto criativo, executivo, detalhamentos e acompanhamento de obra em um modelo inovador e sob medida.'
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
 
+const jsonLdOrganization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteName,
+  url: baseUrl,
+  description: siteDescription,
+  logo: `${baseUrl}/logotipos/LOGOTIPO%20REDONDO@300x.png`,
+}
+
+const jsonLdWebSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteName,
+  url: baseUrl,
+  description: siteDescription,
+  publisher: { '@id': `${baseUrl}#organization` },
+  inLanguage: 'pt-BR',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
@@ -111,6 +130,18 @@ export default function RootLayout({
       className={rubik.variable}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLdOrganization),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLdWebSite),
+          }}
+        />
         <BodyScope>{children}</BodyScope>
       </body>
     </html>

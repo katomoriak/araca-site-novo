@@ -2,8 +2,8 @@
 
 /**
  * Campo Autor como select nativo (mesmo padrão do CategorySelectField).
- * Carrega usuários da API e exibe o autor selecionado corretamente, evitando
- * bugs de CSS/HTML do Relationship padrão do Payload.
+ * Carrega usuários da API Payload e exibe o autor selecionado corretamente.
+ * Usa o formato { relationTo, value } para o valor, compatível com o Admin e hooks afterRead/beforeValidate.
  */
 import type { RelationshipFieldClientComponent } from 'payload'
 import React from 'react'
@@ -14,6 +14,8 @@ import {
   fieldBaseClass,
   useField,
 } from '@payloadcms/ui'
+
+const RELATION_TO = 'users'
 
 function labelToString(lbl: unknown): string {
   if (typeof lbl === 'string') return lbl
@@ -38,7 +40,7 @@ function authorIdFromValue(value: unknown): string {
   return ''
 }
 
-type UserDoc = { id: string | number; name?: string }
+type UserDoc = { id: string | number; name?: string | null; email?: string | null }
 
 export const AuthorSelectField: RelationshipFieldClientComponent = (props) => {
   const { field, path } = props
@@ -65,7 +67,7 @@ export const AuthorSelectField: RelationshipFieldClientComponent = (props) => {
         if (cancelled || !data?.docs) return
         setOptions(
           data.docs.map((u) => ({
-            label: u.name ?? String(u.id),
+            label: (u.name && u.name.trim()) ? u.name : (u.email ?? `Usuário ${u.id}`),
             value: String(u.id),
           })),
         )
@@ -84,12 +86,23 @@ export const AuthorSelectField: RelationshipFieldClientComponent = (props) => {
   const value = authorIdFromValue(rawValue)
   const selectValue = value === '' ? '' : value
 
+  // Opções exibidas: lista da API; se o valor atual não estiver na lista, opção sintética para exibir e manter editável
+  const optionsWithCurrent = React.useMemo(() => {
+    if (!value) return options
+    const hasCurrent = options.some((o) => o.value === value)
+    if (hasCurrent) return options
+    return [{ label: `Autor (ID: ${value})`, value }, ...options]
+  }, [options, value])
+
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const raw = e.target.value
-      // Relationship armazena ID (string ou number); vazio = undefined para validação.
-      const newValue = raw === '' ? undefined : raw
-      setValue(newValue)
+      if (raw === '') {
+        setValue(undefined)
+        return
+      }
+      // Formato esperado pelo Payload Admin (relationship): { relationTo, value }
+      setValue({ relationTo: RELATION_TO, value: raw })
     },
     [setValue],
   )
@@ -115,9 +128,10 @@ export const AuthorSelectField: RelationshipFieldClientComponent = (props) => {
           onChange={handleChange}
           value={selectValue}
           disabled={loading}
+          aria-label={labelToString(label ?? name)}
         >
-          <option value="">Selecione...</option>
-          {options.map((opt) => (
+          <option value="">Selecione um autor...</option>
+          {optionsWithCurrent.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>

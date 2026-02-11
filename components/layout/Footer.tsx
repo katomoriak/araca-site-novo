@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Github, Linkedin, Twitter, Instagram, ArrowRight } from 'lucide-react'
+import { Linkedin, Instagram, ArrowRight } from 'lucide-react'
 import { Container } from './Container'
 
 const footerNavColumns = [
@@ -35,9 +35,8 @@ const footerNavColumns = [
 ]
 
 const socialLinks = [
-  { href: '#', icon: Instagram, label: 'Instagram' },
-  { href: '#', icon: Linkedin, label: 'LinkedIn' },
-  { href: '#', icon: Github, label: 'GitHub' },
+  { href: 'https://www.instagram.com/aracainteriores/', icon: Instagram, label: 'Instagram' },
+  { href: 'https://www.linkedin.com/company/araca-arq', icon: Linkedin, label: 'LinkedIn' },
 ]
 
 export function Footer() {
@@ -171,6 +170,8 @@ export function Footer() {
                   <li key={label}>
                     <a
                       href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       aria-label={label}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-araca-cafe-escuro/30 text-araca-cafe-escuro transition hover:border-araca-laranja-queimado hover:bg-araca-laranja-queimado hover:text-white"
                     >
@@ -206,23 +207,44 @@ export function Footer() {
           </div>
 
           {/* Rodapé legal */}
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-araca-cafe-medio pt-8 sm:flex-row">
-            <p className="text-sm text-araca-chocolate-amargo/80">
-              © {year} Aracá Interiores. Todos os direitos reservados.
-            </p>
-            <div className="flex gap-6">
-              <Link
-                href="/politica-privacidade"
-                className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
+          <div className="mt-12 flex flex-col gap-6 border-t border-araca-cafe-medio pt-8">
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+              <p className="text-sm text-araca-chocolate-amargo/80">
+                © {year} Aracá Interiores. Todos os direitos reservados.
+              </p>
+              <div className="flex gap-6">
+                <Link
+                  href="/politica-privacidade"
+                  className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
+                >
+                  Política de Privacidade
+                </Link>
+                <Link
+                  href="/termos"
+                  className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
+                >
+                  Termos de Uso
+                </Link>
+              </div>
+            </div>
+            {/* Assinatura Naut - desenvolvido por */}
+            <div className="flex flex-col items-center gap-2 border-t border-araca-cafe-medio/50 pt-6">
+              <span className="text-xs text-araca-chocolate-amargo/60">Desenvolvido por</span>
+              <a
+                href="https://naut.design"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-araca-chocolate-amargo/70 hover:text-araca-laranja-queimado transition"
+                aria-label="Naut - Design e Desenvolvimento"
               >
-                Política de Privacidade
-              </Link>
-              <Link
-                href="/termos"
-                className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
-              >
-                Termos de Uso
-              </Link>
+                <Image
+                  src="/naut-logo.svg"
+                  alt="Naut"
+                  width={80}
+                  height={24}
+                  className="h-6 w-auto"
+                />
+              </a>
             </div>
           </div>
         </Container>
