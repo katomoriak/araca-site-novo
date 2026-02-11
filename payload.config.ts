@@ -37,11 +37,10 @@ function getCollections(): CollectionConfig[] {
 
 // Fallback para desenvolvimento/build sem banco
 const rawUrl = process.env.DATABASE_URL || 'postgresql://user:pass@localhost:5432/payload'
-// Rejeitar placeholders de documentação (hosts de exemplo não existem)
-if (rawUrl.includes('ep-....vercel-storage.com')) {
-  throw new Error(
-    'DATABASE_URL contém um host de exemplo. Use a connection string real do Supabase: ' +
-    'Project Settings → Database → Connection string (URI). Prefira "Session mode" (porta 6543) para Vercel.',
+// Avisar placeholders de documentação (não quebrar no carregamento; a conexão falhará depois e as páginas usam fallback)
+if (rawUrl.includes('ep-....vercel-storage.com') && process.env.NODE_ENV === 'production') {
+  console.error(
+    '[Payload] DATABASE_URL contém host de exemplo. Use a connection string real do Supabase (Project Settings → Database). Páginas do blog/projetos exibirão dados vazios até corrigir.',
   )
 }
 // Supabase: manter sslmode=require e adicionar uselibpqcompat=true para silenciar aviso do pg (evita verify-full que causa SELF_SIGNED_CERT_IN_CHAIN)
@@ -55,9 +54,8 @@ const databaseURL = rawUrl.includes('supabase.com')
 const defaultSecret = 'development-secret-please-change-in-production'
 const payloadSecret = process.env.PAYLOAD_SECRET || defaultSecret
 if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
-  throw new Error(
-    'Em produção, defina PAYLOAD_SECRET no ambiente (ex.: Vercel → Settings → Environment Variables). ' +
-    'Use um valor aleatório longo (32+ caracteres).',
+  console.error(
+    '[Payload] Em produção defina PAYLOAD_SECRET (Vercel → Settings → Environment Variables). Use 32+ caracteres. Até lá, blog/projetos podem falhar.',
   )
 }
 
