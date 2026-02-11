@@ -2,11 +2,32 @@
 
 Este projeto usa **Vercel** (serverless) + **Supabase Cloud**. Não há Docker, Coolify nem VPS.
 
+## Primeiro deploy (conectar ao GitHub)
+
+1. Acesse [vercel.com](https://vercel.com) e faça login (use “Continue with GitHub” se o repositório estiver no GitHub).
+2. **Add New** → **Project** → importe o repositório `katomoriak/araca-site-novo` (ou o seu fork).
+3. A Vercel detecta Next.js e usa o `vercel.json` do projeto (build: `npm install --legacy-peer-deps && next build --webpack`).
+4. Em **Environment Variables** adicione as variáveis obrigatórias (veja tabela abaixo) para **Production** (e **Preview** se quiser).
+5. Clique em **Deploy**. O build **não** roda `payload migrate` (evita erro de ambiente com undici na Vercel); aplique migrações separadamente (veja seção *Migrações* abaixo).
+
+Depois disso, cada **push na branch conectada** (ex.: `master`) gera um deploy automático.
+
 ## Build
 
-- **Build command**: `npm install --legacy-peer-deps && npm run ci`  
-  O script `ci` executa `payload migrate` e em seguida `next build --webpack`.
+- **Build command**: `npm install --legacy-peer-deps && next build --webpack`  
+  O build na Vercel **não** executa `payload migrate` para evitar o erro `TypeError: Illegal constructor` (undici/CacheStorage no ambiente de build). As migrações devem ser aplicadas separadamente (veja *Migrações*).
 - **Node**: 20.x (definido em `engines` e `.nvmrc`).
+
+## Migrações
+
+As migrações do Payload **não** rodam durante o build na Vercel. Aplique-as assim:
+
+1. **Antes do primeiro deploy** (ou após alterar collections): no seu ambiente local, defina `DATABASE_URL` com a connection string do **Supabase Cloud** (produção) e execute:
+   ```bash
+   npx payload migrate
+   ```
+2. Ou use o script do projeto: `npm run payload migrate` (com `DATABASE_URL` no `.env.local` apontando para o banco de produção).
+3. Depois disso, faça o deploy na Vercel; o site usará o schema já migrado.
 
 ## Variáveis de ambiente obrigatórias
 
@@ -53,7 +74,7 @@ No Supabase: Project Settings → Storage → S3 Connection. Crie o bucket `medi
 ## Checklist antes do primeiro deploy
 
 1. [ ] Criar projeto no [Supabase Cloud](https://supabase.com) e obter `DATABASE_URL` (Session mode, porta 6543).
-2. [ ] Aplicar migrações no Supabase (o build com `npm run ci` roda `payload migrate`; o banco deve estar acessível no momento do build).
+2. [ ] Aplicar migrações no Supabase **localmente** (veja seção *Migrações*); o build na Vercel não roda `payload migrate`.
 3. [ ] Definir `PAYLOAD_SECRET` e `NEXT_PUBLIC_SITE_URL` na Vercel.
 4. [ ] Configurar upload: S3 (Supabase) ou `BLOB_READ_WRITE_TOKEN` (Vercel Blob).
 5. [ ] Não commitar `.env` nem `.env.local`; usar apenas o painel da Vercel (ou CLI) para valores reais.
