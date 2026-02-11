@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/Button'
 import { Plus, Loader } from 'lucide-react'
 
 const variants = [
-  { id: 'primary', name: 'Primary', variant: 'primary' as const },
+  { id: 'default', name: 'Default', variant: 'default' as const },
   { id: 'secondary', name: 'Secondary', variant: 'secondary' as const },
   { id: 'outline', name: 'Outline', variant: 'outline' as const },
   { id: 'ghost', name: 'Ghost', variant: 'ghost' as const },
   { id: 'glass', name: 'Glass', variant: 'glass' as const },
+  { id: 'link', name: 'Link', variant: 'link' as const },
+  { id: 'destructive', name: 'Destructive', variant: 'destructive' as const },
 ]
 
 const sizes = [
@@ -19,7 +21,7 @@ const sizes = [
 
 const codeExample = `import { Button } from '@/components/ui/Button'
 
-<Button variant="primary" size="md">Primary</Button>
+<Button variant="default" size="md">Primary</Button>
 <Button variant="outline" loading>Loading</Button>
 <Button variant="glass" size="lg">
   <Plus className="h-4 w-4" /> Add
