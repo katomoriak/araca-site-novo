@@ -31,10 +31,15 @@ const getPost = cache(async (slug: string) => {
       'id' in payloadPost.author
         ? String((payloadPost.author as { id: string }).id)
         : undefined
+    const categoryValue = payloadPost.category
+    const categoryLabel =
+      typeof categoryValue === 'object' && categoryValue != null && 'name' in categoryValue
+        ? String((categoryValue as { name?: string }).name ?? '')
+        : String(categoryValue ?? 'news')
     return {
       title: titleStr,
       excerpt: excerptStr,
-      category: payloadPost.category ?? 'news',
+      category: categoryLabel,
       author: { name: String(name), id: authorId },
       publishedAt: payloadPost.publishedAt ?? payloadPost.createdAt,
       coverImage:
@@ -173,9 +178,7 @@ export default async function PostPage({ params }: PageProps) {
 
         <header className="mt-6 max-w-3xl">
           <span className="inline-block rounded-lg bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
-            {typeof post.category === 'object' && post.category?.name != null
-              ? post.category.name
-              : String(post.category ?? '')}
+            {post.category}
           </span>
           <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-[2.5rem]">
             {post.title}
