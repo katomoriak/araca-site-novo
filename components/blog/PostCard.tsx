@@ -4,6 +4,12 @@ import { Card, CardContent, CardFooter, Badge } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
 import type { Post } from '@/lib/blog-mock'
 
+function toCategoryLabel(cat: unknown): string {
+  if (typeof cat === 'object' && cat != null && 'name' in cat)
+    return String((cat as { name?: string }).name ?? '')
+  return String(cat ?? '')
+}
+
 interface PostCardProps {
   post: Post
 }
@@ -25,9 +31,7 @@ export function PostCard({ post }: PostCardProps) {
         )}
         <CardContent className="p-6">
           <Badge variant="default" className="mb-2">
-            {typeof post.category === 'object' && post.category?.name != null
-              ? post.category.name
-              : String(post.category ?? '')}
+            {toCategoryLabel(post.category)}
           </Badge>
           <h2 className="font-display text-xl font-semibold text-neutral-900 line-clamp-2">
             {post.title}

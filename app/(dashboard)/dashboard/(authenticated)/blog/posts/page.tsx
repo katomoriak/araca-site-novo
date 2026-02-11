@@ -12,6 +12,13 @@ import { DeletePostButton } from '@/components/dashboard/DeletePostButton'
 import { Plus, Edit } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 
+function getCategoryName(cat: unknown): string | null {
+  if (typeof cat === 'object' && cat != null && 'name' in cat)
+    return (cat as { name?: string }).name ?? null
+  if (typeof cat === 'string') return cat
+  return null
+}
+
 export default async function PostsPage() {
   const payload = await getPayloadClient()
   const result = await payload.find({
@@ -70,9 +77,7 @@ export default async function PostsPage() {
               ? post.author.email
               : 'Sem autor'
             
-            const categoryName = typeof post.category === 'object' && post.category?.name
-              ? post.category.name
-              : null
+            const categoryName = getCategoryName(post.category)
 
             const coverUrl = typeof post.coverImage === 'object' && post.coverImage?.url
               ? post.coverImage.url

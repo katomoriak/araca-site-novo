@@ -14,7 +14,8 @@ export default function FrontendLayout({
 }) {
   const pathname = usePathname()
   const isHomePage = pathname === '/'
-  const showHeader = !isHomePage
+  const isBlogPage = pathname === '/blog'
+  const showHeader = !isHomePage && !isBlogPage
 
   return (
     <ParallaxProvider>

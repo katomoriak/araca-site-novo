@@ -10,6 +10,13 @@ import type { Post } from '@/lib/blog-mock'
 
 export const revalidate = 60
 
+/** Exibe categoria como string (payload pode vir como objeto relation ou string). */
+function toCategoryLabel(cat: unknown): string {
+  if (typeof cat === 'object' && cat != null && 'name' in cat)
+    return String((cat as { name?: string }).name ?? '')
+  return String(cat ?? '')
+}
+
 export const metadata = {
   title: 'Blog',
   description:
@@ -62,9 +69,7 @@ export default async function BlogPage() {
               <div className="group block max-w-2xl rounded-2xl bg-white/95 p-6 shadow-xl backdrop-blur-sm transition hover:bg-white md:p-8">
                 <Link href={`/blog/${heroPost.slug}`} className="block">
                   <span className="inline-block rounded-full bg-araca-mineral-green/90 px-4 py-1.5 text-xs font-medium text-white">
-                    {typeof heroPost.category === 'object' && heroPost.category?.name != null
-                      ? heroPost.category.name
-                      : String(heroPost.category ?? '')}
+                    {toCategoryLabel(heroPost.category)}
                   </span>
                   <h1 className="mt-4 font-display text-2xl font-bold leading-tight text-neutral-900 sm:text-3xl md:text-4xl">
                     {heroPost.title}
