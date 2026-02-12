@@ -1,10 +1,11 @@
 import { cache } from 'react'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { Container } from '@/components/layout/Container'
 import { PostContent } from '@/components/blog/PostContent'
+import { ProgressiveImage } from '@/components/ui'
+import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 import { formatDate } from '@/lib/utils'
 import { getPosts, getPostBySlug, stringFromLocale } from '@/lib/payload'
 import { MOCK_POSTS } from '@/lib/blog-mock'
@@ -206,13 +207,14 @@ export default async function PostPage({ params }: PageProps) {
         {post.coverImage && (
           <div className="relative mt-8 w-full overflow-hidden rounded-xl bg-muted">
             <div className="relative aspect-video w-full">
-              <Image
+              <ProgressiveImage
                 src={post.coverImage.url}
                 alt={post.coverImage.alt}
                 fill
                 className="object-cover"
                 priority
                 sizes="(max-width: 1024px) 100vw, 1024px"
+                blurPlaceholderUrl={getBlurPlaceholderUrl(post.coverImage.url)}
               />
             </div>
           </div>

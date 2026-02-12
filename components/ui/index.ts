@@ -13,3 +13,5 @@ export {
   liquidGlassTextStyles, 
   liquidGlassLogoStyles 
 } from './LiquidGlass'
+export { TypewriterEffect } from './typewriter-effect'
+export { ProgressiveImage } from './ProgressiveImage'

@@ -2,5 +2,16 @@
   "buildCommand": "npm install --legacy-peer-deps && next build --webpack",
   "devCommand": "npm run dev",
   "installCommand": "npm install --legacy-peer-deps",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "headers": [
+    {
+      "source": "/(projetos|logotipos)/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
 }

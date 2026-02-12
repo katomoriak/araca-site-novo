@@ -40,7 +40,10 @@ export function TestimonialsMarquee({ items, className }: TestimonialsMarqueePro
       {columns.map((col, colIndex) => (
         <div
           key={colIndex}
-          className="overflow-hidden rounded-2xl"
+          className={cn(
+            'overflow-hidden rounded-2xl',
+            colIndex > 0 && 'hidden md:block'
+          )}
           style={{
             height: '26rem',
             maskImage:

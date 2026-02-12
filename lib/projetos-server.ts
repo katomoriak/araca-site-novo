@@ -9,6 +9,7 @@ import path from 'path'
 import { projectSlugSchema } from '@/lib/validation-schemas'
 import type { ProjectGalleryItem, GalleryMediaItem } from '@/components/home/ProjectGallery'
 import { getPayloadClient } from '@/lib/payload'
+import { getProxiedImageUrlWithResize } from '@/lib/transform-content-images'
 
 const SUPABASE_PROJETOS_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_PROJETOS_BUCKET ?? 'a_public'
 
@@ -27,6 +28,11 @@ export function getProjetosBucketBaseUrl(): string {
     return `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${SUPABASE_PROJETOS_BUCKET}`
   }
   return '/projetos'
+}
+
+/** Converte URL de imagem Supabase para proxy com resize. URLs locais retornam inalteradas. */
+function toOptimizedImageUrl(url: string, w: number, q = 80): string {
+  return getProxiedImageUrlWithResize(url, w, q) || url
 }
 
 /** Documento da collection Payload Projetos (shape usado na leitura). */
@@ -55,13 +61,15 @@ export async function getProjetosFromPayload(): Promise<ProjectGalleryItem[]> {
     const docs = (result.docs ?? []) as ProjetoDoc[]
     const projects: ProjectGalleryItem[] = docs.map((doc) => {
       const base = getProjetosBaseUrl(doc.slug)
-      const coverUrl = doc.cover.includes('/')
+      const coverRaw = doc.cover.includes('/')
         ? `${bucketBase}/${doc.cover}`
         : `${base}/${encodeURIComponent(doc.cover)}`
+      const coverUrl = toOptimizedImageUrl(coverRaw, 1200)
       const media: GalleryMediaItem[] = (doc.media ?? []).map((m) => {
-        const url = m.file.includes('/')
+        const rawUrl = m.file.includes('/')
           ? `${bucketBase}/${m.file}`
           : `${base}/${encodeURIComponent(m.file)}`
+        const url = m.type === 'image' ? toOptimizedImageUrl(rawUrl, 1200) : rawUrl
         return {
           type: m.type === 'video' ? 'video' : 'image',
           url,
@@ -135,12 +143,17 @@ export async function getProjetosFromManifests(): Promise<ProjectGalleryItem[]> 
     if (!manifest.title || !manifest.cover || !Array.isArray(manifest.media)) continue
 
     const baseUrl = getProjetosBaseUrl(slug)
-    const coverImage = `${baseUrl}/${encodeURIComponent(manifest.cover)}`
-    const media: GalleryMediaItem[] = manifest.media.map((m) => ({
-      type: m.type === 'video' ? 'video' : 'image',
-      url: `${baseUrl}/${encodeURIComponent(m.file)}`,
-      ...(m.name != null && m.name !== '' && { name: m.name }),
-    }))
+    const coverRaw = `${baseUrl}/${encodeURIComponent(manifest.cover)}`
+    const coverImage = toOptimizedImageUrl(coverRaw, 1200)
+    const media: GalleryMediaItem[] = manifest.media.map((m) => {
+      const rawUrl = `${baseUrl}/${encodeURIComponent(m.file)}`
+      const url = m.type === 'image' ? toOptimizedImageUrl(rawUrl, 1200) : rawUrl
+      return {
+        type: m.type === 'video' ? 'video' : 'image',
+        url,
+        ...(m.name != null && m.name !== '' && { name: m.name }),
+      }
+    })
 
     projects.push({
       id: slug,
@@ -175,4 +188,10 @@ export const getProjetosCached = async (): Promise<ProjectGalleryItem[]> => {
     revalidate: 60,
     tags: ['projetos-home'],
   })()
+}
+
+/** Busca um projeto por slug. Usa Payload primeiro, fallback para manifests. */
+export async function getProjetoBySlug(slug: string): Promise<ProjectGalleryItem | null> {
+  const projects = await getProjetosCached()
+  return projects.find((p) => p.id === slug) ?? null
 }

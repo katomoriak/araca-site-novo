@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getProjetosFromManifests } from '@/lib/projetos-server'
+import { getProjetosCached } from '@/lib/projetos-server'
 import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 
 export async function GET(request: Request) {
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const projects = await getProjetosFromManifests()
+    const projects = await getProjetosCached()
 
     return NextResponse.json(projects, {
       headers: {

@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { Card, CardContent, CardFooter, Badge } from '@/components/ui'
+import { Card, CardContent, CardFooter, Badge, ProgressiveImage } from '@/components/ui'
+import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 import { formatDate } from '@/lib/utils'
 import type { Post } from '@/lib/blog-mock'
 
@@ -20,12 +20,13 @@ export function PostCard({ post }: PostCardProps) {
       <Link href={`/blog/${post.slug}`} className="block">
         {post.coverImage && (
           <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
-            <Image
+            <ProgressiveImage
               src={post.coverImage.url}
               alt={post.coverImage.alt}
               fill
               className="object-cover transition duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 400px"
+              blurPlaceholderUrl={getBlurPlaceholderUrl(post.coverImage.url)}
             />
           </div>
         )}

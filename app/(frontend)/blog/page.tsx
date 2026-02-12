@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Container } from '@/components/layout/Container'
 import { PostGrid } from '@/components/blog/PostGrid'
 import { SiteNav } from '@/components/layout/SiteNav'
+import { ProgressiveImage } from '@/components/ui'
 import { getPosts, toBlogPostListItem } from '@/lib/payload'
 import { MOCK_POSTS } from '@/lib/blog-mock'
+import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 import { formatDate } from '@/lib/utils'
 import type { Post } from '@/lib/blog-mock'
 
@@ -47,13 +48,14 @@ export default async function BlogPage() {
       {/* Hero full-screen com imagem de capa do último post */}
       <section className="relative flex min-h-screen flex-col overflow-hidden text-white">
         <div className="absolute inset-0 h-full w-full bg-neutral-800" aria-hidden>
-          <Image
+          <ProgressiveImage
             src={heroImageUrl}
             alt=""
             fill
             className="object-cover object-center"
             sizes="100vw"
             priority
+            blurPlaceholderUrl={getBlurPlaceholderUrl(heroImageUrl)}
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />

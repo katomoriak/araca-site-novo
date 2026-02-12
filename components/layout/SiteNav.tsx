@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { Container } from './Container'
 import { cn } from '@/lib/utils'
+import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
 
 export type SiteNavTheme = 'dark-bg' | 'light-bg'
 
@@ -19,9 +20,9 @@ export interface SiteNavLink {
 const DEFAULT_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'Sobre nós' },
-  { href: '/#projetos', label: 'Projetos' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/projetos', label: 'Projetos' },
   { href: '/#contato', label: 'Contato' },
+  { href: '/blog', label: 'Blog' },
 ]
 
 /** Cor do logo: default = branco (dark-bg) ou original (light-bg); cafe = tom café para contraste em fundo claro */
@@ -82,7 +83,10 @@ export function SiteNav({
 }: SiteNavProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { galleryOpen } = useGalleryOpen()
   const allLinks = extraLinks ? [...links, ...extraLinks] : links
+
+  if (galleryOpen) return null
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
@@ -130,12 +134,31 @@ export function SiteNav({
                 const active = isActive(link.href)
                 const isHash = link.href.startsWith('#')
                 const href = isHash ? `/${link.href}` : link.href
+                const isBlog = link.href === '/blog'
+
+                /* Blog: destaque verde com hover mais escuro e scale */
+                if (isBlog) {
+                  return (
+                    <Link
+                      key={link.href}
+                      href={href}
+                      className="group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium text-araca-creme transition-all duration-300 hover:scale-[1.05] [--blog-bg:var(--araca-mineral-green)] hover:[--blog-bg:var(--araca-mineral-green-hover)]"
+                      style={{
+                        backgroundColor: 'var(--blog-bg)',
+                        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.12)',
+                      }}
+                    >
+                      <span className="relative z-10">{link.label}</span>
+                    </Link>
+                  )
+                }
+
                 if (active && isDark) {
                   return (
                     <Link
                       key={link.href}
                       href={href}
-                      className="group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium text-neutral-900 transition-all duration-300 hover:scale-[1.02]"
+                      className="group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium text-neutral-900 transition-all duration-300 hover:scale-[1.05]"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
                         boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
@@ -151,7 +174,7 @@ export function SiteNav({
                     <Link
                       key={link.href}
                       href={href}
-                      className="group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.02]"
+                      className="group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:scale-[1.05]"
                       style={{
                         background: 'linear-gradient(135deg, rgba(48, 22, 12, 0.9) 0%, rgba(48, 22, 12, 0.75) 100%)',
                         boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
@@ -166,7 +189,7 @@ export function SiteNav({
                     key={link.href}
                     href={href}
                     className={cn(
-                      'group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300',
+                      'group relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 hover:scale-[1.05]',
                       isDark ? 'text-white/95 hover:text-white' : 'text-neutral-700 hover:text-neutral-900'
                     )}
                     style={isDark ? { textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)' } : undefined}

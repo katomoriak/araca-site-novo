@@ -26,7 +26,6 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { NewsletterEditView as NewsletterEditView_9f2677891a8cc9902c334daade111f5e } from '../../../components/admin/NewsletterEditView'
 import { AracaIcon as AracaIcon_e6d882487f36e37f01a76f95a34602c6 } from '../../../components/admin/AracaIcon'
 import { AracaLogo as AracaLogo_103afd5fdfc1a44af8a9332e1e3f02dc } from '../../../components/admin/AracaLogo'
-import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -58,6 +57,5 @@ export const importMap = {
   "/components/admin/NewsletterEditView#NewsletterEditView": NewsletterEditView_9f2677891a8cc9902c334daade111f5e,
   "/components/admin/AracaIcon#AracaIcon": AracaIcon_e6d882487f36e37f01a76f95a34602c6,
   "/components/admin/AracaLogo#AracaLogo": AracaLogo_103afd5fdfc1a44af8a9332e1e3f02dc,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

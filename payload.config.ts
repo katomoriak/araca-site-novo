@@ -98,9 +98,7 @@ export default buildConfig({
       fileSize: 4194304, // 4 MB — limite compatível com Vercel serverless
     },
   },
-  get collections() {
-    return getCollections()
-  },
+  collections: getCollections(),
   secret: payloadSecret,
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),

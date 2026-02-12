@@ -28,6 +28,66 @@ export function getProxiedImageUrl(url: string): string {
   return `/api/image-proxy?url=${encodeURIComponent(trimmed)}`
 }
 
+/**
+ * Retorna URL do proxy com resize (w, q) para imagens do Supabase.
+ * Reduz tempo de carregamento ao servir versões menores.
+ */
+export function getProxiedImageUrlWithResize(url: string, w?: number, q = 80): string {
+  if (!url || typeof url !== 'string') return ''
+  const trimmed = url.trim()
+  if (!trimmed) return ''
+  if (!isSupabaseStorageUrl(trimmed)) return trimmed
+  const params = new URLSearchParams({ url: trimmed })
+  if (w && w > 0) params.set('w', String(Math.min(w, 2048)))
+  if (q > 0) params.set('q', String(Math.min(q, 90)))
+  return `/api/image-proxy?${params.toString()}`
+}
+
+/**
+ * Extrai a URL bruta quando o argumento é uma URL do proxy (/api/image-proxy?url=...).
+ * Caso contrário retorna a própria URL.
+ */
+function getRawUrlFromMaybeProxied(url: string): string {
+  const trimmed = url.trim()
+  if (!trimmed || !trimmed.includes('image-proxy')) return trimmed
+  try {
+    const parsed = trimmed.startsWith('http') ? new URL(trimmed) : new URL(trimmed, 'https://_')
+    const urlParam = parsed.searchParams.get('url')
+    if (urlParam) return decodeURIComponent(urlParam)
+  } catch {
+    // fallthrough
+  }
+  return trimmed
+}
+
+/**
+ * Retorna URL do proxy em baixa resolução para uso como placeholder (carregamento progressivo).
+ * Aceita URL bruta do Supabase ou URL já proxada (/api/image-proxy?url=...).
+ * Para outras origens retorna null (usar BLUR_DATA_URL estático).
+ */
+export function getBlurPlaceholderUrl(url: string): string | null {
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+  if (!trimmed) return null
+  const rawUrl = getRawUrlFromMaybeProxied(trimmed)
+  if (!isSupabaseStorageUrl(rawUrl)) return null
+  return getProxiedImageUrlWithResize(rawUrl, 40, 25)
+}
+
+/**
+ * Retorna URL do proxy em tamanho médio para prévia (segundo estágio do carregamento progressivo).
+ * Aceita URL bruta do Supabase ou URL já proxada.
+ * Para outras origens retorna null.
+ */
+export function getPreviewImageUrl(url: string, w = 800, q = 65): string | null {
+  if (!url || typeof url !== 'string') return null
+  const trimmed = url.trim()
+  if (!trimmed) return null
+  const rawUrl = getRawUrlFromMaybeProxied(trimmed)
+  if (!isSupabaseStorageUrl(rawUrl)) return null
+  return getProxiedImageUrlWithResize(rawUrl, w, q)
+}
+
 export function transformImageUrls(html: string): string {
   if (!SUPABASE_URL || !html.includes('<img')) {
     return html
@@ -40,7 +100,7 @@ export function transformImageUrls(html: string): string {
       if (!isSupabaseStorageUrl(trimmed)) {
         return `<img${before}src="${src}"${after}>`
       }
-      const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(trimmed)}`
+      const proxyUrl = getProxiedImageUrlWithResize(trimmed, 1024, 80)
       return `<img${before}src="${proxyUrl}"${after}>`
     }
   )

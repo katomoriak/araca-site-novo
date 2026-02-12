@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
-import Image from 'next/image'
+import { ProgressiveImage } from '@/components/ui'
+import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 
 export type GalleryMediaItem = { type: 'image' | 'video'; url: string; name?: string }
 
@@ -20,6 +21,8 @@ export interface ProjectGalleryItem {
 interface ProjectGalleryProps {
   project: ProjectGalleryItem
   onClose?: () => void
+  /** Índice inicial da galeria (ex.: ao abrir a partir de um thumb). */
+  initialIndex?: number
 }
 
 interface ProjectCardProps {
@@ -27,10 +30,12 @@ interface ProjectCardProps {
   onClick: (e?: React.MouseEvent) => void
   reverse?: boolean
   showContent?: boolean
+  /** Priorizar carregamento (LCP). Usar apenas no primeiro slide visível do carrossel. */
+  priority?: boolean
 }
 
 // Card do projeto (thumbnail clicável)
-export function ProjectCard({ project, onClick, reverse = false, showContent = true }: ProjectCardProps) {
+export function ProjectCard({ project, onClick, reverse = false, showContent = true, priority = false }: ProjectCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -43,13 +48,14 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
       {/* Container com imagem de fundo */}
       <div className="relative min-h-[600px] md:min-h-[700px] overflow-hidden rounded-3xl">
         {/* Imagem de Fundo */}
-        <Image
+        <ProgressiveImage
           src={project.coverImage}
           alt={project.title}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 85vw, 1200px"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
-          priority
+          priority={priority}
+          blurPlaceholderUrl={getBlurPlaceholderUrl(project.coverImage)}
         />
         
         {/* Overlay gradiente */}
@@ -130,8 +136,8 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
 }
 
 // Modal de galeria com navegação horizontal (imagens e vídeos)
-export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
+export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGalleryProps) {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [direction, setDirection] = useState<'left' | 'right'>('right')
   const videoRef = useRef<HTMLVideoElement>(null)
   const totalMedia = project.media.length
@@ -300,13 +306,16 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                       onEnded={() => videoRef.current?.pause()}
                     />
                   ) : (
-                    <Image
+                    <ProgressiveImage
                       src={currentItem.url}
                       alt={currentItem.name ?? `${project.title} - ${currentIndex + 1}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 90vw"
                       className="object-contain rounded-3xl"
-                      priority
+                      priority={currentIndex === 0}
+                      blurPlaceholderUrl={getBlurPlaceholderUrl(currentItem.url)}
+                      showHqBadge
+                      previewLoadingVariant="full"
                     />
                   )}
                 </div>
@@ -378,12 +387,15 @@ export function ProjectGallery({ project, onClose }: ProjectGalleryProps) {
                       <Play className="h-6 w-6 text-white" fill="currentColor" />
                     </div>
                   ) : (
-                    <Image
+                    <ProgressiveImage
                       src={item.url}
                       alt={`Miniatura ${index + 1}`}
                       fill
                       sizes="120px"
                       className="object-cover"
+                      blurPlaceholderUrl={getBlurPlaceholderUrl(item.url)}
+                      showHqBadge
+                      previewLoadingVariant="icon"
                     />
                   )}
                 </motion.button>

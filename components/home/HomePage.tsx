@@ -1,8 +1,9 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowRight,
@@ -18,6 +19,7 @@ import { cn } from '@/lib/utils'
 import { ScrollTextReveal } from '@/components/home/ScrollTextReveal'
 import type { ProjectGalleryItem } from '@/components/home/ProjectGallery'
 import { Parallax } from 'react-scroll-parallax'
+import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
 
 const GalleryCarousel = dynamic(
   () => import('@/components/home/GalleryCarousel').then((m) => ({ default: m.GalleryCarousel })),
@@ -31,13 +33,6 @@ const ProjectGallery = dynamic(
   () => import('@/components/home/ProjectGallery').then((m) => ({ default: m.ProjectGallery })),
   { ssr: false }
 )
-
-const HOME_NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/sobre', label: 'Sobre nós' },
-  { href: '/#projetos', label: 'Projetos' },
-  { href: '/#contato', label: 'Contato' },
-]
 
 const TIPOS_CONSULTA = ['Projeto residencial', 'Projeto comercial', 'Consultoria', 'Outros'] as const
 
@@ -94,6 +89,15 @@ export interface HomePageProps {
 
 export function HomePage({ initialProjects }: HomePageProps) {
   const [selectedProject, setSelectedProject] = useState<ProjectGalleryItem | null>(null)
+  const { setGalleryOpen } = useGalleryOpen()
+  const openGallery = useCallback((project: ProjectGalleryItem | null) => {
+    setSelectedProject(project)
+    setGalleryOpen(!!project)
+  }, [setGalleryOpen])
+  const closeGallery = useCallback(() => {
+    setSelectedProject(null)
+    setGalleryOpen(false)
+  }, [setGalleryOpen])
   const [showFloatingNav, setShowFloatingNav] = useState(false)
   const [tipoConsulta, setTipoConsulta] = useState<string>(TIPOS_CONSULTA[0])
   const [contactForm, setContactForm] = useState({
@@ -158,7 +162,6 @@ export function HomePage({ initialProjects }: HomePageProps) {
             <SiteNav
               theme="light-bg"
               logoVariant="cafe"
-              links={HOME_NAV_LINKS}
               noEnterAnimation
             />
           </motion.div>
@@ -259,6 +262,11 @@ export function HomePage({ initialProjects }: HomePageProps) {
             3: ['Detalhamentos', 'Acompanhamento'],
             4: ['estética', 'funcionalidade', 'execução', 'completo', 'sentido', 'momento'],
             5: ['história'],
+          }}
+          highlightColors={{
+            gradient1: '#3C5945',
+            gradient2: '#4A6B54',
+            gradient3: '#658972',
           }}
           className="max-w-7xl text-center"
         />
@@ -381,7 +389,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
           <div className="relative w-full z-[30]">
             <GalleryCarousel
               projects={galleryProjects}
-              onSelectProject={setSelectedProject}
+              onSelectProject={openGallery}
             />
           </div>
 
@@ -399,7 +407,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
       {selectedProject && (
         <ProjectGallery 
           project={selectedProject} 
-          onClose={() => setSelectedProject(null)} 
+          onClose={closeGallery} 
         />
       )}
 
@@ -443,7 +451,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
           </div>
 
           <div className="mt-10 grid gap-6 md:grid-cols-3 p-6 sm:p-8">
-            <div className="text-center">
+            <div className="text-center transition-transform duration-200 ease-out hover:scale-[1.06] origin-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center">
                 <Home className="h-7 w-7 text-araca-chocolate-amargo" />
               </div>
@@ -456,7 +464,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center transition-transform duration-200 ease-out hover:scale-[1.06] origin-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center">
                 <Store className="h-7 w-7 text-araca-chocolate-amargo" />
               </div>
@@ -469,7 +477,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
               </p>
             </div>
 
-            <div className="text-center">
+            <div className="text-center transition-transform duration-200 ease-out hover:scale-[1.06] origin-center">
               <div className="mx-auto flex h-12 w-12 items-center justify-center">
                 <Leaf className="h-7 w-7 text-araca-chocolate-amargo" />
               </div>
@@ -553,12 +561,16 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     className="absolute bottom-0 left-0 right-0 top-0 flex items-end justify-start pointer-events-none opacity-10"
                     aria-hidden
                   >
-                    <img
-                      src="/logotipos/LOGOTIPO%20REDONDO@300x.png"
-                      alt=""
-                      className="max-h-full max-w-[45%] w-auto object-contain object-left-bottom"
-                      style={{ filter: 'brightness(0) invert(1)' }}
-                    />
+                    <div className="relative h-full max-h-[280px] w-[45%] max-w-[200px]">
+                      <Image
+                        src="/logotipos/LOGOTIPO%20REDONDO@300x.png"
+                        alt=""
+                        fill
+                        sizes="200px"
+                        className="object-contain object-left-bottom"
+                        style={{ filter: 'brightness(0) invert(1)' }}
+                      />
+                    </div>
                   </div>
                   <div>
                     <h2 className="font-display text-3xl font-bold sm:text-4xl">

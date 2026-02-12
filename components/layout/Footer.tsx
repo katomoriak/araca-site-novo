@@ -3,36 +3,31 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Linkedin, Instagram, ArrowRight } from 'lucide-react'
+import { Linkedin, Instagram, ArrowRight, Mail } from 'lucide-react'
 import { Container } from './Container'
 
+/* Navegação do site (sem locais sensíveis). Equipe acessa pelo Dashboard. */
 const footerNavColumns = [
   {
     title: 'Navegação',
     links: [
       { href: '/', label: 'Home' },
       { href: '/sobre', label: 'Sobre nós' },
-      { href: '/#projetos', label: 'Projetos' },
-      { href: '/blog', label: 'Blog' },
+      { href: '/projetos', label: 'Projetos' },
       { href: '/#contato', label: 'Contato' },
-    ],
-  },
-  {
-    title: 'Sobre',
-    links: [
-      { href: '/sobre', label: 'Nossa História' },
       { href: '/blog', label: 'Blog' },
-      { href: '/design-system', label: 'Design System' },
     ],
   },
   {
-    title: 'Suporte',
-    links: [
-      { href: '/#contato', label: 'Entre em contato' },
-      { href: '/admin', label: 'Admin' },
-    ],
+    title: 'Equipe',
+    links: [{ href: '/dashboard', label: 'Dashboard' }],
   },
 ]
+
+const footerContact = {
+  email: 'contato@aracainteriores.com.br',
+  emailLabel: 'contato@aracainteriores.com.br',
+}
 
 const socialLinks = [
   { href: 'https://www.instagram.com/aracainteriores/', icon: Instagram, label: 'Instagram' },
@@ -182,7 +177,7 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Colunas de navegação */}
+            {/* Colunas de navegação + contato */}
             <div className="flex flex-wrap gap-10 sm:gap-12">
               {footerNavColumns.map((col) => (
                 <div key={col.title}>
@@ -203,6 +198,22 @@ export function Footer() {
                   </ul>
                 </div>
               ))}
+              <div>
+                <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-araca-cafe-escuro">
+                  Contato
+                </h3>
+                <ul className="mt-4 space-y-2">
+                  <li>
+                    <a
+                      href={`mailto:${footerContact.email}`}
+                      className="inline-flex items-center gap-2 text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
+                    >
+                      <Mail className="h-4 w-4" />
+                      {footerContact.emailLabel}
+                    </a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 

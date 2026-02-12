@@ -79,6 +79,22 @@ No Supabase: Project Settings → Storage → S3 Connection. Crie o bucket `medi
 4. [ ] Configurar upload: S3 (Supabase) ou `BLOB_READ_WRITE_TOKEN` (Vercel Blob).
 5. [ ] Não commitar `.env` nem `.env.local`; usar apenas o painel da Vercel (ou CLI) para valores reais.
 
+## Última verificação antes de rodar o build na Vercel
+
+Antes de dar **Deploy** (ou push na branch conectada):
+
+1. **Variáveis no painel da Vercel** (Settings → Environment Variables) para **Production**:
+   - `PAYLOAD_SECRET` (32+ caracteres)
+   - `DATABASE_URL` (Supabase Cloud, Session mode, porta **6543**, com `?sslmode=require`)
+   - `NEXT_PUBLIC_SITE_URL` (ex.: `https://aracainteriores.com.br`)
+   - Upload: ou todas as `S3_*` (Supabase Storage) ou `BLOB_READ_WRITE_TOKEN` (Vercel Blob)
+
+2. **Migrações**: schema do Payload já aplicado no banco de produção (rodar `npx payload migrate` localmente com `DATABASE_URL` de produção).
+
+3. **Build local** (opcional): `npm run build` — se passar, o build na Vercel tende a passar (ambiente pode diferir em runtime).
+
+4. **Não subir**: `.env`, `.env.local`, `.env.production.local` — já estão no `.gitignore`.
+
 ## Referências
 
 - `.env.example` — lista de variáveis e comentários.
