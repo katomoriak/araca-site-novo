@@ -43,6 +43,13 @@ if (rawUrl.includes('ep-....vercel-storage.com') && process.env.NODE_ENV === 'pr
     '[Payload] DATABASE_URL contém host de exemplo. Use a connection string real do Supabase (Project Settings → Database). Páginas do blog/projetos exibirão dados vazios até corrigir.',
   )
 }
+// Supabase na Vercel: conexão direta (porta 5432) pode resolver para IPv6 e causar ENETUNREACH. Use o pooler (porta 6543).
+const isSupabaseDirect = /supabase\.co.*:5432\//.test(rawUrl)
+if (process.env.VERCEL && isSupabaseDirect) {
+  console.error(
+    '[Payload] DATABASE_URL está usando conexão direta do Supabase (porta 5432). Na Vercel isso pode falhar com ENETUNREACH (IPv6). Use Connection pooling (Session mode, porta 6543) em Project Settings → Database e defina DATABASE_URL com o host pooler (ex.: aws-0-XX.pooler.supabase.com:6543).',
+  )
+}
 // Supabase: manter sslmode=require e adicionar uselibpqcompat=true para silenciar aviso do pg (evita verify-full que causa SELF_SIGNED_CERT_IN_CHAIN)
 // Outros provedores: usar verify-full para evitar aviso de segurança do pg
 const databaseURL = rawUrl.includes('supabase.com')
@@ -106,6 +113,11 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: databaseURL,
+      // Session mode (Supabase/Neon pooler porta 6543): limite de conexões por cliente.
+      // pg-pool default 10 esgota o pooler → "max clients reached".
+      max: process.env.NODE_ENV === 'development' ? 2 : 5,
+      idleTimeoutMillis: 10000,
+      connectionTimeoutMillis: 10000,
     },
     prodMigrations: [],
   }),
