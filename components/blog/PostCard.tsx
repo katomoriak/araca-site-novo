@@ -27,6 +27,7 @@ export function PostCard({ post }: PostCardProps) {
               className="object-cover transition duration-300 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 400px"
               blurPlaceholderUrl={getBlurPlaceholderUrl(post.coverImage.url)}
+              maxFullWidth={1200}
             />
           </div>
         )}
@@ -43,7 +44,7 @@ export function PostCard({ post }: PostCardProps) {
         </CardContent>
       </Link>
       <CardFooter className="flex items-center justify-between border-t border-neutral-100 p-6 pt-0">
-        {post.author.id ? (
+        {post.author.id && post.author.showAsPublicAuthor ? (
           <Link
             href={`/blog/autor/${post.author.id}`}
             className="text-sm text-neutral-500 hover:underline"

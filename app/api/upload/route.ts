@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
 import { createClient } from '@supabase/supabase-js'
 import { getDashboardUser } from '@/lib/dashboard-auth'
+import { uploadBlogFile, isR2Configured } from '@/lib/storage-server'
 
 const MAX_FILE_SIZE = 4 * 1024 * 1024 // 4 MB (compatível com Vercel serverless)
 
@@ -33,23 +34,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const timestamp = Date.now()
+    const randomStr = Math.random().toString(36).substring(2, 8)
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const safeExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) ? ext : 'jpg'
+    const fileName = `blog/${timestamp}-${randomStr}.${safeExt}`
+
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    if (isR2Configured()) {
+      const result = await uploadBlogFile(fileName, buffer, file.type)
+      if (result) {
+        return NextResponse.json({
+          url: result.publicUrl,
+          filename: fileName,
+          alt: file.name,
+        })
+      }
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    // Upload para Supabase Storage (exige SERVICE_ROLE para bypass RLS)
     if (supabaseUrl && serviceRoleKey) {
       const supabase = createClient(supabaseUrl, serviceRoleKey, {
         auth: { persistSession: false },
       })
-
-      const timestamp = Date.now()
-      const randomStr = Math.random().toString(36).substring(2, 8)
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-      const safeExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) ? ext : 'jpg'
-      const fileName = `blog/${timestamp}-${randomStr}.${safeExt}`
-
-      const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
 
       const { error } = await supabase.storage
         .from('media')

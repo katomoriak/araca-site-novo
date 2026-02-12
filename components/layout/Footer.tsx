@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Linkedin, Instagram, ArrowRight, Mail } from 'lucide-react'
+import { Linkedin, Instagram, ArrowRight, Mail, Phone } from 'lucide-react'
 import { Container } from './Container'
 
 /* Navegação do site (sem locais sensíveis). Equipe acessa pelo Dashboard. */
@@ -14,7 +14,7 @@ const footerNavColumns = [
       { href: '/', label: 'Home' },
       { href: '/sobre', label: 'Sobre nós' },
       { href: '/projetos', label: 'Projetos' },
-      { href: '/#contato', label: 'Contato' },
+      { href: '/contato', label: 'Contato' },
       { href: '/blog', label: 'Blog' },
     ],
   },
@@ -25,8 +25,10 @@ const footerNavColumns = [
 ]
 
 const footerContact = {
-  email: 'contato@aracainteriores.com.br',
-  emailLabel: 'contato@aracainteriores.com.br',
+  email: 'contato@araca.arq.br',
+  emailLabel: 'contato@araca.arq.br',
+  phone: '(11) 99745-8464',
+  whatsappHref: 'https://wa.me/5511997458464',
 }
 
 const socialLinks = [
@@ -203,6 +205,18 @@ export function Footer() {
                   Contato
                 </h3>
                 <ul className="mt-4 space-y-2">
+                  <li>
+                    <a
+                      href={footerContact.whatsappHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
+                      aria-label="WhatsApp: (11) 99745-8464"
+                    >
+                      <Phone className="h-4 w-4" />
+                      {footerContact.phone}
+                    </a>
+                  </li>
                   <li>
                     <a
                       href={`mailto:${footerContact.email}`}

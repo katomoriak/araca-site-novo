@@ -10,6 +10,7 @@ import {
   ImageIcon,
   BookOpen,
   ChevronDown,
+  UserCog,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -31,11 +32,13 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import { useHasPermission } from './DashboardAuthContext'
 
 const navItems = [
-  { href: '/dashboard', label: 'Visão geral', icon: LayoutDashboard },
-  { href: '/dashboard/crm', label: 'CRM', icon: Users },
-  { href: '/dashboard/finance', label: 'Financeiro', icon: Wallet },
+  { href: '/dashboard', label: 'Visão geral', icon: LayoutDashboard, permission: null as 'blog' | 'finance' | 'crm' | 'projetos' | 'users' | null },
+  { href: '/dashboard/crm', label: 'CRM', icon: Users, permission: 'crm' as const },
+  { href: '/dashboard/finance', label: 'Financeiro', icon: Wallet, permission: 'finance' as const },
+  { href: '/dashboard/users', label: 'Usuários', icon: UserCog, permission: 'users' as const },
 ]
 
 const projetoItems = [
@@ -53,6 +56,19 @@ const blogItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const isBlogActive = pathname.startsWith('/dashboard/blog')
+  const canAccessBlog = useHasPermission('blog')
+  const canAccessProjetos = useHasPermission('projetos')
+  const canAccessCRM = useHasPermission('crm')
+  const canAccessFinance = useHasPermission('finance')
+  const canAccessUsers = useHasPermission('users')
+  
+  const showNavItem = (permission: typeof navItems[number]['permission']) => {
+    if (permission === null) return true
+    if (permission === 'crm') return canAccessCRM
+    if (permission === 'finance') return canAccessFinance
+    if (permission === 'users') return canAccessUsers
+    return false
+  }
   
   return (
     <Sidebar variant="inset">
@@ -75,6 +91,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => {
+                if (!showNavItem(item.permission)) return null
                 const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
                 const Icon = item.icon
                 return (
@@ -89,6 +106,7 @@ export function AppSidebar() {
                 )
               })}
 
+              {canAccessProjetos && (
               <Collapsible defaultOpen={pathname.startsWith('/dashboard/projetos')} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -116,7 +134,9 @@ export function AppSidebar() {
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
+              )}
               
+              {canAccessBlog && (
               <Collapsible defaultOpen={isBlogActive} className="group/collapsible">
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
@@ -144,6 +164,7 @@ export function AppSidebar() {
                   </CollapsibleContent>
                 </SidebarMenuItem>
               </Collapsible>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

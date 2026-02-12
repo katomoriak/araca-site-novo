@@ -56,6 +56,7 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           priority={priority}
           blurPlaceholderUrl={getBlurPlaceholderUrl(project.coverImage)}
+          maxFullWidth={1920}
         />
         
         {/* Overlay gradiente */}
@@ -137,11 +138,12 @@ export function ProjectCard({ project, onClick, reverse = false, showContent = t
 
 // Modal de galeria com navegação horizontal (imagens e vídeos)
 export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGalleryProps) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex)
+  const totalMedia = project.media?.length ?? 0
+  const safeIndex = totalMedia > 0 ? Math.min(initialIndex, totalMedia - 1) : 0
+  const [currentIndex, setCurrentIndex] = useState(safeIndex)
   const [direction, setDirection] = useState<'left' | 'right'>('right')
   const videoRef = useRef<HTMLVideoElement>(null)
-  const totalMedia = project.media.length
-  const currentItem = project.media[currentIndex]
+  const currentItem = totalMedia > 0 ? project.media[currentIndex] : undefined
 
   const goToNext = () => {
     setDirection('right')
@@ -191,6 +193,44 @@ export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGa
       document.body.style.overflow = 'unset'
     }
   }, [])
+
+  // Sem mídia: exibe mensagem e botão fechar
+  if (totalMedia === 0 || !currentItem) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-araca-cafe-escuro/95 p-4 backdrop-blur-xl"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="relative rounded-2xl bg-araca-cafe-escuro/90 p-8 text-center backdrop-blur-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="font-display text-2xl font-bold text-araca-creme sm:text-3xl">
+              {project.title}
+            </h2>
+            <p className="mt-4 text-araca-bege-claro">
+              Nenhuma mídia disponível neste projeto.
+            </p>
+            <button
+              onClick={onClose}
+              className="mt-6 rounded-full bg-white/10 px-6 py-3 text-araca-bege-claro transition hover:bg-white/20"
+              aria-label="Fechar"
+            >
+              Fechar
+            </button>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    )
+  }
 
   return (
     <AnimatePresence>
@@ -314,6 +354,7 @@ export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGa
                       className="object-contain rounded-3xl"
                       priority={currentIndex === 0}
                       blurPlaceholderUrl={getBlurPlaceholderUrl(currentItem.url)}
+                      maxFullWidth={1920}
                       showHqBadge
                       previewLoadingVariant="full"
                     />
@@ -394,6 +435,7 @@ export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGa
                       sizes="120px"
                       className="object-cover"
                       blurPlaceholderUrl={getBlurPlaceholderUrl(item.url)}
+                      maxFullWidth={240}
                       showHqBadge
                       previewLoadingVariant="icon"
                     />

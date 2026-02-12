@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { getProjetosCached, getProjetoBySlug } from '@/lib/projetos-server'
+import { getProjetosCachedForProjectsPage, getProjetoBySlug } from '@/lib/projetos-server'
 import { ProjetoDetailContent } from '@/components/projetos/ProjetoDetailContent'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams() {
-  const projects = await getProjetosCached()
+  const projects = await getProjetosCachedForProjectsPage()
   return projects.map((p) => ({ slug: p.id }))
 }
 

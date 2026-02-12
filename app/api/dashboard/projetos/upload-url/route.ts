@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getDashboardUser } from '@/lib/dashboard-auth'
-import { createSignedUploadUrl } from '@/lib/supabase-server'
+import { createSignedUploadUrl } from '@/lib/storage-server'
 import { projectSlugSchema } from '@/lib/validation-schemas'
 
 /**
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message:
-            'Supabase não configurado (NEXT_PUBLIC_SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY) ou erro ao gerar URL.',
+            'Storage não configurado (R2 ou Supabase) ou erro ao gerar URL.',
         },
         { status: 503 }
       )

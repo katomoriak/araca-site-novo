@@ -87,6 +87,7 @@ export async function POST(request: NextRequest) {
         title: body.title,
         slug: body.slug,
         excerpt: body.excerpt,
+        metaDescription: body.metaDescription?.trim() || null,
         content,
         status: body.status || 'draft',
         category,

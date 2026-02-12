@@ -3,10 +3,35 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { Upload, Loader2, ImageIcon, Search, Pencil, Trash2, FolderOpen } from 'lucide-react'
+import { Upload, Loader2, ImageIcon, Search, Pencil, Trash2, FolderOpen, FolderPlus, FolderMinus } from 'lucide-react'
+
+function MediaThumbnail({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className="relative h-full w-full">
+      {!loaded && (
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-muted"
+          aria-hidden
+        >
+          <Loader2 className="size-8 animate-spin text-muted-foreground" />
+        </div>
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover"
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+      />
+    </div>
+  )
+}
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,6 +52,7 @@ interface ProjectOption {
 interface MediaItem {
   id: string
   url: string
+  thumbnailUrl?: string
   filename: string
   alt: string
   fileType?: string
@@ -44,17 +70,31 @@ export default function ProjetosMidiasPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [selectedFolder, setSelectedFolder] = useState<string>(FILTER_ALL)
   const [uploadFolder, setUploadFolder] = useState<string>(FOLDER_GERAL_SELECT)
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
-  const [pendingFile, setPendingFile] = useState<File | null>(null)
+  const [pendingFiles, setPendingFiles] = useState<File[]>([])
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null)
   const [editFilename, setEditFilename] = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [newFolderOpen, setNewFolderOpen] = useState(false)
+  const [newFolderSlug, setNewFolderSlug] = useState('')
+  const [newFolderTitle, setNewFolderTitle] = useState('')
+  const [creatingFolder, setCreatingFolder] = useState(false)
+  const [deletingFolderSlug, setDeletingFolderSlug] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300)
@@ -70,12 +110,18 @@ export default function ProjetosMidiasPage() {
       const res = await fetch(`/api/dashboard/projetos/media?${params}`, { credentials: 'include' })
       if (!res.ok) throw new Error('Falha ao carregar mídias')
       const data = await res.json()
-      setItems(data.media ?? [])
-      setProjects(data.projects ?? [])
+      if (mountedRef.current) {
+        setItems(data.media ?? [])
+        setProjects(data.projects ?? [])
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao carregar')
+      if (mountedRef.current) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar')
+      }
     } finally {
-      setLoading(false)
+      if (mountedRef.current) {
+        setLoading(false)
+      }
     }
   }, [debouncedSearch])
 
@@ -99,56 +145,71 @@ export default function ProjetosMidiasPage() {
   }, [fetchMedia])
 
   const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    setPendingFile(file ?? null)
+    const list = e.target.files ? Array.from(e.target.files) : []
+    const valid = list.filter((f) => {
+      const isImage = f.type.startsWith('image/')
+      const isVideo = f.type.startsWith('video/')
+      return isImage || isVideo
+    })
+    setPendingFiles(valid)
   }, [])
 
   const handleUploadConfirm = useCallback(async () => {
-    if (!pendingFile) return
-    const isImage = pendingFile.type.startsWith('image/')
-    const isVideo = pendingFile.type.startsWith('video/')
-    if (!isImage && !isVideo) {
-      setError('Selecione apenas imagens ou vídeos.')
-      return
-    }
+    if (pendingFiles.length === 0) return
     setUploading(true)
+    setUploadProgress({ current: 0, total: pendingFiles.length })
     setError(null)
+    const folderToUse =
+      uploadFolder === FOLDER_GERAL_SELECT || !uploadFolder ? undefined : uploadFolder
+    const uploaded: typeof items = []
     try {
-      const formData = new FormData()
-      formData.append('file', pendingFile)
-      const folderToUse =
-        uploadFolder === FOLDER_GERAL_SELECT || !uploadFolder ? undefined : uploadFolder
-      if (folderToUse) formData.append('folder', folderToUse)
-      const res = await fetch('/api/dashboard/projetos/media', {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.message ?? 'Falha no upload')
-      setItems((prev) => [{ ...data }, ...prev])
-      setPendingFile(null)
-      setUploadDialogOpen(false)
+      let index = 0
+      for (const file of pendingFiles) {
+        if (mountedRef.current) setUploadProgress({ current: index + 1, total: pendingFiles.length })
+        const formData = new FormData()
+        formData.append('file', file)
+        if (folderToUse) formData.append('folder', folderToUse)
+        const res = await fetch('/api/dashboard/projetos/media', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data?.message ?? 'Falha no upload')
+        uploaded.push({ ...data })
+        index++
+      }
+      if (mountedRef.current) {
+        setItems((prev) => [...uploaded, ...prev])
+        setPendingFiles([])
+        setUploadDialogOpen(false)
+      }
       if (fileInputRef.current) fileInputRef.current.value = ''
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro no upload')
+      if (mountedRef.current) {
+        setError(err instanceof Error ? err.message : 'Erro no upload')
+        setItems((prev) => [...uploaded, ...prev])
+      }
     } finally {
-      setUploading(false)
+      if (mountedRef.current) {
+        setUploading(false)
+        setUploadProgress(null)
+      }
     }
-  }, [pendingFile, uploadFolder])
+  }, [pendingFiles, uploadFolder])
 
   const openUploadDialog = useCallback(() => {
     const initialFolder =
       !selectedFolder || selectedFolder === FILTER_ALL ? FOLDER_GERAL_SELECT : selectedFolder
     setUploadFolder(initialFolder)
-    setPendingFile(null)
+    setPendingFiles([])
     if (fileInputRef.current) fileInputRef.current.value = ''
     setUploadDialogOpen(true)
   }, [selectedFolder])
 
   const closeUploadDialog = useCallback(() => {
     setUploadDialogOpen(false)
-    setPendingFile(null)
+    setPendingFiles([])
     if (fileInputRef.current) fileInputRef.current.value = ''
   }, [])
 
@@ -205,6 +266,80 @@ export default function ProjetosMidiasPage() {
     []
   )
 
+  const handleCreateFolder = useCallback(async () => {
+    const slug = newFolderSlug
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, '_')
+      .replace(/[^a-z0-9_-]/g, '')
+    const title = newFolderTitle.trim()
+    if (!slug || !title) {
+      setError('Informe o slug e o título da pasta.')
+      return
+    }
+    setCreatingFolder(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/dashboard/projetos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug,
+          title,
+          description: '',
+          tag: '',
+          cover: '_',
+          media: [],
+        }),
+        credentials: 'include',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.message ?? 'Falha ao criar pasta')
+      await fetchMedia()
+      setUploadFolder(slug)
+      setSelectedFolder(slug)
+      setNewFolderOpen(false)
+      setNewFolderSlug('')
+      setNewFolderTitle('')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao criar pasta')
+    } finally {
+      setCreatingFolder(false)
+    }
+  }, [newFolderSlug, newFolderTitle, fetchMedia])
+
+  const canDeleteFolder =
+    selectedFolder &&
+    selectedFolder !== FILTER_ALL &&
+    selectedFolder !== FOLDER_GERAL_SELECT
+
+  const handleDeleteFolder = useCallback(async () => {
+    if (!canDeleteFolder) return
+    const label = folderLabel(selectedFolder)
+    if (
+      !confirm(
+        `Excluir a pasta "${label}"? O projeto será removido. Os arquivos no storage desta pasta não serão apagados.`
+      )
+    )
+      return
+    setDeletingFolderSlug(selectedFolder)
+    setError(null)
+    try {
+      const res = await fetch(`/api/dashboard/projetos/${encodeURIComponent(selectedFolder)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.message ?? 'Falha ao excluir pasta')
+      setSelectedFolder(FILTER_ALL)
+      await fetchMedia()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao excluir pasta')
+    } finally {
+      setDeletingFolderSlug(null)
+    }
+  }, [canDeleteFolder, selectedFolder, folderLabel, fetchMedia])
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -215,10 +350,19 @@ export default function ProjetosMidiasPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setNewFolderOpen(true)}
+          >
+            <FolderPlus className="size-4" />
+            Nova pasta
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*,video/*"
+            multiple
             className="sr-only"
             onChange={handleFileInputChange}
             disabled={uploading || !uploadDialogOpen}
@@ -275,6 +419,23 @@ export default function ProjetosMidiasPage() {
               ))}
             </SelectContent>
           </Select>
+          {canDeleteFolder && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={handleDeleteFolder}
+              disabled={!!deletingFolderSlug}
+            >
+              {deletingFolderSlug === selectedFolder ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <FolderMinus className="size-4" />
+              )}
+              Excluir pasta
+            </Button>
+          )}
         </div>
       )}
 
@@ -296,6 +457,7 @@ export default function ProjetosMidiasPage() {
               ref={fileInputRef}
               type="file"
               accept="image/*,video/*"
+              multiple
               className="sr-only"
               onChange={handleFileInputChange}
               disabled={uploading || !uploadDialogOpen}
@@ -341,11 +503,9 @@ export default function ProjetosMidiasPage() {
                       preload="metadata"
                     />
                   ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.url}
+                    <MediaThumbnail
+                      src={item.thumbnailUrl || item.url}
                       alt={item.alt || item.filename}
-                      className="h-full w-full object-cover"
                     />
                   ))}
               </div>
@@ -402,29 +562,56 @@ export default function ProjetosMidiasPage() {
           <DialogHeader>
             <DialogTitle>Enviar mídia</DialogTitle>
           </DialogHeader>
+          {uploadProgress && (
+            <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-primary/20 bg-primary/5 py-6">
+              <Loader2 className="size-10 animate-spin text-primary" />
+              <p className="text-sm font-medium text-foreground">
+                Enviando {uploadProgress.current} de {uploadProgress.total} arquivo(s)…
+              </p>
+              <p className="text-xs text-muted-foreground">Aguarde, não feche o painel.</p>
+            </div>
+          )}
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <label className="text-sm font-medium">Selecionar pasta</label>
-              <Select value={uploadFolder} onValueChange={setUploadFolder}>
-                <SelectTrigger>
-                  <FolderOpen className="size-4 shrink-0" />
-                  <SelectValue placeholder="Escolha a pasta" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={FOLDER_GERAL_SELECT}>Geral</SelectItem>
-                  {projects.map((p) => (
-                    <SelectItem key={p.slug} value={p.slug}>
-                      {p.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={uploadFolder} onValueChange={setUploadFolder}>
+                  <SelectTrigger className="flex-1">
+                    <FolderOpen className="size-4 shrink-0" />
+                    <SelectValue placeholder="Escolha a pasta" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={FOLDER_GERAL_SELECT}>Geral</SelectItem>
+                    {projects.map((p) => (
+                      <SelectItem key={p.slug} value={p.slug}>
+                        {p.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setNewFolderOpen(true)}
+                  title="Nova pasta de projeto"
+                >
+                  <FolderPlus className="size-4" />
+                </Button>
+              </div>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">Arquivo</label>
-              {pendingFile ? (
-                <div className="rounded border border-dashed border-muted-foreground/40 px-3 py-2 text-sm">
-                  {pendingFile.name}
+              <label className="text-sm font-medium">Arquivos</label>
+              {pendingFiles.length > 0 ? (
+                <div className="max-h-32 space-y-1 overflow-y-auto rounded border border-dashed border-muted-foreground/40 px-3 py-2 text-sm">
+                  {pendingFiles.map((f, i) => (
+                    <p key={i} className="truncate" title={f.name}>
+                      {f.name}
+                    </p>
+                  ))}
+                  <p className="text-xs text-muted-foreground">
+                    {pendingFiles.length} arquivo(s) selecionado(s)
+                  </p>
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">Nenhum arquivo selecionado</p>
@@ -435,7 +622,7 @@ export default function ProjetosMidiasPage() {
                 disabled={uploading}
                 onClick={() => fileInputRef.current?.click()}
               >
-                Escolher arquivo
+                Escolher arquivo(s)
               </Button>
             </div>
           </div>
@@ -451,7 +638,7 @@ export default function ProjetosMidiasPage() {
             <Button
               type="button"
               onClick={handleUploadConfirm}
-              disabled={!pendingFile || uploading}
+              disabled={pendingFiles.length === 0 || uploading}
             >
               {uploading && <Loader2 className="mr-2 size-4 animate-spin" />}
               Enviar
@@ -489,6 +676,53 @@ export default function ProjetosMidiasPage() {
             >
               {savingEdit && <Loader2 className="size-4 animate-spin" />}
               Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={newFolderOpen} onOpenChange={setNewFolderOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Nova pasta de projeto</DialogTitle>
+            <DialogDescription>
+              Crie uma pasta para organizar mídias. Será criado um projeto com este slug e título; você pode editar o projeto depois para adicionar capa e galeria.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Slug (identificador)</label>
+              <Input
+                value={newFolderSlug}
+                onChange={(e) => setNewFolderSlug(e.target.value.replace(/\s/g, '_').replace(/[^a-zA-Z0-9_.-]/g, '').toLowerCase())}
+                placeholder="ex: meu-projeto-2025"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Título</label>
+              <Input
+                value={newFolderTitle}
+                onChange={(e) => setNewFolderTitle(e.target.value)}
+                placeholder="ex: Meu Projeto 2025"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setNewFolderOpen(false)}
+              disabled={creatingFolder}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCreateFolder}
+              disabled={!newFolderSlug.trim() || !newFolderTitle.trim() || creatingFolder}
+            >
+              {creatingFolder && <Loader2 className="mr-2 size-4 animate-spin" />}
+              Criar pasta
             </Button>
           </DialogFooter>
         </DialogContent>

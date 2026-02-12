@@ -181,9 +181,12 @@ export function HomePage({ initialProjects }: HomePageProps) {
         >
           <source
             src={
-              process.env.NEXT_PUBLIC_SUPABASE_URL
-                ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/FJO__VIDEOFACHADA_01_R00.mp4`
-                : ''
+              process.env.NEXT_PUBLIC_HERO_VIDEO_URL ||
+              (process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+                ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL.replace(/\/$/, '')}/FJO__VIDEOFACHADA_01_R00.mp4`
+                : process.env.NEXT_PUBLIC_SUPABASE_URL
+                  ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/FJO__VIDEOFACHADA_01_R00.mp4`
+                  : '')
             }
             type="video/mp4"
           />

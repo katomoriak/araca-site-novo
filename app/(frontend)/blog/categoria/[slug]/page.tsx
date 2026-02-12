@@ -113,7 +113,13 @@ export default async function BlogCategoryPage({ params }: BlogCategoryPageProps
                   {heroPost.title}
                 </h2>
                 <div className="mt-4 flex items-center gap-3 text-sm text-neutral-600">
-                  <span>{heroPost.author.name}</span>
+                  {heroPost.author.id && heroPost.author.showAsPublicAuthor ? (
+                    <Link href={`/blog/autor/${heroPost.author.id}`} className="hover:underline">
+                      {heroPost.author.name}
+                    </Link>
+                  ) : (
+                    <span>{heroPost.author.name}</span>
+                  )}
                   <time dateTime={heroPost.publishedAt}>
                     {formatDate(heroPost.publishedAt)}
                   </time>

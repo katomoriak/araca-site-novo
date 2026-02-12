@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const R2_PUBLIC = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 
 /** Largura máxima permitida para resize (evita abuse). */
 const MAX_WIDTH = 2048
@@ -41,18 +42,21 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Invalid url', { status: 400 })
     }
 
-    // SSRF: permitir apenas URLs do Supabase configurado
-    if (!SUPABASE_URL) {
+    // SSRF: permitir apenas URLs do storage configurado (Supabase ou R2)
+    const allowedOrigins: string[] = []
+    if (SUPABASE_URL) allowedOrigins.push(new URL(SUPABASE_URL.replace(/\/$/, '')).origin)
+    if (R2_PUBLIC) allowedOrigins.push(new URL(R2_PUBLIC.replace(/\/$/, '')).origin)
+    if (allowedOrigins.length === 0) {
       return new NextResponse('Proxy not configured', { status: 503 })
     }
-    const allowedOrigin = new URL(SUPABASE_URL.replace(/\/$/, '')).origin
-    if (targetUrl.origin !== allowedOrigin) {
+    if (!allowedOrigins.includes(targetUrl.origin)) {
       return new NextResponse('Forbidden', { status: 403 })
     }
-
-    // Restringir ao path de storage público
-    if (!targetUrl.pathname.startsWith('/storage/v1/object/public/')) {
-      return new NextResponse('Forbidden', { status: 403 })
+    // Supabase: path /storage/v1/object/public/... | R2: path é relativo ao bucket
+    if (SUPABASE_URL && targetUrl.origin === new URL(SUPABASE_URL.replace(/\/$/, '')).origin) {
+      if (!targetUrl.pathname.startsWith('/storage/v1/object/public/')) {
+        return new NextResponse('Forbidden', { status: 403 })
+      }
     }
 
     // cache: 'no-store' evita "items over 2MB can not be cached" do Next.js; a resposta do proxy

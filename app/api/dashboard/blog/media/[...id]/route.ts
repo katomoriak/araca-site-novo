@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayloadClient } from '@/lib/payload'
 import { getDashboardUser } from '@/lib/dashboard-auth'
-import { deleteBlogMediaFromStorage } from '@/lib/supabase-server'
+import { deleteBlogMediaFromStorage } from '@/lib/storage-server'
 
 function resolveId(id: string | string[]): string {
   return Array.isArray(id) ? id.join('/') : id
@@ -19,7 +19,7 @@ export async function PATCH(
     const id = resolveId((await params).id)
     const payload = await getPayloadClient()
 
-    if (id.startsWith('supabase-')) {
+    if (id.startsWith('supabase-') || id.startsWith('storage-')) {
       const body = await request.json()
       return NextResponse.json({
         id,
@@ -64,8 +64,10 @@ export async function DELETE(
     const id = resolveId((await params).id)
     const payload = await getPayloadClient()
 
-    if (id.startsWith('supabase-')) {
-      const storagePath = id.slice('supabase-'.length)
+    if (id.startsWith('supabase-') || id.startsWith('storage-')) {
+      const storagePath = id.startsWith('supabase-')
+        ? id.slice('supabase-'.length)
+        : id.slice('storage-'.length)
       const ok = await deleteBlogMediaFromStorage(storagePath)
       if (!ok) {
         return NextResponse.json(

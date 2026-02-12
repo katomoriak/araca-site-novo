@@ -4,13 +4,15 @@ import { useState, useRef } from 'react'
 import Image, { type ImageProps } from 'next/image'
 import { BLUR_DATA_URL } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-import { getPreviewImageUrl } from '@/lib/transform-content-images'
+import { getPreviewImageUrl, getProxiedImageUrlWithResize } from '@/lib/transform-content-images'
 
 export interface ProgressiveImageProps extends Omit<ImageProps, 'placeholder' | 'blurDataURL'> {
   /** URL da versão em baixa resolução (blur). Quando definida, exibe primeiro e depois prévia e alta qualidade. */
   blurPlaceholderUrl?: string | null
   /** URL da prévia (proxy, tamanho médio). Se não passada, derivada de src quando for URL do proxy/Supabase. */
   previewUrl?: string | null
+  /** Largura máxima (px) da imagem final. Quando definido, a etapa "alta qualidade" usa o proxy redimensionado para carregar mais rápido. Ex: 1920. */
+  maxFullWidth?: number
   /** Exibe etiqueta "HQ" no canto quando a imagem em alta qualidade terminar de carregar. */
   showHqBadge?: boolean
   /**
@@ -35,6 +37,7 @@ export function ProgressiveImage({
   alt,
   blurPlaceholderUrl,
   previewUrl: previewUrlProp,
+  maxFullWidth,
   showHqBadge = false,
   previewLoadingVariant,
   className,
@@ -49,6 +52,10 @@ export function ProgressiveImage({
   const derivedPreviewUrl = previewUrlProp ?? (typeof src === 'string' ? getPreviewImageUrl(src) : null)
   const previewUrl = derivedPreviewUrl ?? null
   const hasThreeStages = Boolean(blurPlaceholderUrl || previewUrl)
+  const fullSrc =
+    typeof src === 'string' && maxFullWidth && maxFullWidth > 0
+      ? (getProxiedImageUrlWithResize(src, maxFullWidth, 85) || src)
+      : src
 
   const handlePreviewLoad = () => setPreviewLoaded(true)
   const handlePreviewError = () => setPreviewLoaded(true) // não travar: segue para carregar a imagem final
@@ -155,10 +162,10 @@ export function ProgressiveImage({
         />
       )}
 
-      {/* 4. Alta qualidade: só monta quando prévia carregou; transição ao carregar */}
+      {/* 4. Alta qualidade: só monta quando prévia carregou; transição ao carregar (usa fullSrc com proxy se maxFullWidth) */}
       {(!previewUrl || previewLoaded) && (
         <Image
-          src={src}
+          src={fullSrc}
           alt={alt}
           {...rest}
           className={cn(

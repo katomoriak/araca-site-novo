@@ -1,6 +1,6 @@
 /**
  * Utilitário para upload de imagens no conteúdo do blog.
- * Tenta signed URL (Supabase) primeiro — sem limite de tamanho.
+ * Tenta signed URL (R2 ou Supabase) primeiro — sem limite de tamanho.
  * Fallback: FormData em /api/upload — máximo 4 MB.
  */
 export async function uploadBlogImage(file: File): Promise<{
@@ -27,7 +27,7 @@ export async function uploadBlogImage(file: File): Promise<{
     if (putRes.ok) {
       return { url: signedData.publicUrl, alt }
     }
-    throw new Error('Falha ao enviar imagem ao Supabase')
+    throw new Error('Falha ao enviar imagem ao storage')
   }
 
   // 2. Fallback: FormData (máx 4 MB — Supabase não configurado ou signed URL falhou)
@@ -38,7 +38,7 @@ export async function uploadBlogImage(file: File): Promise<{
     // Supabase não configurado — tentar FormData (pode falhar se > 4 MB)
     if (file.size > 4 * 1024 * 1024) {
       throw new Error(
-        'Imagem muito grande. Configure Supabase (NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY) para enviar arquivos maiores.'
+        'Imagem muito grande. Configure R2 (NEXT_PUBLIC_R2_PUBLIC_URL + S3_*) ou Supabase para enviar arquivos maiores.'
       )
     }
   }

@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { dashboardAccess } from '../access/dashboardAccess'
+import { financeAccess } from '../access/collectionAccess'
 
 export const Transactions: CollectionConfig = {
   slug: 'transactions',
@@ -8,10 +8,10 @@ export const Transactions: CollectionConfig = {
     plural: { en: 'Transactions', pt: 'Transações' },
   },
   access: {
-    create: dashboardAccess.create,
-    read: dashboardAccess.read,
-    update: dashboardAccess.update,
-    delete: dashboardAccess.delete,
+    create: financeAccess.create,
+    read: financeAccess.read,
+    update: financeAccess.update,
+    delete: financeAccess.delete,
   },
   admin: {
     useAsTitle: 'description',

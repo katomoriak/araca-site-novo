@@ -6,8 +6,10 @@ import {
   createSignedUploadUrlProjetosMedia,
   deleteProjetosMediaFromStorage,
   moveProjetosMediaInStorage,
+  getStoragePublicUrl,
   PROJETOS_MIDIAS_PREFIX,
-} from '@/lib/supabase-server'
+} from '@/lib/storage-server'
+import { getProxiedImageUrlWithResize } from '@/lib/transform-content-images'
 
 function getFileType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase()
@@ -47,6 +49,8 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(Number(searchParams.get('limit')) || 100, 200)
     const offset = Number(searchParams.get('offset')) || 0
     const search = searchParams.get('search')?.trim() || ''
+    /** Filtro por pasta: "" ou "__geral__" = Geral, slug = pasta do projeto, "__all__" ou omitido = todas */
+    const folderParam = searchParams.get('folder')?.trim() ?? ''
 
     const payload = await getPayloadClient()
     const projetosRes = await payload.find({
@@ -72,11 +76,20 @@ export async function GET(request: NextRequest) {
       search: search || undefined,
     })
 
-    const media = files.map((f) => {
+    const isImageType = (name: string) => {
+      const ext = name.split('.').pop()?.toLowerCase()
+      return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext ?? '')
+    }
+    let media = files.map((f) => {
       const folder = folderFromPath(f.path)
+      const isImage = isImageType(f.name)
+      const thumbnailUrl = isImage
+        ? (getProxiedImageUrlWithResize(f.publicUrl, 400, 75) || f.publicUrl)
+        : f.publicUrl
       return {
         id: `projetos-${f.path}`,
         url: f.publicUrl,
+        thumbnailUrl,
         path: f.path,
         filename: f.name,
         alt: f.name,
@@ -84,6 +97,11 @@ export async function GET(request: NextRequest) {
         folder,
       }
     })
+
+    if (folderParam && folderParam !== '__all__') {
+      const filterFolder = folderParam === '__geral__' ? '' : folderParam
+      media = media.filter((m) => (m.folder ?? '') === filterFolder)
+    }
 
     const start = offset
     const paginated = media.slice(start, start + limit)
@@ -173,9 +191,14 @@ export async function POST(request: NextRequest) {
       )
     }
     const displayName = result.path.slice(result.path.lastIndexOf('/') + 1)
+    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(filename.split('.').pop()?.toLowerCase() ?? '')
+    const thumbnailUrl = isImage
+      ? (getProxiedImageUrlWithResize(result.publicUrl, 400, 75) || result.publicUrl)
+      : result.publicUrl
     return NextResponse.json({
       id: `projetos-${result.path}`,
       url: result.publicUrl,
+      thumbnailUrl,
       path: result.path,
       filename: displayName,
       alt: filename,
@@ -265,15 +288,17 @@ export async function PATCH(request: NextRequest) {
         { status: 502 }
       )
     }
-    const ext = newFilename.split('.').pop()?.toLowerCase()
     const fileType = getFileType(newFilename)
-    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, '') ?? ''
-    const bucket = process.env.NEXT_PUBLIC_SUPABASE_PROJETOS_BUCKET ?? 'a_public'
-    const publicUrl = `${baseUrl}/storage/v1/object/public/${bucket}/${toPath}`
+    const publicUrl = getStoragePublicUrl(toPath)
+    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(newFilename.split('.').pop()?.toLowerCase() ?? '')
+    const thumbnailUrl = isImage
+      ? (getProxiedImageUrlWithResize(publicUrl, 400, 75) || publicUrl)
+      : publicUrl
 
     return NextResponse.json({
       id: `projetos-${toPath}`,
       url: publicUrl,
+      thumbnailUrl,
       path: toPath,
       filename: lastSlash >= 0 ? newFilename : newFilename,
       alt: newFilename,

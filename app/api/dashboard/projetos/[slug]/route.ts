@@ -81,6 +81,9 @@ export async function PATCH(
     if (validation.data.description !== undefined)
       data.description = validation.data.description
     if (validation.data.tag !== undefined) data.tag = validation.data.tag
+    if (validation.data.showOnHome !== undefined) data.showOnHome = validation.data.showOnHome
+    if (validation.data.showOnProjectsPage !== undefined)
+      data.showOnProjectsPage = validation.data.showOnProjectsPage
     if (validation.data.cover !== undefined) data.cover = validation.data.cover
     if (validation.data.media !== undefined) data.media = validation.data.media
 
@@ -100,6 +103,53 @@ export async function PATCH(
     console.error('[api/dashboard/projetos/[slug] PATCH]', e)
     return NextResponse.json(
       { message: e instanceof Error ? e.message : 'Erro ao atualizar.' },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * DELETE /api/dashboard/projetos/[slug]
+ * Exclui o projeto. Requer admin ou editor. Os arquivos no storage da pasta não são removidos.
+ */
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const user = await getDashboardUser()
+  if (!user) {
+    return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
+  }
+
+  const { slug } = await params
+  try {
+    const payload = await getPayloadClient()
+    const result = await payload.find({
+      collection: 'projetos',
+      where: { slug: { equals: slug } },
+      limit: 1,
+      overrideAccess: true,
+    })
+    const doc = result.docs?.[0]
+    if (!doc) {
+      return NextResponse.json({ message: 'Projeto não encontrado.' }, { status: 404 })
+    }
+
+    await payload.delete({
+      collection: 'projetos',
+      id: doc.id,
+      overrideAccess: true,
+    })
+
+    const { revalidatePath, revalidateTag } = await import('next/cache')
+    revalidatePath('/', 'layout')
+    revalidateTag('projetos-home', 'max')
+
+    return NextResponse.json({ success: true, message: 'Pasta excluída.' })
+  } catch (e) {
+    console.error('[api/dashboard/projetos/[slug] DELETE]', e)
+    return NextResponse.json(
+      { message: e instanceof Error ? e.message : 'Erro ao excluir.' },
       { status: 500 }
     )
   }

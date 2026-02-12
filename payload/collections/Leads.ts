@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { dashboardAccess } from '../access/dashboardAccess'
+import { crmAccess } from '../access/collectionAccess'
 
 export const Leads: CollectionConfig = {
   slug: 'leads',
@@ -8,10 +8,10 @@ export const Leads: CollectionConfig = {
     plural: { en: 'Leads', pt: 'Leads' },
   },
   access: {
-    create: dashboardAccess.create,
-    read: dashboardAccess.read,
-    update: dashboardAccess.update,
-    delete: dashboardAccess.delete,
+    create: crmAccess.create,
+    read: crmAccess.read,
+    update: crmAccess.update,
+    delete: crmAccess.delete,
   },
   admin: {
     useAsTitle: 'name',

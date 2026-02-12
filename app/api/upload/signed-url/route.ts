@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDashboardUser } from '@/lib/dashboard-auth'
-import { createSignedUploadUrlForBlog } from '@/lib/supabase-server'
+import { createSignedUploadUrlForBlog } from '@/lib/storage-server'
 
 /**
  * POST /api/upload/signed-url
  * Body: { filename: string }
- * Retorna signedUrl para o cliente fazer PUT direto no Supabase (sem limite de tamanho).
+ * Retorna signedUrl para o cliente fazer PUT direto no R2/Supabase (sem limite de tamanho).
  * Usado para imagens do conteúdo do blog.
  */
 export async function POST(request: NextRequest) {
@@ -36,8 +36,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message:
-            'Supabase não configurado (NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY). ' +
-            'Crie o bucket "media" no Supabase Storage (público).',
+            'Storage não configurado. Configure R2 (NEXT_PUBLIC_R2_PUBLIC_URL + S3_*) ou Supabase (NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY).',
         },
         { status: 503 }
       )

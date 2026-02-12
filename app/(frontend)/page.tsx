@@ -1,9 +1,9 @@
 import { HomePage } from '@/components/home/HomePage'
-import { getProjetosCached } from '@/lib/projetos-server'
+import { getProjetosCachedForHome } from '@/lib/projetos-server'
 
 export const revalidate = 60
 
 export default async function Page() {
-  const initialProjects = await getProjetosCached()
+  const initialProjects = await getProjetosCachedForHome()
   return <HomePage initialProjects={initialProjects} />
 }

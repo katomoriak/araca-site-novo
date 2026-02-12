@@ -23,6 +23,8 @@ export default async function EditarProjetoPage({ params }: PageProps) {
         description?: string | null
         tag?: string | null
         cover: string
+        showOnHome?: boolean | null
+        showOnProjectsPage?: boolean | null
         media?: Array<{ type: 'image' | 'video'; file: string; name?: string | null }> | null
       }
     | undefined
@@ -34,6 +36,8 @@ export default async function EditarProjetoPage({ params }: PageProps) {
     title: doc.title,
     description: doc.description ?? '',
     tag: doc.tag ?? '',
+    showOnHome: doc.showOnHome ?? true,
+    showOnProjectsPage: doc.showOnProjectsPage ?? true,
     cover: doc.cover,
     media: (doc.media ?? []).map((m) => ({
       type: m.type as 'image' | 'video',

@@ -24,10 +24,14 @@ import { RichTextEditor } from '@/components/dashboard/RichTextEditor'
 import { CoverImagePicker } from '@/components/dashboard/CoverImagePicker'
 import { SchedulePicker } from '@/components/dashboard/SchedulePicker'
 
+const EXCERPT_IDEAL_MIN = 150
+const EXCERPT_IDEAL_MAX = 160
+
 export interface PostFormData {
   title: string
   slug: string
   excerpt: string
+  metaDescription: string
   content: string
   status: 'draft' | 'published'
   categoryId?: string | null
@@ -104,6 +108,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
     title: initialData?.title ?? '',
     slug: initialData?.slug ?? '',
     excerpt: initialData?.excerpt ?? '',
+    metaDescription: initialData?.metaDescription ?? '',
     content: initialData?.content ?? '',
     status: initialData?.status ?? 'draft',
     categoryId: normalizedCategoryId,
@@ -166,6 +171,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt,
+        metaDescription: data.metaDescription?.trim() || null,
         content: contentStr,
         status: data.status,
         category: data.categoryId && data.categoryId !== 'none' ? data.categoryId : null,
@@ -280,14 +286,46 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
           </div>
           <div>
             <label className="mb-1 block text-sm font-medium">Resumo *</label>
+            <p className="mb-1 text-xs text-muted-foreground">
+              Ideal 150–160 caracteres para snippet em buscas.
+            </p>
             <textarea
               value={form.excerpt}
               onChange={(e) => setForm((p) => ({ ...p, excerpt: e.target.value }))}
               placeholder="Breve resumo do post"
-              className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className={`w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ${
+                form.excerpt.length > 0 && (form.excerpt.length < EXCERPT_IDEAL_MIN || form.excerpt.length > EXCERPT_IDEAL_MAX)
+                  ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
+                  : ''
+              }`}
               rows={3}
               required
             />
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span className={form.excerpt.length >= EXCERPT_IDEAL_MIN && form.excerpt.length <= EXCERPT_IDEAL_MAX ? 'text-green-600' : ''}>
+                {form.excerpt.length}/160
+              </span>
+            </p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Meta description (opcional)</label>
+            <p className="mb-1 text-xs text-muted-foreground">
+              Se preenchido, usado em buscas no lugar do resumo. Ideal 150–160 caracteres.
+            </p>
+            <textarea
+              value={form.metaDescription}
+              onChange={(e) => setForm((p) => ({ ...p, metaDescription: e.target.value }))}
+              placeholder="Opcional"
+              className={`w-full min-h-[60px] rounded-md border border-input bg-background px-3 py-2 text-sm ${
+                form.metaDescription.length > 0 && (form.metaDescription.length < EXCERPT_IDEAL_MIN || form.metaDescription.length > EXCERPT_IDEAL_MAX)
+                  ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
+                  : ''
+              }`}
+              rows={2}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              {form.metaDescription.length}/160
+            </p>
           </div>
           <CoverImagePicker
             value={form.coverImageId ?? null}

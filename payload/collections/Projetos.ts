@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { dashboardAccess } from '../access/dashboardAccess'
+import { projetosAccess } from '../access/collectionAccess'
 
 export const Projetos: CollectionConfig = {
   slug: 'projetos',
@@ -8,10 +8,10 @@ export const Projetos: CollectionConfig = {
     plural: { en: 'Projects', pt: 'Projetos' },
   },
   access: {
-    create: dashboardAccess.create,
-    read: dashboardAccess.read,
-    update: dashboardAccess.update,
-    delete: dashboardAccess.delete,
+    create: projetosAccess.create,
+    read: projetosAccess.read,
+    update: projetosAccess.update,
+    delete: projetosAccess.delete,
   },
   admin: {
     useAsTitle: 'title',
@@ -43,6 +43,20 @@ export const Projetos: CollectionConfig = {
       type: 'text',
       label: { en: 'Tag', pt: 'Tag' },
       admin: { description: { pt: 'Ex.: Interiores, Residencial' } },
+    },
+    {
+      name: 'showOnHome',
+      type: 'checkbox',
+      label: { en: 'Show on home', pt: 'Exibir na home' },
+      defaultValue: true,
+      admin: { description: { pt: 'Exibir este projeto na seção de projetos da página inicial.' } },
+    },
+    {
+      name: 'showOnProjectsPage',
+      type: 'checkbox',
+      label: { en: 'Show on projects page', pt: 'Exibir na aba projetos' },
+      defaultValue: true,
+      admin: { description: { pt: 'Exibir este projeto na página /projetos do site.' } },
     },
     {
       name: 'cover',

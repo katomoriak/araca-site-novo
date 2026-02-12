@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const payload = await getPayloadClient()
     const result = await payload.find({
       collection: 'users',
+      where: { showAsPublicAuthor: { equals: true } },
       limit: 100,
       pagination: false,
       sort: 'name',

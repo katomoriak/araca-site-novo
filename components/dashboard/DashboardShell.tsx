@@ -4,9 +4,18 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { Separator } from '@/components/ui/separator'
 import { AppSidebar } from './AppSidebar'
 import { SilkDynamic } from './SilkDynamic'
+import { DashboardAuthProvider } from './DashboardAuthContext'
+import type { DashboardUser } from '@/lib/dashboard-auth'
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+export function DashboardShell({
+  user,
+  children,
+}: {
+  user?: DashboardUser | null
+  children: React.ReactNode
+}) {
   return (
+    <DashboardAuthProvider user={user ?? null}>
     <SidebarProvider
       style={
         {
@@ -42,5 +51,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </SidebarInset>
       </div>
     </SidebarProvider>
+    </DashboardAuthProvider>
   )
 }

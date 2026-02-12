@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getPayloadClient } from '@/lib/payload'
 import { getDashboardUser } from '@/lib/dashboard-auth'
-import { listBlogMediaFromStorage } from '@/lib/supabase-server'
+import { listBlogMediaFromStorage, uploadBlogFile, isR2Configured } from '@/lib/storage-server'
+import { getProxiedImageUrlWithResize } from '@/lib/transform-content-images'
 
 function getFileType(filename: string, mimeType?: string | null): string {
   if (mimeType) {
@@ -38,6 +39,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'Apenas imagens são permitidas' }, { status: 400 })
     }
 
+    const timestamp = Date.now()
+    const randomStr = Math.random().toString(36).substring(2, 8)
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const safeExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) ? ext : 'jpg'
+    const fileName = `blog/${timestamp}-${randomStr}.${safeExt}`
+
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
+
+    if (isR2Configured()) {
+      const result = await uploadBlogFile(fileName, buffer, file.type)
+      if (result) {
+        return NextResponse.json({
+          id: `storage-${fileName}`,
+          url: result.publicUrl,
+          filename: file.name,
+          alt,
+          fileType: getFileType(file.name, file.type),
+        })
+      }
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
@@ -45,14 +68,6 @@ export async function POST(request: NextRequest) {
       const supabase = createClient(supabaseUrl, serviceRoleKey, {
         auth: { persistSession: false },
       })
-      const timestamp = Date.now()
-      const randomStr = Math.random().toString(36).substring(2, 8)
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-      const safeExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) ? ext : 'jpg'
-      const fileName = `blog/${timestamp}-${randomStr}.${safeExt}`
-
-      const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
 
       const { error } = await supabase.storage
         .from('media')
@@ -83,8 +98,6 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
     const fileWithBuffer = new File([buffer], file.name, { type: file.type })
 
     const media = await payload.create({
@@ -153,22 +166,30 @@ export async function GET(request: NextRequest) {
       })(),
     ])
 
+    const thumbnailFor = (url: string) =>
+      getProxiedImageUrlWithResize(url, 400, 75) || url
+    const storagePrefix = isR2Configured() ? 'storage-' : 'supabase-'
     const storageItems = storageFiles.map((f) => ({
-      id: `supabase-${f.path}`,
+      id: `${storagePrefix}${f.path}`,
       url: f.publicUrl,
+      thumbnailUrl: thumbnailFor(f.publicUrl),
       filename: f.name,
       alt: f.name,
       fileType: getFileType(f.name, null),
     }))
 
     const payloadItems = (payloadResult.docs ?? []).map(
-      (doc: { id: string | number; url?: string; filename?: string; alt?: string; mimeType?: string | null }) => ({
-        id: String(doc.id),
-        url: doc.url ?? '',
-        filename: doc.filename ?? '',
-        alt: doc.alt ?? doc.filename ?? '',
-        fileType: getFileType(doc.filename ?? '', doc.mimeType),
-      })
+      (doc: { id: string | number; url?: string; filename?: string; alt?: string; mimeType?: string | null }) => {
+        const url = doc.url ?? ''
+        return {
+          id: String(doc.id),
+          url,
+          thumbnailUrl: thumbnailFor(url),
+          filename: doc.filename ?? '',
+          alt: doc.alt ?? doc.filename ?? '',
+          fileType: getFileType(doc.filename ?? '', doc.mimeType),
+        }
+      }
     )
 
     const seenUrls = new Set<string>()

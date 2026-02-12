@@ -94,6 +94,6 @@ export const sobreContent = {
 
   cta: {
     primary: { label: 'Ver projetos', href: '/projetos' },
-    secondary: { label: 'Fale conosco', href: '/#contato' },
+    secondary: { label: 'Fale conosco', href: '/contato' },
   },
 } as const

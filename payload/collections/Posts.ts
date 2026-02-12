@@ -68,6 +68,18 @@ export const Posts: CollectionConfig = {
       type: 'textarea',
       required: true,
       label: { en: 'Excerpt', pt: 'Resumo' },
+      admin: {
+        description: 'Ideal 150–160 caracteres para snippet em buscas.',
+      },
+    },
+    {
+      name: 'metaDescription',
+      type: 'textarea',
+      required: false,
+      label: { en: 'Meta description', pt: 'Meta description' },
+      admin: {
+        description: 'Opcional. Se preenchido, usado como description em buscas; senão usa o resumo. Ideal 150–160 caracteres.',
+      },
     },
     {
       name: 'coverImage',

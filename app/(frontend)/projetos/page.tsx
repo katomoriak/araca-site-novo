@@ -1,4 +1,4 @@
-import { getProjetosCached } from '@/lib/projetos-server'
+import { getProjetosCachedForProjectsPage } from '@/lib/projetos-server'
 import { projetosContent } from '@/content/projetos'
 import { ProjetosHero } from '@/components/projetos/ProjetosHero'
 import { ProjetosGrid } from '@/components/projetos/ProjetosGrid'
@@ -12,7 +12,7 @@ export const metadata = {
 }
 
 export default async function ProjetosPage() {
-  const projects = await getProjetosCached()
+  const projects = await getProjetosCachedForProjectsPage()
   const { hero } = projetosContent
 
   return (

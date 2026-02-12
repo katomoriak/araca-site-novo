@@ -73,6 +73,8 @@ export async function POST(request: Request) {
         title: validation.data.title,
         description: validation.data.description ?? '',
         tag: validation.data.tag ?? '',
+        showOnHome: validation.data.showOnHome ?? true,
+        showOnProjectsPage: validation.data.showOnProjectsPage ?? true,
         cover: validation.data.cover,
         media: validation.data.media,
       },

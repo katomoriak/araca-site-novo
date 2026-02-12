@@ -18,10 +18,33 @@ function toCategoryLabel(cat: unknown): string {
   return String(cat ?? '')
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+
 export const metadata = {
   title: 'Blog',
   description:
     'Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.',
+  openGraph: {
+    title: 'Blog | Aracá Interiores',
+    description:
+      'Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.',
+    url: `${baseUrl}/blog`,
+    type: 'website' as const,
+    images: [
+      {
+        url: `${baseUrl}/hero-interiores.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Aracá Interiores — Blog',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image' as const,
+    title: 'Blog | Aracá Interiores',
+    description:
+      'Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.',
+  },
 }
 
 // Placeholder quando não há imagem (gradiente neutro)
@@ -78,7 +101,7 @@ export default async function BlogPage() {
                   </h1>
                 </Link>
                 <div className="mt-4 flex items-center gap-3 text-sm text-neutral-600">
-                  {heroPost.author.id ? (
+                  {heroPost.author.id && heroPost.author.showAsPublicAuthor ? (
                     <Link
                       href={`/blog/autor/${heroPost.author.id}`}
                       className="hover:underline"

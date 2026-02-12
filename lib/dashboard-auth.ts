@@ -1,16 +1,18 @@
 import { cookies } from 'next/headers'
 import { getPayloadClient } from '@/lib/payload'
+import { canAccessDashboard, type UserWithPermissions } from '@/payload/access/permissions'
 
 const PAYLOAD_TOKEN_COOKIE = 'payload-token'
 
 export interface DashboardUser {
   id: string
-  role: string
+  role?: string
+  permissions?: string[]
 }
 
 /**
- * Valida cookie de autenticação e retorna o usuário se for admin ou editor.
- * Use nas API routes do dashboard. Retorna null se não autenticado ou sem permissão.
+ * Valida cookie de autenticação e retorna o usuário se tiver acesso ao dashboard.
+ * Admin tem acesso total; demais precisam de pelo menos uma permissão.
  */
 export async function getDashboardUser(): Promise<DashboardUser | null> {
   const cookieStore = await cookies()
@@ -23,9 +25,13 @@ export async function getDashboardUser(): Promise<DashboardUser | null> {
       headers: new Headers({ cookie: `${PAYLOAD_TOKEN_COOKIE}=${token}` }),
     })
     if (!user) return null
-    const role = (user as { role?: string })?.role
-    if (role !== 'admin' && role !== 'editor') return null
-    return { id: String(user.id), role }
+    const u = user as UserWithPermissions
+    if (!canAccessDashboard(u)) return null
+    return {
+      id: String(user.id),
+      role: u.role,
+      permissions: u.permissions ?? [],
+    }
   } catch {
     return null
   }

@@ -9,8 +9,9 @@ import {
 } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Plus } from 'lucide-react'
-import { getProjetosBaseUrl } from '@/lib/projetos-server'
+import { getProjetoCoverUrl } from '@/lib/projetos-server'
 import { ProjetosSeedButton } from './ProjetosSeedButton'
+import { ProjectCardWithDelete } from './ProjectCardWithDelete'
 
 export default async function ProjetosPage() {
   const payload = await getPayloadClient()
@@ -62,32 +63,15 @@ export default async function ProjetosPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => {
-            const baseUrl = getProjetosBaseUrl(p.slug)
-            const coverSrc = `${baseUrl}/${encodeURIComponent(p.cover)}`
+            const coverSrc = getProjetoCoverUrl(p.slug, p.cover)
             return (
-              <Link key={p.id} href={`/dashboard/projetos/${encodeURIComponent(p.slug)}`}>
-                <Card className="overflow-hidden transition-shadow hover:shadow-md">
-                  <div className="relative aspect-video w-full bg-muted">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={coverSrc}
-                      alt={p.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <CardHeader className="p-4">
-                    <CardTitle className="line-clamp-1 text-base">{p.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      {p.tag && (
-                        <span className="rounded bg-muted px-1.5 py-0.5 text-xs">
-                          {p.tag}
-                        </span>
-                      )}
-                      <span className="text-xs">{p.slug}</span>
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </Link>
+              <ProjectCardWithDelete
+                key={p.id}
+                slug={p.slug}
+                title={p.title}
+                tag={p.tag}
+                coverSrc={coverSrc}
+              />
             )
           })}
         </div>

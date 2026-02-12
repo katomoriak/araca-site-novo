@@ -21,7 +21,7 @@ const DEFAULT_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'Sobre nós' },
   { href: '/projetos', label: 'Projetos' },
-  { href: '/#contato', label: 'Contato' },
+  { href: '/contato', label: 'Contato' },
   { href: '/blog', label: 'Blog' },
 ]
 

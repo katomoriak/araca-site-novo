@@ -10,7 +10,7 @@ export interface Post {
   excerpt: string
   coverImage?: { url: string; alt: string }
   content: string
-  author: { name: string; id?: string }
+  author: { name: string; id?: string; showAsPublicAuthor?: boolean }
   category: PostCategory
   tags: string[]
   publishedAt: string

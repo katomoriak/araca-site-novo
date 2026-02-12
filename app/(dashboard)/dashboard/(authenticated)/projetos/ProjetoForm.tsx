@@ -15,6 +15,8 @@ import { Input } from '@/components/ui/Input'
 import Image from 'next/image'
 import { ArrowLeft, Loader2, Trash2, GripVertical, Video, ImagePlus } from 'lucide-react'
 import { ProjetoImageDialog } from '@/components/dashboard/ProjetoImageDialog'
+import { Badge } from '@/components/ui/Badge'
+import { Switch } from '@/components/ui/Switch'
 
 export interface MediaItem {
   type: 'image' | 'video'
@@ -29,6 +31,8 @@ export interface ProjetoFormData {
   title: string
   description: string
   tag: string
+  showOnHome: boolean
+  showOnProjectsPage: boolean
   cover: string
   media: MediaItem[]
 }
@@ -54,11 +58,14 @@ function getMediaThumbUrl(
   file: string,
   projetosBaseUrl?: string | null
 ): string {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const r2Public = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, '')
   const bucket = process.env.NEXT_PUBLIC_SUPABASE_PROJETOS_BUCKET ?? 'a_public'
-  const bucketBase = supabaseUrl
-    ? `${supabaseUrl.replace(/\/$/, '')}/storage/v1/object/public/${bucket}`
-    : ''
+  const bucketBase = r2Public
+    ? r2Public
+    : supabaseUrl
+      ? `${supabaseUrl}/storage/v1/object/public/${bucket}`
+      : ''
 
   if (file.includes('/')) {
     return bucketBase ? `${bucketBase}/${file}` : `/projetos/${file}`
@@ -67,7 +74,7 @@ function getMediaThumbUrl(
   if (projetosBaseUrl) {
     return `${projetosBaseUrl.replace(/\/$/, '')}/${encoded}`
   }
-  if (supabaseUrl) {
+  if (bucketBase) {
     return `${bucketBase}/${slug}/${encoded}`
   }
   return `/projetos/${slug}/${encoded}`
@@ -88,6 +95,8 @@ export function ProjetoForm({
       title: '',
       description: '',
       tag: '',
+      showOnHome: true,
+      showOnProjectsPage: true,
       cover: '',
       media: [],
     }
@@ -128,13 +137,13 @@ export function ProjetoForm({
   )
 
   const handleAddMediaFromDialog = useCallback(
-    (filePath: string, _publicUrl: string, type?: 'image' | 'video') => {
+    (filePath: string, _publicUrl: string, type?: 'image' | 'video', name?: string) => {
       const mediaType = type ?? 'image'
       setForm((prev) => ({
         ...prev,
         media: [
           ...prev.media,
-          { type: mediaType, file: filePath, name: '', publicUrl: _publicUrl },
+          { type: mediaType, file: filePath, name: name ?? '', publicUrl: _publicUrl },
         ],
       }))
     },
@@ -202,7 +211,11 @@ export function ProjetoForm({
         const res = await fetch('/api/dashboard/projetos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(form),
+          body: JSON.stringify({
+            ...form,
+            showOnHome: form.showOnHome ?? true,
+            showOnProjectsPage: form.showOnProjectsPage ?? true,
+          }),
         })
         const data = await res.json().catch(() => ({}))
         if (!res.ok) {
@@ -220,6 +233,8 @@ export function ProjetoForm({
             title: form.title,
             description: form.description,
             tag: form.tag,
+            showOnHome: form.showOnHome,
+            showOnProjectsPage: form.showOnProjectsPage,
             cover: form.cover,
             media: form.media.map((m) => ({ type: m.type, file: m.file, name: m.name ?? '' })),
           }),
@@ -309,6 +324,31 @@ export function ProjetoForm({
 
       <Card>
         <CardHeader>
+          <CardTitle>Onde exibir</CardTitle>
+          <CardDescription>
+            Defina em quais áreas do site este projeto será exibido.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
+            <span className="text-sm font-medium">Exibir na home</span>
+            <Switch
+              checked={form.showOnHome}
+              onCheckedChange={(checked) => setForm((p) => ({ ...p, showOnHome: checked }))}
+            />
+          </div>
+          <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
+            <span className="text-sm font-medium">Exibir na aba projetos</span>
+            <Switch
+              checked={form.showOnProjectsPage}
+              onCheckedChange={(checked) => setForm((p) => ({ ...p, showOnProjectsPage: checked }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Capa</CardTitle>
           <CardDescription>
             Envie uma nova imagem ou selecione do banco de mídias dos projetos.
@@ -364,8 +404,16 @@ export function ProjetoForm({
       <Card>
         <CardHeader>
           <CardTitle>Mídias da galeria</CardTitle>
-          <CardDescription>
-            Adicione imagens ou vídeos enviando novos arquivos ou escolhendo do banco de mídias. Ordem = ordem na galeria.
+          <CardDescription className="space-y-2">
+            <span className="block">
+              Adicione imagens ou vídeos enviando novos arquivos ou escolhendo do banco de mídias. Ordem = ordem na galeria.
+            </span>
+            <span className="block mt-2 font-medium text-foreground">
+              Alt text (texto alternativo):
+            </span>
+            <span className="block">
+              É o campo editável ao lado de cada mídia — descreva o que aparece na imagem em poucas palavras. Importante para acessibilidade (leitores de tela), SEO e quando a imagem não carrega. Ex.: &quot;Sala de estar com sofá em L e prateleira decorativa&quot;.
+            </span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -375,14 +423,14 @@ export function ProjetoForm({
             onClick={() => setMediaDialogOpen(true)}
           >
             <ImagePlus className="size-4" />
-            Adicionar mídia
+            Enviar mídia
           </Button>
 
           <ProjetoImageDialog
             open={mediaDialogOpen}
             onOpenChange={setMediaDialogOpen}
             title="Adicionar mídia à galeria"
-            description="Envie uma nova imagem/vídeo ou selecione do banco de mídias dos projetos."
+            description="Envie uma nova imagem/vídeo ou selecione do banco de mídias dos projetos. Escolha a pasta ao enviar; você pode criar e excluir pastas."
             projectSlug={form.slug || slugParam || null}
             onUpload={async (slug, file) => {
               setMediaUploading(true)
@@ -392,6 +440,8 @@ export function ProjetoForm({
               return result
             }}
             onSelect={handleAddMediaFromDialog}
+            allowMultiple
+            useFolderUpload
           />
           <ul className="space-y-2">
             {form.media.map((m, i) => {
@@ -434,12 +484,23 @@ export function ProjetoForm({
                   <span className="w-28 shrink-0 truncate text-sm font-mono text-muted-foreground">
                     {m.file}
                   </span>
-                  <Input
-                    placeholder="Legenda"
-                    value={m.name ?? ''}
-                    onChange={(e) => updateMediaName(i, e.target.value)}
-                    className="min-w-0 flex-1 text-sm"
-                  />
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <label className="text-xs font-medium text-muted-foreground">
+                      Alt text:
+                    </label>
+                    <Input
+                      placeholder="Descreva a imagem (ex.: Sala de estar com sofá em L)"
+                      value={m.name ?? ''}
+                      onChange={(e) => updateMediaName(i, e.target.value)}
+                      className="text-sm"
+                      aria-label="Texto alternativo da imagem"
+                    />
+                    {!(m.name ?? '').trim() && (
+                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                        Sem alt
+                      </Badge>
+                    )}
+                  </div>
                   <Button
                     type="button"
                     variant="ghost"

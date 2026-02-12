@@ -26,12 +26,21 @@ const getPost = cache(async (slug: string) => {
       'Autor'
     const titleStr = stringFromLocale(payloadPost.title)
     const excerptStr = stringFromLocale(payloadPost.excerpt)
+    const metaDescriptionStr = payloadPost.metaDescription
+      ? stringFromLocale(payloadPost.metaDescription)
+      : null
     const authorId =
       typeof payloadPost.author === 'object' &&
       payloadPost.author != null &&
       'id' in payloadPost.author
         ? String((payloadPost.author as { id: string }).id)
         : undefined
+    const showAsPublicAuthor =
+      typeof payloadPost.author === 'object' &&
+      payloadPost.author != null &&
+      'showAsPublicAuthor' in payloadPost.author
+        ? (payloadPost.author as { showAsPublicAuthor?: boolean }).showAsPublicAuthor === true
+        : false
     const categoryValue = payloadPost.category
     const categoryLabel =
       typeof categoryValue === 'object' && categoryValue != null && 'name' in categoryValue
@@ -40,9 +49,11 @@ const getPost = cache(async (slug: string) => {
     return {
       title: titleStr,
       excerpt: excerptStr,
+      metaDescription: metaDescriptionStr && metaDescriptionStr.trim() ? metaDescriptionStr : null,
       category: categoryLabel,
-      author: { name: String(name), id: authorId },
+      author: { name: String(name), id: authorId, showAsPublicAuthor },
       publishedAt: payloadPost.publishedAt ?? payloadPost.createdAt,
+      updatedAt: payloadPost.updatedAt ?? payloadPost.publishedAt ?? payloadPost.createdAt,
       coverImage:
         payloadPost.coverImage?.url
           ? {
@@ -63,9 +74,11 @@ const getPost = cache(async (slug: string) => {
     return {
       title: mock.title,
       excerpt: mock.excerpt,
+      metaDescription: null,
       category: mock.category,
       author: mock.author,
       publishedAt: mock.publishedAt,
+      updatedAt: mock.publishedAt,
       coverImage: mock.coverImage ?? null,
       content: mock.content,
     }
@@ -80,12 +93,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await getPost(slug)
   if (!post) return { title: 'Post não encontrado' }
   const postUrl = `${baseUrl}/blog/${slug}`
+  const description = post.metaDescription || post.excerpt || undefined
   return {
     title: post.title,
-    description: post.excerpt || undefined,
+    description,
+    alternates: { canonical: postUrl },
     openGraph: {
       title: post.title,
-      description: post.excerpt || undefined,
+      description,
       type: 'article' as const,
       url: postUrl,
       ...(post.coverImage && {
@@ -102,7 +117,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt || undefined,
+      description,
       ...(post.coverImage && { images: [post.coverImage.url.startsWith('http') ? post.coverImage.url : `${baseUrl}${post.coverImage.url.startsWith('/') ? '' : '/'}${post.coverImage.url}`] }),
     },
   }
@@ -134,11 +149,11 @@ export default async function PostPage({ params }: PageProps) {
     description: post.excerpt || undefined,
     url: postUrl,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: post.updatedAt ?? post.publishedAt,
     author: {
       '@type': 'Person',
       name: post.author.name,
-      ...(post.author.id && { url: `${baseUrl}/blog/autor/${post.author.id}` }),
+      ...(post.author.id && post.author.showAsPublicAuthor && { url: `${baseUrl}/blog/autor/${post.author.id}` }),
     },
     publisher: {
       '@type': 'Organization',
@@ -187,7 +202,7 @@ export default async function PostPage({ params }: PageProps) {
           <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">
               <User className="h-4 w-4 shrink-0" aria-hidden />
-              {post.author.id ? (
+              {post.author.id && post.author.showAsPublicAuthor ? (
                 <Link
                   href={`/blog/autor/${post.author.id}`}
                   className="hover:underline"

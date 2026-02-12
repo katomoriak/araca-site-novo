@@ -1,9 +1,11 @@
 import type { Access } from 'payload'
+import { hasPermission, type UserWithPermissions } from './permissions'
 
 /**
  * Posts:
- * - Admin: ver todos, criar, editar e deletar qualquer post.
- * - Editor: ver apenas os próprios (author === user.id), criar (como autor), editar e deletar só os próprios.
+ * - Permissão blog: criar posts.
+ * - Admin: ver todos, editar e deletar qualquer post.
+ * - Editor com blog: ver apenas os próprios (author === user.id), editar e deletar só os próprios.
  */
 export const postsEditorAccess: {
   create: Access
@@ -11,31 +13,32 @@ export const postsEditorAccess: {
   update: Access
   delete: Access
 } = {
-  create: ({ req: { user } }) => Boolean(user?.role === 'admin' || user?.role === 'editor'),
+  create: ({ req: { user } }) => hasPermission(user as UserWithPermissions, 'blog'),
   read: ({ req: { user } }) => {
     if (!user) return true // site público: listagem do blog vê todos os posts
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { author: { equals: user.id } }
-    return false
+    return { author: { equals: user.id } }
   },
   update: ({ req: { user } }) => {
     if (!user) return false
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { author: { equals: user.id } }
-    return false
+    return { author: { equals: user.id } }
   },
   delete: ({ req: { user } }) => {
     if (!user) return false
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { author: { equals: user.id } }
-    return false
+    return { author: { equals: user.id } }
   },
 }
 
 /**
  * Media:
- * - Admin: ver todos, criar, editar e deletar qualquer mídia.
- * - Editor: ver apenas as que fez upload (createdBy === user.id), criar, editar e deletar só as próprias.
+ * - Permissão blog: criar mídia.
+ * - Admin: ver todos, editar e deletar qualquer mídia.
+ * - Editor com blog: ver apenas as que fez upload (createdBy === user.id), editar e deletar só as próprias.
  */
 export const mediaEditorAccess: {
   create: Access
@@ -43,23 +46,23 @@ export const mediaEditorAccess: {
   update: Access
   delete: Access
 } = {
-  create: ({ req: { user } }) => Boolean(user?.role === 'admin' || user?.role === 'editor'),
+  create: ({ req: { user } }) => hasPermission(user as UserWithPermissions, 'blog'),
   read: ({ req: { user } }) => {
     if (!user) return true // site público: exibir mídia dos posts (ex.: capa)
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { createdBy: { equals: user.id } }
-    return false
+    return { createdBy: { equals: user.id } }
   },
   update: ({ req: { user } }) => {
     if (!user) return false
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { createdBy: { equals: user.id } }
-    return false
+    return { createdBy: { equals: user.id } }
   },
   delete: ({ req: { user } }) => {
     if (!user) return false
+    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
     if (user.role === 'admin') return true
-    if (user.role === 'editor') return { createdBy: { equals: user.id } }
-    return false
+    return { createdBy: { equals: user.id } }
   },
 }

@@ -33,6 +33,8 @@ export interface PayloadPost {
   title: string
   slug: string
   excerpt: string
+  /** Opcional. Se preenchido, usado como meta description em buscas. */
+  metaDescription?: string | null
   coverImage?: {
     id: string
     url: string
@@ -46,6 +48,7 @@ export interface PayloadPost {
     id: string
     name?: string | null
     email?: string
+    showAsPublicAuthor?: boolean | null
   }
   category?: PostCategory | null
   tags?: { tag?: string | null }[] | null
@@ -190,7 +193,8 @@ export async function getAuthorById(id: string): Promise<PayloadAuthor | null> {
       depth: 2,
     })
     if (!user) return null
-    const u = user as PayloadAuthor & { avatar?: { id: string; url: string; alt?: string | null } }
+    const u = user as PayloadAuthor & { avatar?: { id: string; url: string; alt?: string | null }; showAsPublicAuthor?: boolean | null }
+    if (u.showAsPublicAuthor !== true) return null
     return {
       id: u.id,
       name: u.name ?? '',
@@ -242,7 +246,7 @@ export function toBlogPostListItem(
   slug: string
   excerpt: string
   coverImage?: { url: string; alt: string }
-  author: { name: string; id: string }
+  author: { name: string; id: string; showAsPublicAuthor?: boolean }
   category: PostCategory
   tags: string[]
   publishedAt: string
@@ -250,6 +254,7 @@ export function toBlogPostListItem(
 } {
   const name = p.author?.name ?? (p.author as { email?: string })?.email ?? 'Autor'
   const authorId = typeof p.author === 'object' && p.author != null && 'id' in p.author ? String((p.author as { id: string }).id) : ''
+  const showAsPublicAuthor = typeof p.author === 'object' && p.author != null && 'showAsPublicAuthor' in p.author ? (p.author as { showAsPublicAuthor?: boolean }).showAsPublicAuthor === true : false
   const titleStr = stringFromLocale(p.title)
   const excerptStr = stringFromLocale(p.excerpt)
   return {
@@ -263,7 +268,7 @@ export function toBlogPostListItem(
         : p.coverImageUrl
           ? { url: p.coverImageUrl, alt: stringFromLocale(p.title) }
           : undefined,
-    author: { name: String(name), id: authorId },
+    author: { name: String(name), id: authorId, showAsPublicAuthor },
     category: (p.category ?? 'news') as PostCategory,
     tags: (p.tags ?? []).map((t) => t?.tag ?? '').filter(Boolean),
     publishedAt: p.publishedAt ?? p.createdAt,

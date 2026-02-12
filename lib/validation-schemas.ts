@@ -62,6 +62,8 @@ export const projetoCreateSchema = z.object({
   title: z.string().min(1, 'Título é obrigatório').max(300),
   description: z.string().max(2000).optional(),
   tag: z.string().max(100).optional(),
+  showOnHome: z.boolean().optional(),
+  showOnProjectsPage: z.boolean().optional(),
   cover: z.string().min(1, 'Arquivo da capa é obrigatório'),
   media: z.array(projectMediaItemSchema).default([]),
 })

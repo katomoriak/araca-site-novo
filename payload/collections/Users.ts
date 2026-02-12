@@ -1,5 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import { isAdmin } from '../access/isAdmin'
+import { usersAccess } from '../access/collectionAccess'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -8,10 +8,10 @@ export const Users: CollectionConfig = {
     plural: { en: 'Users', pt: 'Usuários' },
   },
   access: {
-    read: () => true, // Página de autor do blog precisa ler perfil (nome, avatar, bio, redes) sem login
-    create: isAdmin,
-    update: ({ req: { user } }) => Boolean(user?.role === 'admin'),
-    delete: isAdmin,
+    read: usersAccess.read,
+    create: usersAccess.create,
+    update: usersAccess.update,
+    delete: usersAccess.delete,
   },
   auth: {
     tokenExpiration: 60 * 60 * 24 * 7, // 7 dias (em segundos)
@@ -26,7 +26,12 @@ export const Users: CollectionConfig = {
   lockDocuments: false,
   admin: {
     useAsTitle: 'name',
-    hidden: ({ user }) => user?.role !== 'admin', // só admin vê e gerencia usuários
+    hidden: ({ user }) => {
+      if (!user) return true
+      if (user.role === 'admin') return false
+      const perms = (user as { permissions?: string[] }).permissions
+      return !Array.isArray(perms) || !perms.includes('users')
+    },
   },
   fields: [
     {
@@ -45,6 +50,33 @@ export const Users: CollectionConfig = {
       ],
       defaultValue: 'editor',
       required: true,
+      admin: { description: { pt: 'Admin tem acesso total; Editor usa permissões específicas.' } },
+    },
+    {
+      name: 'permissions',
+      type: 'select',
+      label: { en: 'Permissions', pt: 'Permissões' },
+      hasMany: true,
+      options: [
+        { label: { en: 'Blog', pt: 'Blog' }, value: 'blog' },
+        { label: { en: 'Finance', pt: 'Financeiro' }, value: 'finance' },
+        { label: { en: 'CRM', pt: 'CRM' }, value: 'crm' },
+        { label: { en: 'Projects', pt: 'Projetos' }, value: 'projetos' },
+        { label: { en: 'Users', pt: 'Usuários' }, value: 'users' },
+      ],
+      admin: {
+        description: { pt: 'Módulos do dashboard que este usuário pode acessar. Admin ignora e tem acesso total.' },
+        condition: (_, siblingData) => siblingData?.role === 'editor',
+      },
+    },
+    {
+      name: 'showAsPublicAuthor',
+      type: 'checkbox',
+      label: { en: 'Show as public author', pt: 'Exibir como autor no blog' },
+      defaultValue: false,
+      admin: {
+        description: { pt: 'Se marcado, o usuário aparece como autor nos posts e na página de perfil do blog.' },
+      },
     },
     {
       name: 'avatar',
