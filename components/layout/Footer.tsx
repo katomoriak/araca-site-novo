@@ -18,10 +18,6 @@ const footerNavColumns = [
       { href: '/blog', label: 'Blog' },
     ],
   },
-  {
-    title: 'Equipe',
-    links: [{ href: '/dashboard', label: 'Dashboard' }],
-  },
 ]
 
 const footerContact = {
@@ -249,6 +245,12 @@ export function Footer() {
                   className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
                 >
                   Termos de Uso
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
+                >
+                  Dashboard
                 </Link>
                 <a
                   href="https://naut.design"

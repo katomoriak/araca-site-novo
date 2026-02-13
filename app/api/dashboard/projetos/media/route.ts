@@ -66,7 +66,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const limit = Math.min(Number(searchParams.get('limit')) || 100, 200)
+    // Limite menor para evitar 413 (resposta grande) em proxies/Vercel
+    const limit = Math.min(Number(searchParams.get('limit')) || 50, 100)
     const offset = Number(searchParams.get('offset')) || 0
     const search = searchParams.get('search')?.trim() || ''
     /** Filtro por pasta: "" ou "__geral__" = Geral, slug = pasta do projeto, "__all__" ou omitido = todas */

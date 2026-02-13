@@ -15,10 +15,8 @@ export const postsEditorAccess: {
 } = {
   create: ({ req: { user } }) => hasPermission(user as UserWithPermissions, 'blog'),
   read: ({ req: { user } }) => {
-    if (!user) return true // site público: listagem do blog vê todos os posts
-    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
-    if (user.role === 'admin') return true
-    return { author: { equals: user.id } }
+    if (!user) return true // site público
+    return hasPermission(user as UserWithPermissions, 'blog')
   },
   update: ({ req: { user } }) => {
     if (!user) return false
@@ -49,9 +47,7 @@ export const mediaEditorAccess: {
   create: ({ req: { user } }) => hasPermission(user as UserWithPermissions, 'blog'),
   read: ({ req: { user } }) => {
     if (!user) return true // site público: exibir mídia dos posts (ex.: capa)
-    if (!hasPermission(user as UserWithPermissions, 'blog')) return false
-    if (user.role === 'admin') return true
-    return { createdBy: { equals: user.id } }
+    return hasPermission(user as UserWithPermissions, 'blog')
   },
   update: ({ req: { user } }) => {
     if (!user) return false

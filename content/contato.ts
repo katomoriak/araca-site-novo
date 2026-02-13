@@ -18,9 +18,9 @@ export const contatoContent = {
   contact: {
     location: 'Santo André, SP',
     schedule: 'Segunda a Sexta | 09:00–18:00',
-    email: 'contato@aracainteriores.com.br',
-    phone: '(11) 91163-2003',
-    phoneHref: 'tel:+5511911632003',
+    email: 'contato@araca.arq.br',
+    phone: '(11) 99745-8464',
+    phoneHref: 'tel:+5511997458464',
     instagram: 'https://www.instagram.com/aracainteriores/',
     linkedin: 'https://www.linkedin.com/company/araca-arq',
   },

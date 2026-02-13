@@ -3,9 +3,16 @@ import { NextRequest, NextResponse } from 'next/server'
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const R2_PUBLIC = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
 
-/** Cache longo (Vercel CDN + browser) para reduzir egress. */
-const CACHE_MAX_AGE = 60 * 60 * 24 * 7 // 7 dias
-const CACHE_HEADER = `public, max-age=${CACHE_MAX_AGE}, s-maxage=${CACHE_MAX_AGE}, stale-while-revalidate=86400`
+/** Cache no CDN (Vercel) e no browser. Mesma estratégia do image-proxy (env IMAGE_PROXY_CACHE_MAX_AGE). */
+const CACHE_MAX_AGE =
+  typeof process.env.IMAGE_PROXY_CACHE_MAX_AGE !== 'undefined'
+    ? Math.max(0, parseInt(process.env.IMAGE_PROXY_CACHE_MAX_AGE, 10) || 0)
+    : 60 * 60 // padrão: 1 hora
+const CACHE_SWR = Math.min(60 * 60 * 6, Math.max(0, CACHE_MAX_AGE * 2))
+const CACHE_HEADER =
+  CACHE_MAX_AGE <= 0
+    ? 'public, max-age=0, s-maxage=0, no-store'
+    : `public, max-age=${CACHE_MAX_AGE}, s-maxage=${CACHE_MAX_AGE}, stale-while-revalidate=${CACHE_SWR}`
 
 /**
  * GET /api/video-proxy?url=ENCODED_URL

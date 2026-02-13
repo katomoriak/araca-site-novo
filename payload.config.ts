@@ -37,18 +37,32 @@ function getCollections(): CollectionConfig[] {
 
 // Fallback para desenvolvimento/build sem banco
 const rawUrl = process.env.DATABASE_URL || 'postgresql://user:pass@localhost:5432/payload'
-// Avisar placeholders de documentação (não quebrar no carregamento; a conexão falhará depois e as páginas usam fallback)
-if (rawUrl.includes('ep-....vercel-storage.com') && process.env.NODE_ENV === 'production') {
-  console.error(
-    '[Payload] DATABASE_URL contém host de exemplo. Use a connection string real do Supabase (Project Settings → Database). Páginas do blog/projetos exibirão dados vazios até corrigir.',
-  )
-}
-// Supabase na Vercel: conexão direta (porta 5432) pode resolver para IPv6 e causar ENETUNREACH. Use o pooler (porta 6543).
-const isSupabaseDirect = /supabase\.co.*:5432\//.test(rawUrl)
-if (process.env.VERCEL && isSupabaseDirect) {
-  console.error(
-    '[Payload] DATABASE_URL está usando conexão direta do Supabase (porta 5432). Na Vercel isso pode falhar com ENETUNREACH (IPv6). Use Connection pooling (Session mode, porta 6543) em Project Settings → Database e defina DATABASE_URL com o host pooler (ex.: aws-0-XX.pooler.supabase.com:6543).',
-  )
+const defaultSecret = 'development-secret-please-change-in-production'
+const payloadSecret = process.env.PAYLOAD_SECRET || defaultSecret
+
+// Em produção: falhar cedo com mensagem clara em vez de "There was an error initializing Payload"
+if (process.env.NODE_ENV === 'production') {
+  const noDb = !process.env.DATABASE_URL || rawUrl === 'postgresql://user:pass@localhost:5432/payload' || rawUrl.includes('ep-....vercel-storage.com')
+  if (noDb) {
+    throw new Error(
+      '[Payload] Em produção defina DATABASE_URL (Vercel → Settings → Environment Variables). ' +
+        'Supabase: use a connection string do Project Settings → Database (Connection pooling, porta 6543). ' +
+        'Ver docs/PAYLOAD_PRODUCAO.md',
+    )
+  }
+  if (payloadSecret === defaultSecret) {
+    throw new Error(
+      '[Payload] Em produção defina PAYLOAD_SECRET com 32+ caracteres (Vercel → Settings → Environment Variables). ' +
+        'Ver docs/PAYLOAD_PRODUCAO.md',
+    )
+  }
+  // Supabase na Vercel: conexão direta (porta 5432) pode causar ENETUNREACH. Avisar.
+  const isSupabaseDirect = /supabase\.co.*:5432\//.test(rawUrl)
+  if (process.env.VERCEL && isSupabaseDirect) {
+    console.error(
+      '[Payload] DATABASE_URL está usando porta 5432. Na Vercel use Connection pooling (porta 6543) em Project Settings → Database.',
+    )
+  }
 }
 // Supabase: manter sslmode=require e adicionar uselibpqcompat=true para silenciar aviso do pg (evita verify-full que causa SELF_SIGNED_CERT_IN_CHAIN)
 // Outros provedores: usar verify-full para evitar aviso de segurança do pg
@@ -58,13 +72,6 @@ const databaseURL = rawUrl.includes('supabase.com')
       /([?&])sslmode=(require|prefer|verify-ca)(&|$)/i,
       '$1sslmode=verify-full$3',
     )
-const defaultSecret = 'development-secret-please-change-in-production'
-const payloadSecret = process.env.PAYLOAD_SECRET || defaultSecret
-if (process.env.NODE_ENV === 'production' && payloadSecret === defaultSecret) {
-  console.error(
-    '[Payload] Em produção defina PAYLOAD_SECRET (Vercel → Settings → Environment Variables). Use 32+ caracteres. Até lá, blog/projetos podem falhar.',
-  )
-}
 
 // Sem SMTP: usa transport noop (não envia e não usa Ethereal). Com SMTP: usa servidor real.
 const hasSmtp = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER)

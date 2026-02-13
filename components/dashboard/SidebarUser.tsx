@@ -11,7 +11,7 @@ interface DashboardUser {
   id: string
   name?: string | null
   email?: string | null
-  avatar?: { url: string; alt?: string } | null
+  avatarUrl?: string | null
 }
 
 function getInitials(name: string | null | undefined, email: string | null | undefined): string {
@@ -75,8 +75,12 @@ export function SidebarUser() {
     <SidebarFooter className="border-t border-sidebar-border mt-auto">
       <div className="flex items-center gap-2 px-2 py-2">
         <Avatar className="size-9 shrink-0">
-          {user.avatar?.url && (
-            <AvatarImage src={user.avatar.url} alt={user.avatar.alt ?? user.name ?? undefined} />
+          {user.avatarUrl && (
+            <AvatarImage
+              src={user.avatarUrl}
+              alt={user.name ?? undefined}
+              className="object-cover"
+            />
           )}
           <AvatarFallback className="text-xs font-medium">
             {getInitials(user.name, user.email)}

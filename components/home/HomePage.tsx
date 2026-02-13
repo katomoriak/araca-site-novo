@@ -38,7 +38,7 @@ const ProjectGallery = dynamic(
 const HERO_VIDEO_SRC = '/api/hero-video'
 
 function HeroVideo() {
-  const [shouldLoad, setShouldLoad] = useState(false)
+  const [shouldLoad, setShouldLoad] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -214,7 +214,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
         <HeroVideo />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
         <div className="absolute inset-0 bg-gradient-to-br from-araca-mineral-green/20 via-transparent to-araca-ameixa/15" />
-        
+
         {/* Menu - Liquid Glass (design system: SiteNav) */}
         <SiteNav theme="dark-bg" noEnterAnimation />
 
@@ -256,11 +256,11 @@ export function HomePage({ initialProjects }: HomePageProps) {
             </div>
           </motion.div>
         </div>
-        
+
         <ScrollIndicator />
-        
+
         {/* Gradiente de transição para o bege */}
-        <div 
+        <div
           className="absolute bottom-0 left-0 right-0 z-0 h-32 pointer-events-none"
           style={{
             background: 'linear-gradient(to bottom, transparent 0%, rgba(236, 229, 219, 0.3) 40%, rgba(236, 229, 219, 0.7) 70%, #ECE5DB 100%)'
@@ -270,7 +270,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
       {/* SOBRE NÓS - Scroll Text Reveal */}
       <section className="relative bg-araca-bege-claro">
-        <ScrollTextReveal 
+        <ScrollTextReveal
           texts={[
             'Somos Aracá Interiores.',
             'Nosso modelo é totalmente inovador: você escolhe o que quer contratar.',
@@ -294,9 +294,9 @@ export function HomePage({ initialProjects }: HomePageProps) {
           }}
           className="max-w-7xl text-center"
         />
-        
+
         {/* Gradiente de transição para o marrom */}
-        <div 
+        <div
           className="absolute bottom-0 left-0 right-0 z-0 h-32 pointer-events-none"
           style={{
             background: 'linear-gradient(to bottom, transparent 0%, rgba(48, 22, 12, 0.3) 40%, rgba(48, 22, 12, 0.7) 70%, #30160C 100%)'
@@ -307,7 +307,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
       {/* NOSSOS PROJETOS - Com Scroll Text Reveal */}
       <section id="projetos" className="relative z-20 bg-araca-cafe-escuro overflow-visible">
         {/* Textos que rolam normalmente */}
-        <ScrollTextReveal 
+        <ScrollTextReveal
           texts={[
             'Da ideia ao acabamento final.',
           ]}
@@ -323,7 +323,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
           className="max-w-7xl text-center"
           backgroundLogo="/logotipos/utilitaries/U_CAETE.svg"
         />
-        
+
         {/* Seção com scroll para o texto sticky */}
         <div className="relative bg-araca-cafe-escuro overflow-visible" style={{ minHeight: '150vh' }}>
           {/* Logos decorativos (z-20 para ficarem acima da seção da galeria e não serem cortados) */}
@@ -372,7 +372,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     initial={{ opacity: 0, scaleX: 0 }}
                     whileInView={{ opacity: 1, scaleX: 1 }}
                     viewport={{ once: true }}
-                    transition={{ 
+                    transition={{
                       opacity: { duration: 0.1, delay: 0.3 },
                       scaleX: { duration: 0.5, delay: 0.3, ease: "easeOut" }
                     }}
@@ -418,7 +418,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
           </div>
 
           {/* Gradiente de transição para o bege */}
-          <div 
+          <div
             className="absolute bottom-0 left-0 right-0 z-0 h-32 pointer-events-none"
             style={{
               background: 'linear-gradient(to bottom, transparent 0%, rgba(236, 229, 219, 0.3) 40%, rgba(236, 229, 219, 0.7) 70%, #ECE5DB 100%)'
@@ -429,9 +429,9 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
       {/* Modal de Galeria */}
       {selectedProject && (
-        <ProjectGallery 
-          project={selectedProject} 
-          onClose={closeGallery} 
+        <ProjectGallery
+          project={selectedProject}
+          onClose={closeGallery}
         />
       )}
 
@@ -649,10 +649,10 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     <div>
                       <h3 className="font-display font-semibold text-white">Contato</h3>
                       <a
-                        href="tel:+5511911632003"
+                        href="tel:+5511997458464"
                         className="mt-1 text-sm text-white/90 hover:text-white underline underline-offset-2"
                       >
-                        (11) 91163-2003
+                        (11) 99745-8464
                       </a>
                     </div>
                   </div>
@@ -703,7 +703,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ email: subscribeEmail, status: 'subscribed' }),
-                          }).catch(() => {})
+                          }).catch(() => { })
                         }
                       } catch {
                         setContactError('Erro de conexão. Tente novamente.')
@@ -777,11 +777,10 @@ export function HomePage({ initialProjects }: HomePageProps) {
                             key={op}
                             type="button"
                             onClick={() => setTipoConsulta(op)}
-                            className={`rounded-full border px-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-araca-mineral-green focus:ring-offset-2 ${
-                              tipoConsulta === op
-                                ? 'border-araca-mineral-green bg-araca-mineral-green/10 text-araca-cafe-escuro'
-                                : 'border-gray-200 text-araca-chocolate-amargo hover:border-araca-mineral-green hover:bg-araca-mineral-green/5'
-                            }`}
+                            className={`rounded-full border px-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-araca-mineral-green focus:ring-offset-2 ${tipoConsulta === op
+                              ? 'border-araca-mineral-green bg-araca-mineral-green/10 text-araca-cafe-escuro'
+                              : 'border-gray-200 text-araca-chocolate-amargo hover:border-araca-mineral-green hover:bg-araca-mineral-green/5'
+                              }`}
                           >
                             {op}
                           </button>
@@ -834,7 +833,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
       {/* Botão flutuante WhatsApp */}
       <a
-        href="https://wa.me/5511911632003"
+        href="https://wa.me/5511997458464"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Fale conosco no WhatsApp"

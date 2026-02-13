@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Upload, ImagePlus, FolderOpen, FolderPlus, FolderMinus, Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,30 @@ import {
 import { MediaPicker, type MediaItem } from './MediaPicker'
 
 const UPLOAD_FOLDER_GERAL = '__geral__'
+
+function ThumbnailWithLoading({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className={className || "relative h-full w-full"}>
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <Loader2 className="size-4 animate-spin text-muted-foreground/50" />
+        </div>
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className={cn(
+          "h-full w-full object-cover transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0"
+        )}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+      />
+    </div>
+  )
+}
 
 /** Gera texto alternativo a partir do nome do arquivo (ex: "minha-foto.jpg" → "Minha foto"). */
 export function filenameToAlt(filename: string): string {
@@ -436,329 +461,319 @@ export function ProjetoImageDialog({
 
   return (
     <>
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md bg-araca-bege-claro border-border/80">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-md bg-araca-bege-claro border-border/80">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
 
-        {step === 'alt' ? (
-          <>
-            <p className="text-sm text-muted-foreground">
-              Edite o texto alternativo (alt) de cada mídia. O nome foi gerado a partir do arquivo.
-            </p>
-            <div className="space-y-3 max-h-64 overflow-y-auto py-2">
-              {pendingItems.map((item, i) => (
-                <div key={`${item.filePath}-${i}`} className="flex items-center gap-3 rounded border p-2">
-                  <div className="size-12 shrink-0 overflow-hidden rounded bg-muted">
-                    {item.type === 'image' ? (
-                      <img
-                        src={item.publicUrl}
-                        alt=""
-                        className="size-full object-cover"
+          {step === 'alt' ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                Edite o texto alternativo (alt) de cada mídia. O nome foi gerado a partir do arquivo.
+              </p>
+              <div className="space-y-3 max-h-64 overflow-y-auto py-2">
+                {pendingItems.map((item, i) => (
+                  <div key={`${item.filePath}-${i}`} className="flex items-center gap-3 rounded border p-2">
+                    <div className="size-12 shrink-0 overflow-hidden rounded bg-muted">
+                      {item.type === 'image' ? (
+                        <ThumbnailWithLoading src={item.publicUrl} alt="" className="size-full" />
+                      ) : (
+                        <div className="flex size-full items-center justify-center text-xs text-muted-foreground">
+                          Vídeo
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-xs text-muted-foreground">{item.filePath}</p>
+                      <Input
+                        value={altNames[i] ?? item.defaultName}
+                        onChange={(e) => {
+                          const next = [...altNames]
+                          next[i] = e.target.value
+                          setAltNames(next)
+                        }}
+                        placeholder="Texto alternativo"
+                        className="mt-1 text-sm"
                       />
-                    ) : (
-                      <div className="flex size-full items-center justify-center text-xs text-muted-foreground">
-                        Vídeo
-                      </div>
-                    )}
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs text-muted-foreground">{item.filePath}</p>
-                    <Input
-                      value={altNames[i] ?? item.defaultName}
-                      onChange={(e) => {
-                        const next = [...altNames]
-                        next[i] = e.target.value
-                        setAltNames(next)
-                      }}
-                      placeholder="Texto alternativo"
-                      className="mt-1 text-sm"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => { setStep('choose'); setPendingItems([]); setAltNames([]) }}>
-                Voltar
-              </Button>
-              <Button type="button" onClick={handleConfirmAltStep}>
-                Adicionar todas
-              </Button>
-            </DialogFooter>
-          </>
-        ) : (
-          <>
-            <div className="flex gap-1 rounded-lg border border-border/60 bg-background/60 p-1">
-              <button
-                type="button"
-                onClick={() => { setMode('upload'); setError(null) }}
-                disabled={!canUpload}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  mode === 'upload'
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground disabled:opacity-50'
-                }`}
-              >
-                <Upload className="size-4" />
-                Enviar arquivo{allowMultiple ? 's' : ''}
-              </button>
-              <button
-                type="button"
-                onClick={() => { setMode('gallery'); setError(null) }}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  mode === 'gallery'
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-                }`}
-              >
-                <ImagePlus className="size-4" />
-                Banco de mídias
-              </button>
-            </div>
+                ))}
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => { setStep('choose'); setPendingItems([]); setAltNames([]) }}>
+                  Voltar
+                </Button>
+                <Button type="button" onClick={handleConfirmAltStep}>
+                  Adicionar todas
+                </Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-1 rounded-lg border border-border/60 bg-background/60 p-1">
+                <button
+                  type="button"
+                  onClick={() => { setMode('upload'); setError(null) }}
+                  disabled={!canUpload}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === 'upload'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground disabled:opacity-50'
+                    }`}
+                >
+                  <Upload className="size-4" />
+                  Enviar arquivo{allowMultiple ? 's' : ''}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setMode('gallery'); setError(null) }}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === 'gallery'
+                      ? 'bg-primary text-primary-foreground shadow-sm'
+                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                    }`}
+                >
+                  <ImagePlus className="size-4" />
+                  Banco de mídias
+                </button>
+              </div>
 
-            <div className="space-y-4 py-2 min-h-[200px]">
-              {mode === 'upload' ? (
-                <>
-                  {useFolderUpload && (
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Pasta para enviar</label>
-                      <div className="flex gap-2">
-                        <Select value={uploadFolder} onValueChange={setUploadFolder}>
-                          <SelectTrigger className="flex-1">
-                            <FolderOpen className="size-4 shrink-0" />
-                            <SelectValue placeholder="Escolha a pasta" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={UPLOAD_FOLDER_GERAL}>Geral</SelectItem>
-                            {projects.map((p) => (
-                              <SelectItem key={p.slug} value={p.slug}>
-                                {p.title}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setCreateFolderOpen(true)}
-                          title="Nova pasta (projeto)"
-                        >
-                          <FolderPlus className="size-4" />
-                        </Button>
-                        {canDeleteFolder && (
+              <div className="space-y-4 py-2 min-h-[200px]">
+                {mode === 'upload' ? (
+                  <>
+                    {useFolderUpload && (
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Pasta para enviar</label>
+                        <div className="flex gap-2">
+                          <Select value={uploadFolder} onValueChange={setUploadFolder}>
+                            <SelectTrigger className="flex-1">
+                              <FolderOpen className="size-4 shrink-0" />
+                              <SelectValue placeholder="Escolha a pasta" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value={UPLOAD_FOLDER_GERAL}>Geral</SelectItem>
+                              {projects.map((p) => (
+                                <SelectItem key={p.slug} value={p.slug}>
+                                  {p.title}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <Button
                             type="button"
                             variant="outline"
                             size="icon"
-                            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={handleDeleteFolder}
-                            disabled={!!deletingFolderSlug}
-                            title="Excluir pasta"
+                            onClick={() => setCreateFolderOpen(true)}
+                            title="Nova pasta (projeto)"
                           >
-                            {deletingFolderSlug === uploadFolder ? (
-                              <Loader2 className="size-4 animate-spin" />
-                            ) : (
-                              <FolderMinus className="size-4" />
-                            )}
+                            <FolderPlus className="size-4" />
                           </Button>
-                        )}
+                          {canDeleteFolder && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={handleDeleteFolder}
+                              disabled={!!deletingFolderSlug}
+                              title="Excluir pasta"
+                            >
+                              {deletingFolderSlug === uploadFolder ? (
+                                <Loader2 className="size-4 animate-spin" />
+                              ) : (
+                                <FolderMinus className="size-4" />
+                              )}
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {!canUpload && (
-                    <p className="text-sm text-muted-foreground">
-                      Defina o slug do projeto para enviar novos arquivos. Use o banco de mídias para escolher imagens já enviadas.
-                    </p>
-                  )}
-                  <input
-                    id="projeto-dialog-file-input"
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*,video/*"
-                    multiple={allowMultiple}
-                    className="sr-only"
-                    onChange={handleFileChange}
-                    aria-hidden
-                  />
-                  <div
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    className="flex min-h-[160px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30 p-4 transition-colors hover:border-muted-foreground/40 hover:bg-muted/50"
-                  >
-                    {files.length > 1 ? (
-                      <div className="w-full space-y-2">
-                        <p className="text-sm font-medium text-muted-foreground">
-                          {files.length} arquivo(s) selecionado(s)
-                        </p>
-                        <ul className="max-h-32 overflow-y-auto text-xs text-muted-foreground">
-                          {files.map((f, idx) => (
-                            <li key={idx} className="truncate">{f.name}</li>
-                          ))}
-                        </ul>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => { setFiles([]) }}
-                        >
-                          Limpar
-                        </Button>
-                      </div>
-                    ) : preview && !isVideo ? (
-                      <div className="relative w-full max-h-48 overflow-hidden rounded-md">
-                        <img
-                          src={preview}
-                          alt="Preview"
-                          className="h-auto max-h-48 w-full object-contain"
-                        />
-                        <p className="mt-2 text-center text-xs text-muted-foreground truncate">
-                          {file?.name}
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="mt-2 w-full"
-                          onClick={() => {
-                            setFile(null)
-                            if (preview) URL.revokeObjectURL(preview)
-                            setPreview(null)
-                          }}
-                        >
-                          Trocar arquivo
-                        </Button>
-                      </div>
-                    ) : file && isVideo ? (
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">{file.name}</p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="mt-2"
-                          onClick={() => { setFile(null); setPreview(null) }}
-                        >
-                          Trocar arquivo
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex w-full flex-col items-center gap-3">
-                        <label
-                          htmlFor="projeto-dialog-file-input"
-                          className="flex cursor-pointer flex-col items-center gap-2 text-center"
-                        >
-                          <Upload className="size-10 text-muted-foreground" />
-                          <span className="text-sm font-medium text-muted-foreground">
-                            Clique ou arraste imagem(s)/vídeo(s){allowMultiple ? ' (vários permitidos)' : ''}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            JPG, PNG, GIF, WebP, MP4, MOV
-                          </span>
-                        </label>
-                        {allowMultiple && (
+                    )}
+                    {!canUpload && (
+                      <p className="text-sm text-muted-foreground">
+                        Defina o slug do projeto para enviar novos arquivos. Use o banco de mídias para escolher imagens já enviadas.
+                      </p>
+                    )}
+                    <input
+                      id="projeto-dialog-file-input"
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple={allowMultiple}
+                      className="sr-only"
+                      onChange={handleFileChange}
+                      aria-hidden
+                    />
+                    <div
+                      onDrop={handleDrop}
+                      onDragOver={handleDragOver}
+                      className="flex min-h-[160px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/30 p-4 transition-colors hover:border-muted-foreground/40 hover:bg-muted/50"
+                    >
+                      {files.length > 1 ? (
+                        <div className="w-full space-y-2">
+                          <p className="text-sm font-medium text-muted-foreground">
+                            {files.length} arquivo(s) selecionado(s)
+                          </p>
+                          <ul className="max-h-32 overflow-y-auto text-xs text-muted-foreground">
+                            {files.map((f, idx) => (
+                              <li key={idx} className="truncate">{f.name}</li>
+                            ))}
+                          </ul>
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={() => fileInputRef.current?.click()}
+                            onClick={() => { setFiles([]) }}
                           >
-                            Escolher arquivo(s)
+                            Limpar
                           </Button>
-                        )}
-                      </div>
-                    )}
+                        </div>
+                      ) : preview && !isVideo ? (
+                        <div className="relative w-full max-h-48 overflow-hidden rounded-md">
+                          <ThumbnailWithLoading src={preview} alt="Preview" className="h-auto max-h-48 w-full" />
+                          <p className="mt-2 text-center text-xs text-muted-foreground truncate">
+                            {file?.name}
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full"
+                            onClick={() => {
+                              setFile(null)
+                              if (preview) URL.revokeObjectURL(preview)
+                              setPreview(null)
+                            }}
+                          >
+                            Trocar arquivo
+                          </Button>
+                        </div>
+                      ) : file && isVideo ? (
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">{file.name}</p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="mt-2"
+                            onClick={() => { setFile(null); setPreview(null) }}
+                          >
+                            Trocar arquivo
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex w-full flex-col items-center gap-3">
+                          <label
+                            htmlFor="projeto-dialog-file-input"
+                            className="flex cursor-pointer flex-col items-center gap-2 text-center"
+                          >
+                            <Upload className="size-10 text-muted-foreground" />
+                            <span className="text-sm font-medium text-muted-foreground">
+                              Clique ou arraste imagem(s)/vídeo(s){allowMultiple ? ' (vários permitidos)' : ''}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              JPG, PNG, GIF, WebP, MP4, MOV
+                            </span>
+                          </label>
+                          {allowMultiple && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              Escolher arquivo(s)
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {error && <p className="text-sm text-destructive">{error}</p>}
+                  </>
+                ) : (
+                  <div className="rounded-lg border border-border/60 bg-background/50 p-2 space-y-2">
+                    <MediaPicker
+                      source="projetos"
+                      currentProjectSlug={projectSlug}
+                      onSelect={handleGallerySelect}
+                      multiSelect={allowMultiple}
+                      onSelectMultiple={handleGallerySelectMultiple}
+                    />
                   </div>
-                  {error && <p className="text-sm text-destructive">{error}</p>}
-                </>
-              ) : (
-                <div className="rounded-lg border border-border/60 bg-background/50 p-2 space-y-2">
-                  <MediaPicker
-                    source="projetos"
-                    currentProjectSlug={projectSlug}
-                    onSelect={handleGallerySelect}
-                    multiSelect={allowMultiple}
-                    onSelectMultiple={handleGallerySelectMultiple}
-                  />
-                </div>
+                )}
+              </div>
+
+              {mode === 'upload' && (
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => handleClose(false)}>
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleInsert}
+                    disabled={!hasFiles || loading}
+                  >
+                    {loading ? 'Enviando…' : allowMultiple && (files.length > 1 || file) ? 'Próximo: editar alt' : 'Inserir'}
+                  </Button>
+                </DialogFooter>
               )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={createFolderOpen} onOpenChange={setCreateFolderOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Nova pasta</DialogTitle>
+            <DialogDescription>
+              Crie uma pasta (projeto) para organizar mídias. Depois você pode editar o projeto para adicionar capa e galeria.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Slug (identificador)</label>
+              <Input
+                value={newFolderSlug}
+                onChange={(e) =>
+                  setNewFolderSlug(
+                    e.target.value
+                      .replace(/\s/g, '_')
+                      .replace(/[^a-zA-Z0-9_.-]/g, '')
+                      .toLowerCase()
+                  )
+                }
+                placeholder="ex: meu-projeto-2025"
+              />
             </div>
-
-            {mode === 'upload' && (
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => handleClose(false)}>
-                  Cancelar
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleInsert}
-                  disabled={!hasFiles || loading}
-                >
-                  {loading ? 'Enviando…' : allowMultiple && (files.length > 1 || file) ? 'Próximo: editar alt' : 'Inserir'}
-                </Button>
-              </DialogFooter>
-            )}
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
-
-    <Dialog open={createFolderOpen} onOpenChange={setCreateFolderOpen}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Nova pasta</DialogTitle>
-          <DialogDescription>
-            Crie uma pasta (projeto) para organizar mídias. Depois você pode editar o projeto para adicionar capa e galeria.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-2">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Slug (identificador)</label>
-            <Input
-              value={newFolderSlug}
-              onChange={(e) =>
-                setNewFolderSlug(
-                  e.target.value
-                    .replace(/\s/g, '_')
-                    .replace(/[^a-zA-Z0-9_.-]/g, '')
-                    .toLowerCase()
-                )
-              }
-              placeholder="ex: meu-projeto-2025"
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Título</label>
+              <Input
+                value={newFolderTitle}
+                onChange={(e) => setNewFolderTitle(e.target.value)}
+                placeholder="ex: Meu Projeto 2025"
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Título</label>
-            <Input
-              value={newFolderTitle}
-              onChange={(e) => setNewFolderTitle(e.target.value)}
-              placeholder="ex: Meu Projeto 2025"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setCreateFolderOpen(false)}
-            disabled={creatingFolder}
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="button"
-            onClick={handleCreateFolder}
-            disabled={!newFolderSlug.trim() || !newFolderTitle.trim() || creatingFolder}
-          >
-            {creatingFolder && <Loader2 className="mr-2 size-4 animate-spin" />}
-            Criar pasta
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setCreateFolderOpen(false)}
+              disabled={creatingFolder}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCreateFolder}
+              disabled={!newFolderSlug.trim() || !newFolderTitle.trim() || creatingFolder}
+            >
+              {creatingFolder && <Loader2 className="mr-2 size-4 animate-spin" />}
+              Criar pasta
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

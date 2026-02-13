@@ -27,7 +27,7 @@ const stagger = {
 }
 
 export function SobrePageContent() {
-  const { hero, quemSomos, valores, processo, equipe, depoimentos, cta } = sobreContent
+  const { hero, quemSomos, valores, processo, depoimentos, cta } = sobreContent
   const parallaxController = useParallaxController()
   const { ref: parallaxRef } = useParallax<HTMLDivElement>({
     translateY: [-30, 30],
@@ -213,49 +213,6 @@ export function SobrePageContent() {
         </Container>
       </section>
 
-      {/* Equipe */}
-      <section className="py-12 sm:py-16 md:py-20" aria-labelledby="equipe-heading">
-        <Container>
-          <motion.h2
-            id="equipe-heading"
-            className="font-display text-3xl font-bold text-foreground sm:text-4xl text-center mb-10 sm:mb-12"
-            {...fadeInUp}
-          >
-            {equipe.title}
-          </motion.h2>
-          <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 max-w-4xl mx-auto">
-            {equipe.members.map((member, i) => (
-              <motion.div key={member.name} {...stagger} transition={{ delay: i * 0.1 }}>
-                <GlassCard variant="default" className="overflow-hidden p-0 h-full">
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-6 p-6">
-                    <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-2xl bg-muted mx-auto sm:mx-0">
-                      <ProgressiveImage
-                        src={member.image}
-                        alt={member.imageAlt}
-                        width={128}
-                        height={128}
-                        className="h-full w-full object-cover"
-                        blurPlaceholderUrl={getBlurPlaceholderUrl(member.image)}
-                      />
-                    </div>
-                    <div className="flex-1 text-center sm:text-left">
-                      <h3 className="font-display text-xl font-semibold text-foreground">
-                        {member.name}
-                      </h3>
-                      <p className="mt-1 font-body text-sm text-primary font-medium">
-                        {member.role}
-                      </p>
-                      <p className="mt-4 font-body text-muted-foreground text-sm leading-relaxed">
-                        {member.bio}
-                      </p>
-                    </div>
-                  </div>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-        </Container>
-      </section>
 
       {/* Depoimentos */}
       <section

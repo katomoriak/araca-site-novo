@@ -9,14 +9,22 @@ import {
   ListObjectsV2Command,
   DeleteObjectCommand,
   CopyObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const bucket = process.env.S3_BUCKET ?? ''
 const publicBase = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '') ?? ''
 
+/** Normaliza endpoint R2: https://<account_id>.r2.cloudflarestorage.com (sem trailing slash). */
+function normalizeR2Endpoint(url: string | undefined): string | null {
+  if (!url?.trim()) return null
+  const u = url.trim().replace(/\/+$/, '')
+  return u.startsWith('http://') || u.startsWith('https://') ? u : null
+}
+
 function getClient(): S3Client | null {
-  const endpoint = process.env.S3_ENDPOINT
+  const endpoint = normalizeR2Endpoint(process.env.S3_ENDPOINT)
   const accessKey = process.env.S3_ACCESS_KEY_ID
   const secretKey = process.env.S3_SECRET_ACCESS_KEY
   if (!endpoint || !accessKey || !secretKey || !bucket || !publicBase) return null
@@ -27,6 +35,20 @@ function getClient(): S3Client | null {
     credentials: { accessKeyId: accessKey, secretAccessKey: secretKey },
     forcePathStyle: true,
   })
+}
+
+/** Log amigável para 403 (UnknownError costuma ser credenciais/endpoint/permissão no R2). */
+function logS3Error(context: string, e: unknown): void {
+  const err = e as { $metadata?: { httpStatusCode?: number }; message?: string; name?: string }
+  const status = err?.$metadata?.httpStatusCode
+  const msg = err?.message ?? (e instanceof Error ? e.message : String(e))
+  console.error(`[storage-r2] ${context}:`, msg)
+  if (status === 403) {
+    console.error(
+      '[storage-r2] 403 Forbidden: confira S3_ENDPOINT (https://<account_id>.r2.cloudflarestorage.com), ' +
+      'S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, nome do bucket e permissão "Object Read & Write" do token. Ver docs/STORAGE_R2.md'
+    )
+  }
 }
 
 /** URL pública de um arquivo no bucket. */
@@ -138,7 +160,7 @@ export async function listBlogMediaFromStorage(options: {
       continuationToken = NextContinuationToken
     } while (continuationToken)
   } catch (e) {
-    console.error('[storage-r2] listBlogMediaFromStorage failed:', e instanceof Error ? e.message : e)
+    logS3Error('listBlogMediaFromStorage failed', e)
     return []
   }
 
@@ -176,8 +198,14 @@ async function listPrefix(
       continuationToken = NextContinuationToken
     } while (continuationToken)
   } catch (e) {
-    // Endpoint pode retornar HTML/plain (ex.: proxy, 403) em vez de XML → SDK lança "Deserialization error"
-    console.error('[storage-r2] listPrefix failed:', prefix, e instanceof Error ? e.message : e)
+    const err = e as { $metadata?: { httpStatusCode?: number }; message?: string }
+    const msg = err?.message ?? (e instanceof Error ? e.message : String(e))
+    logS3Error(`listPrefix failed (prefix: ${prefix})`, e)
+    if (err?.$metadata?.httpStatusCode === 403 || msg.includes('Access Denied')) {
+      console.error(
+        '[storage-r2] Dica: o token R2 (S3_ACCESS_KEY_ID/S3_SECRET_ACCESS_KEY) precisa de permissão "Object Read & Write" no bucket inteiro. Ver docs/STORAGE_R2.md'
+      )
+    }
     return []
   }
 
@@ -211,9 +239,9 @@ export async function listProjetosMediaFromStorage(options: {
 
   const filtered = search
     ? all.filter(
-        (f) =>
-          f.name.toLowerCase().includes(search) || f.path.toLowerCase().includes(search)
-      )
+      (f) =>
+        f.name.toLowerCase().includes(search) || f.path.toLowerCase().includes(search)
+    )
     : all
 
   filtered.sort((a, b) => b.path.localeCompare(a.path))
@@ -227,7 +255,7 @@ export async function deleteBlogMediaFromStorage(path: string): Promise<boolean>
     await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: path }))
     return true
   } catch (e) {
-    console.error('[storage-r2] deleteBlogMediaFromStorage:', e)
+    logS3Error('deleteBlogMediaFromStorage', e)
     return false
   }
 }
@@ -239,7 +267,7 @@ export async function deleteProjetosMediaFromStorage(path: string): Promise<bool
     await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: path }))
     return true
   } catch (e) {
-    console.error('[storage-r2] deleteProjetosMediaFromStorage:', e)
+    logS3Error('deleteProjetosMediaFromStorage', e)
     return false
   }
 }
@@ -262,7 +290,7 @@ export async function moveProjetosMediaInStorage(
     await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: fromPath }))
     return true
   } catch (e) {
-    console.error('[storage-r2] moveProjetosMediaInStorage:', e)
+    logS3Error('moveProjetosMediaInStorage', e)
     return false
   }
 }
@@ -286,7 +314,48 @@ export async function uploadBlogFile(
     )
     return { publicUrl: getR2PublicUrl(path) }
   } catch (e) {
-    console.error('[storage-r2] uploadBlogFile:', e)
+    logS3Error('uploadBlogFile', e)
+    return null
+  }
+}
+
+/** Verifica se um arquivo existe no storage. */
+export async function fileExistsInStorage(path: string): Promise<boolean> {
+  const client = getClient()
+  if (!client) return false
+  try {
+    await client.send(new HeadObjectCommand({ Bucket: bucket, Key: path }))
+    return true
+  } catch (e) {
+    const err = e as { name?: string }
+    if (err.name === 'NotFound' || err.name === 'NoSuchKey') return false
+    logS3Error('fileExistsInStorage', e)
+    return false
+  }
+}
+
+/** Upload genérico (buffer) para qualquer path. */
+export async function uploadFileToStorage(
+  path: string,
+  buffer: Buffer,
+  contentType: string
+): Promise<{ publicUrl: string } | null> {
+  const client = getClient()
+  if (!client) return null
+  try {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: path,
+        Body: buffer,
+        ContentType: contentType,
+        // Cache-Control longo para thumbnails
+        CacheControl: 'public, max-age=31536000, immutable',
+      })
+    )
+    return { publicUrl: getR2PublicUrl(path) }
+  } catch (e) {
+    logS3Error('uploadFileToStorage', e)
     return null
   }
 }

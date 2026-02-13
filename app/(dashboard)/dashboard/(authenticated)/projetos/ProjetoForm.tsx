@@ -17,6 +17,7 @@ import { ArrowLeft, Loader2, Trash2, GripVertical, Video, ImagePlus } from 'luci
 import { ProjetoImageDialog } from '@/components/dashboard/ProjetoImageDialog'
 import { Badge } from '@/components/ui/Badge'
 import { Switch } from '@/components/ui/Switch'
+import { cn } from '@/lib/utils'
 
 export interface MediaItem {
   type: 'image' | 'video'
@@ -71,6 +72,30 @@ function getMediaThumbUrl(
     return `${r2Public}/${slug}/${encoded}`
   }
   return `/projetos/${slug}/${encoded}`
+}
+
+function ThumbnailWithLoading({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [loaded, setLoaded] = useState(false)
+  return (
+    <div className={className || "relative h-full w-full"}>
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <Loader2 className="size-4 animate-spin text-muted-foreground/50" />
+        </div>
+      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className={cn(
+          "h-full w-full object-cover transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0"
+        )}
+        onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
+      />
+    </div>
+  )
 }
 
 export function ProjetoForm({
@@ -360,16 +385,13 @@ export function ProjetoForm({
           {form.cover && (
             <div className="flex items-center gap-3">
               <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-md border bg-muted">
-                <Image
+                <ThumbnailWithLoading
                   src={getMediaThumbUrl(
                     form.slug || slugParam || '',
                     form.cover,
                     projetosBaseUrl ?? undefined
                   )}
                   alt="Capa"
-                  fill
-                  className="object-cover"
-                  unoptimized
                 />
               </div>
               <p className="text-sm text-muted-foreground truncate max-w-xs">Arquivo: {form.cover}</p>
@@ -460,14 +482,7 @@ export function ProjetoForm({
                   </div>
                   <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted">
                     {m.type === 'image' && thumbUrl ? (
-                      <Image
-                        src={thumbUrl}
-                        alt=""
-                        width={56}
-                        height={56}
-                        className="h-full w-full object-cover"
-                        unoptimized
-                      />
+                      <ThumbnailWithLoading src={thumbUrl} alt="" className="h-full w-full" />
                     ) : m.type === 'video' ? (
                       <Video className="size-6 text-muted-foreground" />
                     ) : (

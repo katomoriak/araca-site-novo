@@ -54,25 +54,6 @@ export const sobreContent = {
     ],
   },
 
-  equipe: {
-    title: 'Equipe',
-    members: [
-      {
-        name: 'Rafaela Garbuio',
-        role: 'Fundadora e designer de interiores',
-        bio: 'À frente da direção criativa da Aracá, une sensibilidade espacial e atenção ao detalhe. Especializada em interiores residenciais e comerciais, conduz cada projeto do conceito à entrega, com foco em ambientes que refletem quem mora ou trabalha neles.',
-        image: '/logotipos/LOGOTIPO%20REDONDO@300x.png', // trocar por foto real quando disponível
-        imageAlt: 'Rafaela Garbuio — Fundadora e designer de interiores Aracá',
-      },
-      {
-        name: 'Marcos Paulo',
-        role: 'Fundador e projetista',
-        bio: 'Responsável pela precisão técnica e pelo desenho executivo dos projetos. Garante que ideias e detalhamentos se traduzam em obra com clareza e previsibilidade, do projeto à coordenação na execução.',
-        image: '/logotipos/LOGOTIPO%20REDONDO@300x.png', // trocar por foto real quando disponível
-        imageAlt: 'Marcos Paulo — Fundador e projetista Aracá',
-      },
-    ],
-  },
 
   depoimentos: [
     {

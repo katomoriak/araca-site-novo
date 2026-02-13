@@ -105,7 +105,7 @@ export default function ProjetosMidiasPage() {
     setLoading(true)
     setError(null)
     try {
-      const params = new URLSearchParams({ limit: '200' })
+      const params = new URLSearchParams({ limit: '100' })
       if (debouncedSearch) params.set('search', debouncedSearch)
       const res = await fetch(`/api/dashboard/projetos/media?${params}`, { credentials: 'include' })
       const data = await res.json().catch(() => ({}))

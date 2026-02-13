@@ -33,7 +33,7 @@ function findNode20() {
       const nodeExe = path.join(nvmHome, v20, isWindows ? 'node.exe' : 'bin/node');
       if (fs.existsSync(nodeExe)) return nodeExe;
     }
-  } catch (_) {}
+  } catch (_) { }
   return null;
 }
 
@@ -58,7 +58,8 @@ console.log('Usando Node 20:', node20);
 console.log('');
 
 // PATH com Node 20 primeiro garante que npx use Node 20.
-const result = spawnSync(isWindows ? 'npx.cmd' : 'npx', ['payload', 'migrate'], {
+const args = process.argv.slice(2).length > 0 ? process.argv.slice(2) : ['migrate']
+const result = spawnSync(isWindows ? 'npx.cmd' : 'npx', ['payload', ...args], {
   cwd: projectRoot,
   stdio: 'inherit',
   env: { ...process.env, PATH: newPath, Path: newPath, NODE_OPTIONS: '' },

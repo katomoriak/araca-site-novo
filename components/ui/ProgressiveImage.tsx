@@ -16,10 +16,12 @@ export interface ProgressiveImageProps extends Omit<ImageProps, 'placeholder' | 
   /** Exibe etiqueta "HQ" no canto quando a imagem em alta qualidade terminar de carregar. */
   showHqBadge?: boolean
   /**
-   * Enquanto a prévia está visível e a alta qualidade carrega: 'full' = etiqueta "Prévia" + "Carregando alta qualidade" + ícone;
-   * 'icon' = só o ícone de loading. Omitir = não exibe indicador.
+   * WHILE the preview is visible and the high quality loads: 'full' = label "Preview" + "Loading high quality" + icon;
+   * 'icon' = only the loading icon. Omit = no indicator.
    */
   previewLoadingVariant?: 'full' | 'icon'
+  /** Explicitly set fetch priority for the HQ image. */
+  fetchPriority?: 'high' | 'low' | 'auto'
 }
 
 function getLayerClass(className?: string) {
@@ -40,6 +42,7 @@ export function ProgressiveImage({
   maxFullWidth,
   showHqBadge = false,
   previewLoadingVariant,
+  fetchPriority,
   className,
   onLoad,
   ...rest
@@ -162,12 +165,14 @@ export function ProgressiveImage({
         />
       )}
 
-      {/* 4. Alta qualidade: só monta quando prévia carregou; transição ao carregar (usa fullSrc com proxy se maxFullWidth) */}
-      {(!previewUrl || previewLoaded) && (
+      {/* 4. Alta qualidade: monta se prévia carregou OU se for prioridade (carrega em paralelo com a prévia) */}
+      {(previewLoaded || (!previewUrl) || rest.priority) && (
         <Image
           src={fullSrc}
           alt={alt}
           {...rest}
+          // @ts-ignore - fetchPriority is supported by Next.js 13.4.4+ but might not be in the type defs yet depending on version
+          fetchPriority={fetchPriority ?? (rest.priority ? 'high' : 'auto')}
           className={cn(
             layerClass,
             'transition-opacity duration-300',

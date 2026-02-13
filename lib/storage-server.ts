@@ -16,6 +16,8 @@ import {
   moveProjetosMediaInStorage as r2MoveProjetosMediaInStorage,
   uploadBlogFile as r2UploadBlogFile,
   PROJETOS_MIDIAS_PREFIX as R2_PROJETOS_MIDIAS_PREFIX,
+  fileExistsInStorage as r2FileExistsInStorage,
+  uploadFileToStorage as r2UploadFileToStorage,
 } from './storage-r2'
 
 export { isR2Configured }
@@ -71,4 +73,12 @@ export async function uploadBlogFile(path: string, buffer: Buffer, contentType: 
 /** URL pública de um arquivo no bucket R2. Retorna '' se R2 não estiver configurado. */
 export function getStoragePublicUrl(path: string): string {
   return isR2Configured() ? getR2PublicUrl(path) : ''
+}
+
+export async function fileExistsInStorage(path: string) {
+  return isR2Configured() ? r2FileExistsInStorage(path) : false
+}
+
+export async function uploadFileToStorage(path: string, buffer: Buffer, contentType: string) {
+  return isR2Configured() ? r2UploadFileToStorage(path, buffer, contentType) : null
 }

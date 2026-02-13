@@ -79,11 +79,10 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      name: 'avatar',
-      type: 'upload',
-      relationTo: 'media',
-      label: { en: 'Avatar', pt: 'Foto de perfil' },
-      admin: { description: { pt: 'Foto do autor na página de perfil e nos posts.' } },
+      name: 'avatarUrl',
+      type: 'text',
+      label: { en: 'Avatar URL', pt: 'Foto de perfil (URL)' },
+      admin: { description: { pt: 'URL da foto do autor. Pode ser externa ou do banco de mídias.' } },
     },
     {
       name: 'title',
