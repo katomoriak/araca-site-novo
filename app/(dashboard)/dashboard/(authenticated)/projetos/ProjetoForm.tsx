@@ -52,30 +52,23 @@ function safeFilename(name: string): string {
     .slice(0, 100) || 'file'
 }
 
-/** URL pública da mídia para miniatura. Se file contém '/', é path no bucket (ex: midias/arquivo.jpg); senão é arquivo do projeto (slug/file). */
+/** URL pública da mídia para miniatura (apenas R2). Se file contém '/', é path no bucket (ex: midias/arquivo.jpg); senão é arquivo do projeto (slug/file). */
 function getMediaThumbUrl(
   slug: string,
   file: string,
   projetosBaseUrl?: string | null
 ): string {
   const r2Public = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, '')
-  const bucket = process.env.NEXT_PUBLIC_SUPABASE_PROJETOS_BUCKET ?? 'a_public'
-  const bucketBase = r2Public
-    ? r2Public
-    : supabaseUrl
-      ? `${supabaseUrl}/storage/v1/object/public/${bucket}`
-      : ''
 
   if (file.includes('/')) {
-    return bucketBase ? `${bucketBase}/${file}` : `/projetos/${file}`
+    return r2Public ? `${r2Public}/${file}` : `/projetos/${file}`
   }
   const encoded = encodeURIComponent(file)
   if (projetosBaseUrl) {
     return `${projetosBaseUrl.replace(/\/$/, '')}/${encoded}`
   }
-  if (bucketBase) {
-    return `${bucketBase}/${slug}/${encoded}`
+  if (r2Public) {
+    return `${r2Public}/${slug}/${encoded}`
   }
   return `/projetos/${slug}/${encoded}`
 }

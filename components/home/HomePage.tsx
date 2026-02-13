@@ -34,6 +34,46 @@ const ProjectGallery = dynamic(
   { ssr: false }
 )
 
+/** Vídeo do hero via proxy por redirect: /api/hero-video → 302 para R2. Peso na Vercel é só o redirect. */
+const HERO_VIDEO_SRC = '/api/hero-video'
+
+function HeroVideo() {
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e?.isIntersecting) setShouldLoad(true)
+      },
+      { rootMargin: '50px', threshold: 0 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  return (
+    <div ref={containerRef} className="absolute inset-0">
+      {shouldLoad ? (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src={HERO_VIDEO_SRC} type="video/mp4" />
+        </video>
+      ) : (
+        <div className="absolute inset-0 bg-neutral-900" aria-hidden />
+      )}
+    </div>
+  )
+}
+
 const TIPOS_CONSULTA = ['Projeto residencial', 'Projeto comercial', 'Consultoria', 'Outros'] as const
 
 // Fallback quando não há projetos em public/projetos (ex.: antes de preencher)
@@ -170,27 +210,8 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
       {/* HERO COM MENU INTEGRADO */}
       <section className="relative flex min-h-screen flex-col overflow-hidden text-white">
-        {/* Background Video */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source
-            src={
-              process.env.NEXT_PUBLIC_HERO_VIDEO_URL ||
-              (process.env.NEXT_PUBLIC_R2_PUBLIC_URL
-                ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL.replace(/\/$/, '')}/FJO__VIDEOFACHADA_01_R00.mp4`
-                : process.env.NEXT_PUBLIC_SUPABASE_URL
-                  ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/FJO__VIDEOFACHADA_01_R00.mp4`
-                  : '')
-            }
-            type="video/mp4"
-          />
-        </video>
+        {/* Background Video — servido preferencialmente pelo R2 para não consumir cache/bandwidth da Vercel */}
+        <HeroVideo />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
         <div className="absolute inset-0 bg-gradient-to-br from-araca-mineral-green/20 via-transparent to-araca-ameixa/15" />
         

@@ -35,16 +35,36 @@ function folderFromPath(path: string): string {
 }
 
 /**
+ * Resposta padronizada quando o storage falha (R2/S3 deserialization, rede, etc.).
+ * Retorna sempre 200 para o cliente poder exibir mensagem; evita 500 em prod.
+ */
+function mediaListErrorResponse(projects: { slug: string; title: string }[], logError: unknown) {
+  console.error('[api/dashboard/projetos/media GET] Storage:', logError)
+  return NextResponse.json(
+    {
+      media: [],
+      projects,
+      totalDocs: 0,
+      totalPages: 1,
+      page: 1,
+      error: 'storage',
+      message: 'Não foi possível conectar ao storage de mídias. Configure R2 (S3_* e NEXT_PUBLIC_R2_PUBLIC_URL).',
+    },
+    { status: 200 }
+  )
+}
+
+/**
  * GET /api/dashboard/projetos/media
  * Lista mídias apenas do banco midias/ (com subpastas por projeto). Retorna projects para o seletor de pastas.
  */
 export async function GET(request: NextRequest) {
-  const user = await getDashboardUser()
-  if (!user) {
-    return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
-  }
-
   try {
+    const user = await getDashboardUser()
+    if (!user) {
+      return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
     const limit = Math.min(Number(searchParams.get('limit')) || 100, 200)
     const offset = Number(searchParams.get('offset')) || 0
@@ -52,29 +72,40 @@ export async function GET(request: NextRequest) {
     /** Filtro por pasta: "" ou "__geral__" = Geral, slug = pasta do projeto, "__all__" ou omitido = todas */
     const folderParam = searchParams.get('folder')?.trim() ?? ''
 
-    const payload = await getPayloadClient()
-    const projetosRes = await payload.find({
-      collection: 'projetos',
-      limit: 200,
-      pagination: false,
-      overrideAccess: true,
-    })
-    const projects = (projetosRes.docs ?? []).map((d) => {
-      const doc = d as { slug?: string; title?: string }
-      return { slug: doc.slug ?? '', title: (doc.title as string) ?? doc.slug ?? '' }
-    })
+    let projects: { slug: string; title: string }[] = []
+    try {
+      const payload = await getPayloadClient()
+      const projetosRes = await payload.find({
+        collection: 'projetos',
+        limit: 200,
+        pagination: false,
+        overrideAccess: true,
+      })
+      projects = (projetosRes.docs ?? []).map((d) => {
+        const doc = d as { slug?: string; title?: string }
+        return { slug: doc.slug ?? '', title: (doc.title as string) ?? doc.slug ?? '' }
+      })
+    } catch (e) {
+      console.error('[api/dashboard/projetos/media GET] Payload projetos:', e)
+      // Continua com projects vazio para ainda tentar listar o storage
+    }
 
     const projectSlugs = projects
       .map((p) => p.slug?.trim())
       .filter((slug): slug is string => !!slug && slug !== PROJETOS_MIDIAS_PREFIX)
     const prefixes = Array.from(new Set([PROJETOS_MIDIAS_PREFIX, ...projectSlugs]))
 
-    const files = await listProjetosMediaFromStorage({
-      prefixes,
-      limit: 500,
-      offset: 0,
-      search: search || undefined,
-    })
+    let files: { path: string; name: string; publicUrl: string }[] = []
+    try {
+      files = await listProjetosMediaFromStorage({
+        prefixes,
+        limit: 500,
+        offset: 0,
+        search: search || undefined,
+      })
+    } catch (e) {
+      return mediaListErrorResponse(projects, e)
+    }
 
     const isImageType = (name: string) => {
       const ext = name.split('.').pop()?.toLowerCase()
@@ -114,10 +145,19 @@ export async function GET(request: NextRequest) {
       page: Math.floor(offset / limit) + 1,
     })
   } catch (e) {
+    // Qualquer outro erro (ex.: deserialization do SDK antes do catch interno) → 200 com lista vazia
     console.error('[api/dashboard/projetos/media GET]', e)
     return NextResponse.json(
-      { message: e instanceof Error ? e.message : 'Erro ao listar mídias.' },
-      { status: 500 }
+      {
+        media: [],
+        projects: [],
+        totalDocs: 0,
+        totalPages: 1,
+        page: 1,
+        error: 'storage',
+        message: 'Não foi possível conectar ao storage de mídias. Configure R2 (S3_* e NEXT_PUBLIC_R2_PUBLIC_URL).',
+      },
+      { status: 200 }
     )
   }
 }
@@ -151,7 +191,7 @@ export async function POST(request: NextRequest) {
       const result = await createSignedUploadUrlProjetosMedia(filename, folder)
       if (!result) {
         return NextResponse.json(
-          { message: 'Supabase não configurado ou erro ao gerar URL.' },
+          { message: 'R2 não configurado ou erro ao gerar URL. Configure S3_* e NEXT_PUBLIC_R2_PUBLIC_URL.' },
           { status: 503 }
         )
       }
@@ -175,7 +215,7 @@ export async function POST(request: NextRequest) {
     const result = await createSignedUploadUrlProjetosMedia(filename, folder)
     if (!result) {
       return NextResponse.json(
-        { message: 'Supabase não configurado ou erro ao gerar URL.' },
+        { message: 'R2 não configurado ou erro ao gerar URL. Configure S3_* e NEXT_PUBLIC_R2_PUBLIC_URL.' },
         { status: 503 }
       )
     }

@@ -117,31 +117,36 @@ export async function listBlogMediaFromStorage(options: {
   const items: { path: string; name: string; publicUrl: string }[] = []
   let continuationToken: string | undefined
 
-  do {
-    const { Contents, NextContinuationToken } = await client.send(
-      new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: 'blog/',
-        MaxKeys: 1000,
-        ContinuationToken: continuationToken,
-      })
-    )
+  try {
+    do {
+      const { Contents, NextContinuationToken } = await client.send(
+        new ListObjectsV2Command({
+          Bucket: bucket,
+          Prefix: 'blog/',
+          MaxKeys: 1000,
+          ContinuationToken: continuationToken,
+        })
+      )
 
-    for (const obj of Contents ?? []) {
-      const key = obj.Key ?? ''
-      const name = key.split('/').pop() ?? ''
-      if (!name || !isImage(name)) continue
-      if (search && !name.toLowerCase().includes(search)) continue
-      items.push({ path: key, name, publicUrl: getR2PublicUrl(key) })
-    }
-    continuationToken = NextContinuationToken
-  } while (continuationToken)
+      for (const obj of Contents ?? []) {
+        const key = obj.Key ?? ''
+        const name = key.split('/').pop() ?? ''
+        if (!name || !isImage(name)) continue
+        if (search && !name.toLowerCase().includes(search)) continue
+        items.push({ path: key, name, publicUrl: getR2PublicUrl(key) })
+      }
+      continuationToken = NextContinuationToken
+    } while (continuationToken)
+  } catch (e) {
+    console.error('[storage-r2] listBlogMediaFromStorage failed:', e instanceof Error ? e.message : e)
+    return []
+  }
 
   items.sort((a, b) => b.name.localeCompare(a.name))
   return items.slice(offset, offset + limit)
 }
 
-/** Lista recursivamente arquivos sob um prefixo (S3 não tem pastas, só chaves). */
+/** Lista recursivamente arquivos sob um prefixo (S3 não tem pastas, só chaves). Em falha (ex.: resposta não-XML do endpoint), retorna []. */
 async function listPrefix(
   client: S3Client,
   prefix: string
@@ -149,26 +154,32 @@ async function listPrefix(
   const items: { path: string; name: string; publicUrl: string }[] = []
   let continuationToken: string | undefined
 
-  do {
-    const { Contents, NextContinuationToken } = await client.send(
-      new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: prefix ? `${prefix}/` : '',
-        MaxKeys: 1000,
-        ContinuationToken: continuationToken,
-      })
-    )
+  try {
+    do {
+      const { Contents, NextContinuationToken } = await client.send(
+        new ListObjectsV2Command({
+          Bucket: bucket,
+          Prefix: prefix ? `${prefix}/` : '',
+          MaxKeys: 1000,
+          ContinuationToken: continuationToken,
+        })
+      )
 
-    for (const obj of Contents ?? []) {
-      const key = obj.Key ?? ''
-      const name = key.split('/').pop() ?? ''
-      if (!name) continue
-      if (isMedia(name)) {
-        items.push({ path: key, name, publicUrl: getR2PublicUrl(key) })
+      for (const obj of Contents ?? []) {
+        const key = obj.Key ?? ''
+        const name = key.split('/').pop() ?? ''
+        if (!name) continue
+        if (isMedia(name)) {
+          items.push({ path: key, name, publicUrl: getR2PublicUrl(key) })
+        }
       }
-    }
-    continuationToken = NextContinuationToken
-  } while (continuationToken)
+      continuationToken = NextContinuationToken
+    } while (continuationToken)
+  } catch (e) {
+    // Endpoint pode retornar HTML/plain (ex.: proxy, 403) em vez de XML → SDK lança "Deserialization error"
+    console.error('[storage-r2] listPrefix failed:', prefix, e instanceof Error ? e.message : e)
+    return []
+  }
 
   return items
 }
@@ -189,8 +200,13 @@ export async function listProjetosMediaFromStorage(options: {
 
   const all: { path: string; name: string; publicUrl: string }[] = []
   for (const prefix of options.prefixes) {
-    const items = await listPrefix(client, prefix)
-    all.push(...items)
+    try {
+      const items = await listPrefix(client, prefix)
+      all.push(...items)
+    } catch (e) {
+      console.error('[storage-r2] listProjetosMediaFromStorage prefix:', prefix, e)
+      // Continua com os outros prefixos
+    }
   }
 
   const filtered = search

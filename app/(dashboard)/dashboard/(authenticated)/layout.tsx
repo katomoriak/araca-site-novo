@@ -44,7 +44,11 @@ export default async function DashboardInnerLayout({
       permissions: u.permissions ?? [],
     }
   } catch (error) {
-    console.error('[dashboard/(authenticated)/layout] Auth failed:', error instanceof Error ? error.message : 'Unknown')
+    // NEXT_REDIRECT é lançado por redirect() — não logar como erro
+    const msg = error instanceof Error ? error.message : 'Unknown'
+    if (msg !== 'NEXT_REDIRECT') {
+      console.error('[dashboard/(authenticated)/layout] Auth failed:', msg)
+    }
     redirect('/dashboard/login')
   }
 

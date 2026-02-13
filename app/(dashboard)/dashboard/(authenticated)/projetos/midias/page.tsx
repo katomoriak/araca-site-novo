@@ -108,11 +108,18 @@ export default function ProjetosMidiasPage() {
       const params = new URLSearchParams({ limit: '200' })
       if (debouncedSearch) params.set('search', debouncedSearch)
       const res = await fetch(`/api/dashboard/projetos/media?${params}`, { credentials: 'include' })
-      if (!res.ok) throw new Error('Falha ao carregar mídias')
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
       if (mountedRef.current) {
         setItems(data.media ?? [])
         setProjects(data.projects ?? [])
+      }
+      if (!res.ok) {
+        if (mountedRef.current) setError(data?.message ?? 'Falha ao carregar mídias')
+        return
+      }
+      // API pode retornar 200 com error: 'storage' quando o storage falha (ex.: env em prod)
+      if (data?.error === 'storage' && typeof data?.message === 'string' && mountedRef.current) {
+        setError(data.message)
       }
     } catch (err) {
       if (mountedRef.current) {
@@ -174,7 +181,7 @@ export default function ProjetosMidiasPage() {
           body: formData,
           credentials: 'include',
         })
-        const data = await res.json()
+        const data = await res.json().catch(() => ({}))
         if (!res.ok) throw new Error(data?.message ?? 'Falha no upload')
         uploaded.push({ ...data })
         index++
@@ -230,7 +237,7 @@ export default function ProjetosMidiasPage() {
         body: JSON.stringify({ path: editingItem.path, newFilename: editFilename.trim() }),
         credentials: 'include',
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.message ?? 'Falha ao renomear')
       setItems((prev) =>
         prev.map((it) => (it.id === editingItem.id ? { ...it, ...data } : it))
@@ -254,7 +261,7 @@ export default function ProjetosMidiasPage() {
           `/api/dashboard/projetos/media?path=${encodeURIComponent(item.path)}`,
           { method: 'DELETE', credentials: 'include' }
         )
-        const data = await res.json()
+        const data = await res.json().catch(() => ({}))
         if (!res.ok) throw new Error(data?.message ?? 'Falha ao excluir')
         setItems((prev) => prev.filter((it) => it.id !== item.id))
       } catch (err) {
@@ -293,7 +300,7 @@ export default function ProjetosMidiasPage() {
         }),
         credentials: 'include',
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.message ?? 'Falha ao criar pasta')
       await fetchMedia()
       setUploadFolder(slug)
@@ -329,7 +336,7 @@ export default function ProjetosMidiasPage() {
         method: 'DELETE',
         credentials: 'include',
       })
-      const data = await res.json()
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.message ?? 'Falha ao excluir pasta')
       setSelectedFolder(FILTER_ALL)
       await fetchMedia()

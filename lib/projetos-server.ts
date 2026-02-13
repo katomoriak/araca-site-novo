@@ -1,6 +1,6 @@
 /**
  * Leitura de projetos a partir de public/projetos (manifests) ou da collection Payload Projetos.
- * URLs das mídias: R2 (NEXT_PUBLIC_R2_PUBLIC_URL) ou Supabase Storage, ou arquivos locais em /projetos/{slug}/.
+ * URLs das mídias: apenas R2 (NEXT_PUBLIC_R2_PUBLIC_URL) ou arquivos locais em /projetos/{slug}/.
  * Usado pela API /api/projetos e pela Home (SSR) para evitar waterfall no cliente.
  */
 import fs from 'fs/promises'
@@ -11,21 +11,16 @@ import { getPayloadClient } from '@/lib/payload'
 import { getProxiedImageUrlWithResize, getProxiedVideoUrl } from '@/lib/transform-content-images'
 
 const R2_PUBLIC = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, '')
-const SUPABASE_PROJETOS_BUCKET = process.env.NEXT_PUBLIC_SUPABASE_PROJETOS_BUCKET ?? 'a_public'
 
 export function getProjetosBaseUrl(slug: string): string {
   if (R2_PUBLIC) return `${R2_PUBLIC}/${slug}`
-  if (SUPABASE_URL) {
-    return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_PROJETOS_BUCKET}/${slug}`
-  }
   return `/projetos/${slug}`
 }
 
 /**
  * URL pública da capa do projeto. Se cover contém '/', é path no bucket (ex: midias/slug/capa.jpg);
  * senão é arquivo na pasta do projeto (slug/cover).
- * Usa proxy para Supabase/R2 para evitar CORS e melhorar carregamento.
+ * Usa proxy para R2 para evitar CORS e melhorar carregamento.
  */
 export function getProjetoCoverUrl(slug: string, cover: string): string {
   const bucketBase = getProjetosBucketBaseUrl()
@@ -39,21 +34,18 @@ export function getProjetoCoverUrl(slug: string, cover: string): string {
   return getProxiedImageUrlWithResize(rawUrl, 800, 80) || rawUrl
 }
 
-/** URL base do bucket de projetos (sem slug), para arquivos em pastas como midias/. */
+/** URL base do bucket de projetos (sem slug), para arquivos em pastas como midias/. Apenas R2. */
 export function getProjetosBucketBaseUrl(): string {
   if (R2_PUBLIC) return R2_PUBLIC
-  if (SUPABASE_URL) {
-    return `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_PROJETOS_BUCKET}`
-  }
   return '/projetos'
 }
 
-/** Converte URL de imagem Supabase para proxy com resize. URLs locais retornam inalteradas. */
+/** Converte URL de imagem (R2) para proxy com resize. URLs locais retornam inalteradas. */
 function toOptimizedImageUrl(url: string, w: number, q = 80): string {
   return getProxiedImageUrlWithResize(url, w, q) || url
 }
 
-/** Converte URL de vídeo Supabase para proxy (cache CDN). Outras origens retornam inalteradas. */
+/** Converte URL de vídeo (R2) para proxy (cache CDN). Outras origens retornam inalteradas. */
 function toProxiedVideoUrl(url: string): string {
   return getProxiedVideoUrl(url) || url
 }
