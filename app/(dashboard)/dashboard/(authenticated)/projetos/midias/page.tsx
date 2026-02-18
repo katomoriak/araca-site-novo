@@ -173,17 +173,38 @@ export default function ProjetosMidiasPage() {
       let index = 0
       for (const file of pendingFiles) {
         if (mountedRef.current) setUploadProgress({ current: index + 1, total: pendingFiles.length })
-        const formData = new FormData()
-        formData.append('file', file)
-        if (folderToUse) formData.append('folder', folderToUse)
+
+        // 1. Request signed URL (small JSON payload — avoids FUNCTION_PAYLOAD_TOO_LARGE)
         const res = await fetch('/api/dashboard/projetos/media', {
           method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            filename: file.name,
+            folder: folderToUse,
+          }),
           credentials: 'include',
         })
         const data = await res.json().catch(() => ({}))
-        if (!res.ok) throw new Error(data?.message ?? 'Falha no upload')
-        uploaded.push({ ...data })
+        if (!res.ok || !data.signedUrl) throw new Error(data?.message ?? 'Falha ao obter URL de upload')
+
+        // 2. Upload file directly to R2/S3 (bypasses Vercel serverless limit)
+        const putRes = await fetch(data.signedUrl, {
+          method: 'PUT',
+          body: file,
+          headers: { 'Content-Type': file.type || 'application/octet-stream' },
+        })
+        if (!putRes.ok) throw new Error('Falha no upload para o storage')
+
+        uploaded.push({
+          id: `projetos-${data.path}`,
+          url: data.publicUrl,
+          thumbnailUrl: data.publicUrl,
+          path: data.path,
+          filename: data.filename ?? file.name,
+          alt: file.name,
+          fileType: file.name.split('.').pop()?.toUpperCase() ?? '',
+          folder: data.folder ?? folderToUse ?? '',
+        })
         index++
       }
       if (mountedRef.current) {
