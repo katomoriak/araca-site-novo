@@ -2,7 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { Container } from '@/components/layout/Container'
-import { SiteNav } from '@/components/layout/SiteNav'
 import { PostGrid } from '@/components/blog/PostGrid'
 import {
   getAuthorById,
@@ -54,18 +53,16 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
 
   return (
     <>
-      <SiteNav theme="light-bg" />
-
       <main className="min-h-screen bg-[var(--background)]">
         {/* Seção de biografia do autor */}
         <Container as="section" className="py-12 md:py-16">
           <div className="mx-auto max-w-2xl rounded-2xl bg-neutral-100/80 p-8 shadow-sm backdrop-blur-sm md:p-10">
             <div className="flex flex-col items-center text-center">
-              {author.avatar?.url ? (
+              {author.avatar ? (
                 <div className="relative h-24 w-24 overflow-hidden rounded-full bg-neutral-200 md:h-28 md:w-28">
                   <Image
-                    src={author.avatar.url}
-                    alt={author.avatar.alt ?? author.name}
+                    src={author.avatar}
+                    alt={author.name}
                     fill
                     className="object-cover"
                     sizes="112px"

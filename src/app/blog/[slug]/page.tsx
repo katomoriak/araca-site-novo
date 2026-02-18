@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MOCK_POSTS } from '@/lib/blog-mock'
 import { Card, CardContent } from '@/components/ui/Card'
-import DOMPurify from 'isomorphic-dompurify'
+import { sanitizeHTML } from '@/lib/sanitize-html'
 
 const categoryLabels: Record<string, string> = {
   design: 'Design',
@@ -22,13 +22,7 @@ export default function BlogSlugPage({
   if (!post) notFound()
 
   // Sanitizar HTML para prevenir XSS
-  const sanitizedContent = DOMPurify.sanitize(post.content, {
-    ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'span', 'div',
-    ],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
-  })
+  const sanitizedContent = sanitizeHTML(post.content)
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12 md:px-6">

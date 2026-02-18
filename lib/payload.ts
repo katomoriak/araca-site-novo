@@ -176,7 +176,7 @@ export interface PayloadAuthor {
   email?: string
   title?: string | null
   bio?: string | null
-  avatar?: { id: string; url: string; alt?: string | null } | null
+  avatar?: string | null
   socialLinks?: { network: string; url: string }[] | null
 }
 
@@ -193,7 +193,7 @@ export async function getAuthorById(id: string): Promise<PayloadAuthor | null> {
       depth: 2,
     })
     if (!user) return null
-    const u = user as PayloadAuthor & { avatar?: { id: string; url: string; alt?: string | null }; showAsPublicAuthor?: boolean | null }
+    const u = user as PayloadAuthor & { avatarUrl?: string | null; showAsPublicAuthor?: boolean | null }
     if (u.showAsPublicAuthor !== true) return null
     return {
       id: u.id,
@@ -201,7 +201,7 @@ export async function getAuthorById(id: string): Promise<PayloadAuthor | null> {
       email: u.email,
       title: u.title ?? null,
       bio: u.bio ?? null,
-      avatar: u.avatar?.url ? { id: u.avatar.id, url: u.avatar.url, alt: u.avatar.alt } : null,
+      avatar: u.avatarUrl || null,
       socialLinks: u.socialLinks ?? null,
     }
   } catch {
