@@ -17,6 +17,12 @@ export function getProjetosBaseUrl(slug: string): string {
   return `/projetos/${slug}`
 }
 
+
+// Helper to encode path segments
+function encodePath(pathStr: string): string {
+  return pathStr.split('/').map(encodeURIComponent).join('/')
+}
+
 /**
  * URL pública da capa do projeto. Se cover contém '/', é path no bucket (ex: midias/slug/capa.jpg);
  * senão é arquivo na pasta do projeto (slug/cover).
@@ -27,7 +33,7 @@ export function getProjetoCoverUrl(slug: string, cover: string): string {
   const base = getProjetosBaseUrl(slug)
   let rawUrl: string
   if (cover.includes('/')) {
-    rawUrl = `${bucketBase}/${cover}`
+    rawUrl = `${bucketBase}/${encodePath(cover)}`
   } else {
     rawUrl = `${base}/${encodeURIComponent(cover)}`
   }
@@ -79,7 +85,7 @@ function docToGalleryItem(doc: ProjetoDoc): ProjectGalleryItem {
   const mediaItems = (doc.media ?? []).filter((m) => isValidFileName(m.file))
   const media: GalleryMediaItem[] = mediaItems.map((m) => {
     const rawUrl = m.file.includes('/')
-      ? `${bucketBase}/${m.file}`
+      ? `${bucketBase}/${encodePath(m.file)}`
       : `${base}/${encodeURIComponent(m.file)}`
     const url =
       m.type === 'image'
@@ -95,7 +101,7 @@ function docToGalleryItem(doc: ProjetoDoc): ProjectGalleryItem {
   let coverUrl: string
   if (isValidFileName(doc.cover)) {
     const coverRaw = doc.cover.includes('/')
-      ? `${bucketBase}/${doc.cover}`
+      ? `${bucketBase}/${encodePath(doc.cover)}`
       : `${base}/${encodeURIComponent(doc.cover)}`
     coverUrl = toOptimizedImageUrl(coverRaw, 1200)
   } else {

@@ -171,6 +171,9 @@ export function ProgressiveImage({
           src={fullSrc}
           alt={alt}
           {...rest}
+          // Se a imagem já vem do nosso proxy (redimensionada), não usar otimização do Next.js
+          // Isso evita o erro 400 Bad Request ao tentar otimizar uma URL que já é um proxy
+          unoptimized={typeof fullSrc === 'string' && fullSrc.includes('/api/image-proxy')}
           // @ts-ignore - fetchPriority is supported by Next.js 13.4.4+ but might not be in the type defs yet depending on version
           fetchPriority={fetchPriority ?? (rest.priority ? 'high' : 'auto')}
           className={cn(

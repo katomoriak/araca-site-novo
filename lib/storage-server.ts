@@ -18,6 +18,7 @@ import {
   PROJETOS_MIDIAS_PREFIX as R2_PROJETOS_MIDIAS_PREFIX,
   fileExistsInStorage as r2FileExistsInStorage,
   uploadFileToStorage as r2UploadFileToStorage,
+  downloadFileFromStorage as r2DownloadFileFromStorage,
 } from './storage-r2'
 
 export { isR2Configured }
@@ -81,4 +82,8 @@ export async function fileExistsInStorage(path: string) {
 
 export async function uploadFileToStorage(path: string, buffer: Buffer, contentType: string) {
   return isR2Configured() ? r2UploadFileToStorage(path, buffer, contentType) : null
+}
+
+export async function downloadFileFromStorage(path: string) {
+  return isR2Configured() ? r2DownloadFileFromStorage(path) : null
 }

@@ -21,6 +21,8 @@ function getStorageOrigins(): string[] {
       // ignore
     }
   }
+  // Permitir também o hostname público padrão do R2
+  origins.push('https://pub-9ca9f8ba8c9d47518d53ef4b3818ed26.r2.dev')
   return origins
 }
 
@@ -76,7 +78,7 @@ export function getProxiedImageUrlWithResize(url: string, w?: number, q = 80): s
   if (!trimmed) return ''
   if (!isStorageProxyUrl(trimmed)) return trimmed
   const params = new URLSearchParams({ url: trimmed })
-  if (w && w > 0) params.set('w', String(Math.min(w, 2048)))
+  if (w && w > 0) params.set('w', String(Math.min(w, 3840)))
   if (q > 0) params.set('q', String(Math.min(q, 90)))
   return `/api/image-proxy?${params.toString()}`
 }

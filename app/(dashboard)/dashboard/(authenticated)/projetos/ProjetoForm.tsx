@@ -18,6 +18,7 @@ import { ProjetoImageDialog } from '@/components/dashboard/ProjetoImageDialog'
 import { Badge } from '@/components/ui/Badge'
 import { Switch } from '@/components/ui/Switch'
 import { cn } from '@/lib/utils'
+import { Reorder, useDragControls } from 'framer-motion'
 
 export interface MediaItem {
   type: 'image' | 'video'
@@ -54,24 +55,36 @@ function safeFilename(name: string): string {
 }
 
 /** URL pública da mídia para miniatura (apenas R2). Se file contém '/', é path no bucket (ex: midias/arquivo.jpg); senão é arquivo do projeto (slug/file). */
+function getProxiedUrlIfNeeded(url: string, width = 400): string {
+  const r2Public = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
+  if (r2Public && url.startsWith(r2Public)) {
+    return `/api/image-proxy?url=${encodeURIComponent(url)}&w=${width}&q=80`
+  }
+  return url
+}
+
 function getMediaThumbUrl(
   slug: string,
   file: string,
   projetosBaseUrl?: string | null
 ): string {
   const r2Public = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
+  let url = ''
 
   if (file.includes('/')) {
-    return r2Public ? `${r2Public}/${file}` : `/projetos/${file}`
+    url = r2Public ? `${r2Public}/${file}` : `/projetos/${file}`
+  } else {
+    const encoded = encodeURIComponent(file)
+    if (projetosBaseUrl) {
+      url = `${projetosBaseUrl.replace(/\/$/, '')}/${encoded}`
+    } else if (r2Public) {
+      url = `${r2Public}/${slug}/${encoded}`
+    } else {
+      url = `/projetos/${slug}/${encoded}`
+    }
   }
-  const encoded = encodeURIComponent(file)
-  if (projetosBaseUrl) {
-    return `${projetosBaseUrl.replace(/\/$/, '')}/${encoded}`
-  }
-  if (r2Public) {
-    return `${r2Public}/${slug}/${encoded}`
-  }
-  return `/projetos/${slug}/${encoded}`
+
+  return getProxiedUrlIfNeeded(url)
 }
 
 function ThumbnailWithLoading({ src, alt, className }: { src: string; alt: string; className?: string }) {
@@ -98,6 +111,73 @@ function ThumbnailWithLoading({ src, alt, className }: { src: string; alt: strin
   )
 }
 
+interface SortableMediaItemProps {
+  item: MediaItem
+  thumbUrl: string | null
+  onRemove: () => void
+  onUpdateName: (name: string) => void
+}
+
+function SortableMediaItem({ item, thumbUrl, onRemove, onUpdateName }: SortableMediaItemProps) {
+  const dragControls = useDragControls()
+
+  return (
+    <Reorder.Item
+      value={item}
+      id={item.file}
+      dragListener={false}
+      dragControls={dragControls}
+      className="flex items-center gap-3 rounded border p-2 bg-card select-none"
+    >
+      <div
+        onPointerDown={(e) => dragControls.start(e)}
+        className="cursor-grab active:cursor-grabbing touch-none shrink-0 flex items-center justify-center rounded-md px-3 py-4 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        title="Arrastar para reordenar"
+      >
+        <GripVertical className="size-5" />
+      </div>
+      <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted">
+        {item.type === 'image' && thumbUrl ? (
+          <ThumbnailWithLoading src={thumbUrl} alt="" className="h-full w-full" />
+        ) : item.type === 'video' ? (
+          <Video className="size-6 text-muted-foreground" />
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        )}
+      </div>
+      <span className="w-28 shrink-0 truncate text-sm font-mono text-muted-foreground" title={item.file}>
+        {item.file}
+      </span>
+      <div className="min-w-0 flex-1 space-y-1">
+        <label className="text-xs font-medium text-muted-foreground">
+          Alt text:
+        </label>
+        <Input
+          placeholder="Descreva a imagem (ex.: Sala de estar com sofá em L)"
+          value={item.name ?? ''}
+          onChange={(e) => onUpdateName(e.target.value)}
+          className="text-sm"
+          aria-label="Texto alternativo da imagem"
+        />
+        {!(item.name ?? '').trim() && (
+          <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+            Sem alt
+          </Badge>
+        )}
+      </div>
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onRemove}
+        aria-label="Remover"
+      >
+        <Trash2 className="size-4" />
+      </Button>
+    </Reorder.Item>
+  )
+}
+
 export function ProjetoForm({
   initialData,
   slugParam,
@@ -121,7 +201,6 @@ export function ProjetoForm({
   )
   const [coverUploading, setCoverUploading] = useState(false)
   const [mediaUploading, setMediaUploading] = useState(false)
-  const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [coverDialogOpen, setCoverDialogOpen] = useState(false)
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false)
 
@@ -185,39 +264,8 @@ export function ProjetoForm({
     }))
   }
 
-  const reorderMedia = (fromIndex: number, toIndex: number) => {
-    if (fromIndex === toIndex) return
-    setForm((prev) => {
-      const arr = [...prev.media]
-      const [item] = arr.splice(fromIndex, 1)
-      arr.splice(toIndex, 0, item)
-      return { ...prev, media: arr }
-    })
-  }
-
-  const handleMediaDragStart = (e: React.DragEvent, index: number) => {
-    e.dataTransfer.setData('text/plain', String(index))
-    e.dataTransfer.effectAllowed = 'move'
-    setDragIndex(index)
-  }
-
-  const handleMediaDragEnd = () => {
-    setDragIndex(null)
-  }
-
-  const handleMediaDrop = (e: React.DragEvent, toIndex: number) => {
-    e.preventDefault()
-    const fromStr = e.dataTransfer.getData('text/plain')
-    if (fromStr === '') return
-    const fromIndex = parseInt(fromStr, 10)
-    if (Number.isNaN(fromIndex) || fromIndex === toIndex) return
-    reorderMedia(fromIndex, toIndex)
-    setDragIndex(null)
-  }
-
-  const handleMediaDragOver = (e: React.DragEvent) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
+  const handleReorder = (newMedia: MediaItem[]) => {
+    setForm((prev) => ({ ...prev, media: newMedia }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -458,70 +506,28 @@ export function ProjetoForm({
             allowMultiple
             useFolderUpload
           />
-          <ul className="space-y-2">
-            {form.media.map((m, i) => {
-              const slug = form.slug || slugParam
-              const thumbUrl =
-                m.publicUrl ||
-                (slug ? getMediaThumbUrl(slug, m.file, projetosBaseUrl) : null)
-              return (
-                <li
-                  key={`${m.file}-${i}`}
-                  className={`flex items-center gap-3 rounded border p-2 ${dragIndex === i ? 'opacity-50' : ''}`}
-                  onDragOver={handleMediaDragOver}
-                  onDrop={(e) => handleMediaDrop(e, i)}
-                >
-                  <div
-                    draggable
-                    onDragStart={(e) => handleMediaDragStart(e, i)}
-                    onDragEnd={handleMediaDragEnd}
-                    className="cursor-grab active:cursor-grabbing touch-none shrink-0 rounded p-0.5 text-muted-foreground hover:bg-muted"
-                    title="Arrastar para reordenar"
-                  >
-                    <GripVertical className="size-4" />
-                  </div>
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-md border bg-muted">
-                    {m.type === 'image' && thumbUrl ? (
-                      <ThumbnailWithLoading src={thumbUrl} alt="" className="h-full w-full" />
-                    ) : m.type === 'video' ? (
-                      <Video className="size-6 text-muted-foreground" />
-                    ) : (
-                      <span className="text-xs text-muted-foreground">—</span>
-                    )}
-                  </div>
-                  <span className="w-28 shrink-0 truncate text-sm font-mono text-muted-foreground">
-                    {m.file}
-                  </span>
-                  <div className="min-w-0 flex-1 space-y-1">
-                    <label className="text-xs font-medium text-muted-foreground">
-                      Alt text:
-                    </label>
-                    <Input
-                      placeholder="Descreva a imagem (ex.: Sala de estar com sofá em L)"
-                      value={m.name ?? ''}
-                      onChange={(e) => updateMediaName(i, e.target.value)}
-                      className="text-sm"
-                      aria-label="Texto alternativo da imagem"
-                    />
-                    {!(m.name ?? '').trim() && (
-                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
-                        Sem alt
-                      </Badge>
-                    )}
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeMedia(i)}
-                    aria-label="Remover"
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </li>
-              )
-            })}
-          </ul>
+          <div className="space-y-2">
+            <Reorder.Group axis="y" values={form.media} onReorder={handleReorder} className="flex flex-col gap-2">
+              {form.media.map((m, i) => {
+                const slug = form.slug || slugParam
+                const thumbUrl =
+                  (m.publicUrl ? getProxiedUrlIfNeeded(m.publicUrl) : null) ||
+                  (slug ? getMediaThumbUrl(slug, m.file, projetosBaseUrl) : null)
+
+                // Use the file path as key, assuming it is unique within the project.
+                // If not, we might need a better key, but for now this is consistent with existing logic.
+                return (
+                  <SortableMediaItem
+                    key={m.file}
+                    item={m}
+                    thumbUrl={thumbUrl}
+                    onRemove={() => removeMedia(i)}
+                    onUpdateName={(name) => updateMediaName(i, name)}
+                  />
+                )
+              })}
+            </Reorder.Group>
+          </div>
         </CardContent>
       </Card>
 

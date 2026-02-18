@@ -10,6 +10,8 @@ import {
   DeleteObjectCommand,
   CopyObjectCommand,
   HeadObjectCommand,
+  GetObjectCommand,
+  GetObjectCommandOutput,
 } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
@@ -373,4 +375,30 @@ export function isR2Configured(): boolean {
 /** Retorna a URL pública base para construir URLs (usado quando não há prefixo de bucket). */
 export function getR2BaseUrl(): string {
   return publicBase
+}
+
+/** Baixa arquivo do storage (buffer) usando credenciais. Útil para o proxy quando o bucket for privado. */
+export async function downloadFileFromStorage(key: string) {
+  const client = getClient()
+  if (!client) {
+    console.error('[storage-r2] downloadFileFromStorage: R2 client not configured')
+    return null
+  }
+  try {
+    // console.log('[storage-r2] trying to download:', key)
+    const { Body, ContentType } = await client.send(
+      new GetObjectCommand({ Bucket: bucket, Key: key })
+    )
+    if (!Body) {
+      console.error('[storage-r2] downloadFileFromStorage: Body empty for key:', key)
+      return null
+    }
+    // Converter stream para buffer
+    const byteArray = await Body.transformToByteArray()
+    return { buffer: Buffer.from(byteArray), contentType: ContentType ?? 'application/octet-stream' }
+  } catch (e: any) {
+    console.error('[storage-r2] downloadFileFromStorage failed for key:', key, e.name, e.message)
+    // logS3Error('downloadFileFromStorage', e)
+    return null
+  }
 }

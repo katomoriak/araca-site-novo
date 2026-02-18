@@ -12,9 +12,9 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   reactCompiler: false, // Payload: desativado para compatibilidade (Next 16: chave no nível raiz)
   transpilePackages: ['swiper'],
-  experimental: {
-    proxyClientMaxBodySize: '4mb',
-  },
+  // experimental: {
+  //   // proxyClientMaxBodySize: '4mb',
+  // },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -35,6 +35,8 @@ const nextConfig = {
       { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
       { protocol: 'https', hostname: '**.supabase.co', pathname: '/storage/v1/object/public/**' },
       { protocol: 'https', hostname: '**.blob.vercel-storage.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'img.araca.arq.br', pathname: '/**' },
+      { protocol: 'https', hostname: 'pub-9ca9f8ba8c9d47518d53ef4b3818ed26.r2.dev', pathname: '/**' },
     ],
   },
   async headers() {
