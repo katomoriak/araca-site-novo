@@ -330,17 +330,28 @@ export function ProjetoImageDialog({
       try {
         const results: PendingMediaItem[] = []
         for (const f of toUpload) {
-          const formData = new FormData()
-          formData.append('file', f)
-          if (folderToUse) formData.append('folder', folderToUse)
+          // Request signed URL first to avoid passing file through Next.js (payload limit)
           const res = await fetch('/api/dashboard/projetos/media', {
             method: 'POST',
-            body: formData,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              filename: f.name,
+              folder: folderToUse,
+            }),
             credentials: 'include',
           })
           const data = await res.json()
           if (!mountedRef.current) return
-          if (!res.ok) throw new Error(data?.message ?? 'Falha no upload')
+          if (!res.ok || !data.signedUrl) throw new Error(data?.message ?? 'Falha ao obter URL de upload')
+
+          // Upload directly to R2/S3
+          const putRes = await fetch(data.signedUrl, {
+            method: 'PUT',
+            body: f,
+            headers: { 'Content-Type': f.type || 'application/octet-stream' },
+          })
+          if (!putRes.ok) throw new Error('Falha no upload para o storage')
+
           const type = f.type.startsWith('video/') ? 'video' : 'image'
           results.push({
             filePath: data.path ?? data.filename ?? f.name,
@@ -518,8 +529,8 @@ export function ProjetoImageDialog({
                   onClick={() => { setMode('upload'); setError(null) }}
                   disabled={!canUpload}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === 'upload'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground disabled:opacity-50'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground disabled:opacity-50'
                     }`}
                 >
                   <Upload className="size-4" />
@@ -529,8 +540,8 @@ export function ProjetoImageDialog({
                   type="button"
                   onClick={() => { setMode('gallery'); setError(null) }}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${mode === 'gallery'
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                     }`}
                 >
                   <ImagePlus className="size-4" />
