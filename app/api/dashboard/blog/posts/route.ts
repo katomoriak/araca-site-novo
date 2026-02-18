@@ -74,12 +74,14 @@ export async function POST(request: NextRequest) {
             : rawCategory
         : null
 
-    // coverImage: Payload espera ID numérico da collection media. Supabase retorna "supabase-..." — usar coverImageUrl.
+    // coverImage: Payload espera ID numérico da collection media.
+    // Uploads externos (R2 / Supabase) retornam IDs como "storage-..." ou "supabase-..." — usar coverImageUrl.
     const rawCover = body.coverImage
-    const isSupabaseCover =
-      typeof rawCover === 'string' && rawCover.startsWith('supabase-')
-    const coverImage = isSupabaseCover ? null : rawCover || null
-    const coverImageUrl = isSupabaseCover ? body.coverImageUrl || null : null
+    const isExternalCover =
+      typeof rawCover === 'string' &&
+      (rawCover.startsWith('supabase-') || rawCover.startsWith('storage-'))
+    const coverImage = isExternalCover ? null : rawCover || null
+    const coverImageUrl = isExternalCover ? body.coverImageUrl || null : null
 
     const post = await payload.create({
       collection: 'posts',
@@ -102,10 +104,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ post }, { status: 201 })
   } catch (error) {
     console.error('[API] Erro ao criar post:', error)
-    
+
     // Extrair mensagem de erro do Payload se disponível
     const errorMessage = error instanceof Error ? error.message : 'Erro ao criar post'
-    
+
     return NextResponse.json(
       { message: errorMessage },
       { status: 500 }

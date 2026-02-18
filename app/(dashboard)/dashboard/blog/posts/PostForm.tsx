@@ -119,12 +119,12 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
           fetch('/api/dashboard/blog/categories'),
           fetch('/api/dashboard/blog/authors'),
         ])
-        
+
         if (categoriesRes.ok) {
           const data = await categoriesRes.json()
           setCategories(data.categories ?? [])
         }
-        
+
         if (authorsRes.ok) {
           const data = await authorsRes.json()
           setAuthors(data.authors ?? [])
@@ -135,7 +135,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         setLoadingData(false)
       }
     }
-    
+
     loadData()
   }, [])
 
@@ -154,7 +154,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
       setSaving(false)
       return
     }
-    
+
     try {
       // Conteúdo: sempre string (editor pode não ter disparado onChange no início)
       const contentValue =
@@ -171,7 +171,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         author: data.authorId && data.authorId !== 'none' ? data.authorId : null,
         publishedAt: data.publishedAt || null,
         coverImage: data.coverImageId || null,
-        ...(data.coverImageId?.startsWith?.('supabase-') && data.coverImageUrl && {
+        ...((data.coverImageId?.startsWith?.('supabase-') || data.coverImageId?.startsWith?.('storage-')) && data.coverImageUrl && {
           coverImageUrl: data.coverImageUrl,
         }),
       }

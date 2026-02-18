@@ -125,12 +125,12 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
           fetch('/api/dashboard/blog/categories'),
           fetch('/api/dashboard/blog/authors'),
         ])
-        
+
         if (categoriesRes.ok) {
           const data = await categoriesRes.json()
           setCategories(data.categories ?? [])
         }
-        
+
         if (authorsRes.ok) {
           const data = await authorsRes.json()
           setAuthors(data.authors ?? [])
@@ -141,7 +141,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         setLoadingData(false)
       }
     }
-    
+
     loadData()
   }, [])
 
@@ -160,7 +160,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
       setSaving(false)
       return
     }
-    
+
     try {
       // Conteúdo: sempre string (editor pode não ter disparado onChange no início)
       const contentValue =
@@ -178,7 +178,7 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         author: data.authorId && data.authorId !== 'none' ? data.authorId : null,
         publishedAt: data.publishedAt || null,
         coverImage: data.coverImageId || null,
-        ...(data.coverImageId?.startsWith?.('supabase-') && data.coverImageUrl && {
+        ...((data.coverImageId?.startsWith?.('supabase-') || data.coverImageId?.startsWith?.('storage-')) && data.coverImageUrl && {
           coverImageUrl: data.coverImageUrl,
         }),
       }
@@ -293,11 +293,10 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
               value={form.excerpt}
               onChange={(e) => setForm((p) => ({ ...p, excerpt: e.target.value }))}
               placeholder="Breve resumo do post"
-              className={`w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ${
-                form.excerpt.length > 0 && (form.excerpt.length < EXCERPT_IDEAL_MIN || form.excerpt.length > EXCERPT_IDEAL_MAX)
+              className={`w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ${form.excerpt.length > 0 && (form.excerpt.length < EXCERPT_IDEAL_MIN || form.excerpt.length > EXCERPT_IDEAL_MAX)
                   ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
                   : ''
-              }`}
+                }`}
               rows={3}
               required
             />
@@ -316,11 +315,10 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
               value={form.metaDescription}
               onChange={(e) => setForm((p) => ({ ...p, metaDescription: e.target.value }))}
               placeholder="Opcional"
-              className={`w-full min-h-[60px] rounded-md border border-input bg-background px-3 py-2 text-sm ${
-                form.metaDescription.length > 0 && (form.metaDescription.length < EXCERPT_IDEAL_MIN || form.metaDescription.length > EXCERPT_IDEAL_MAX)
+              className={`w-full min-h-[60px] rounded-md border border-input bg-background px-3 py-2 text-sm ${form.metaDescription.length > 0 && (form.metaDescription.length < EXCERPT_IDEAL_MIN || form.metaDescription.length > EXCERPT_IDEAL_MAX)
                   ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
                   : ''
-              }`}
+                }`}
               rows={2}
             />
             <p className="mt-1 text-xs text-muted-foreground">

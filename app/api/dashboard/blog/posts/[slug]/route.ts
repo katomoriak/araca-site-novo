@@ -60,12 +60,13 @@ export async function PATCH(
             : rawCategory
         : null
 
-    // coverImage: Payload espera ID numérico. Supabase retorna "supabase-..." — usar coverImageUrl.
+    // coverImage: Payload espera ID numérico. Uploads externos (R2/Supabase) retornam "storage-..." ou "supabase-..." — usar coverImageUrl.
     const rawCover = body.coverImage
-    const isSupabaseCover =
-      typeof rawCover === 'string' && rawCover.startsWith('supabase-')
-    const coverImage = isSupabaseCover ? null : (rawCover ?? null)
-    const coverImageUrl = isSupabaseCover ? body.coverImageUrl ?? null : null
+    const isExternalCover =
+      typeof rawCover === 'string' &&
+      (rawCover.startsWith('supabase-') || rawCover.startsWith('storage-'))
+    const coverImage = isExternalCover ? null : (rawCover ?? null)
+    const coverImageUrl = isExternalCover ? body.coverImageUrl ?? null : null
     const coverUpdate =
       coverImageUrl != null
         ? { coverImage, coverImageUrl }
@@ -91,10 +92,10 @@ export async function PATCH(
     return NextResponse.json({ post })
   } catch (error) {
     console.error('[API] Erro ao atualizar post:', error)
-    
+
     // Extrair mensagem de erro do Payload se disponível
     const errorMessage = error instanceof Error ? error.message : 'Erro ao atualizar post'
-    
+
     return NextResponse.json(
       { message: errorMessage },
       { status: 500 }
