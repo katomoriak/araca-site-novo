@@ -56,7 +56,7 @@ interface AnalyticsData {
 interface StatCardProps {
     title: string
     value: string
-    icon: React.ElementType
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
     loading?: boolean
 }
 
