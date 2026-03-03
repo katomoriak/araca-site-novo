@@ -1,7 +1,10 @@
+import Script from 'next/script'
 import type { Metadata } from 'next'
 import { Rubik } from 'next/font/google'
 import { BodyScope } from '@/components/layout/BodyScope'
 import '@/styles/globals.css'
+
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-B0F0PY4FW8'
 
 const rubik = Rubik({
   subsets: ['latin'],
@@ -129,6 +132,21 @@ export default function RootLayout({
       lang="pt-BR"
       className={rubik.variable}
     >
+      <head>
+        {/* Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}');
+          `}
+        </Script>
+      </head>
       <body>
         <script
           type="application/ld+json"

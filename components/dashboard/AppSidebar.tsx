@@ -12,6 +12,7 @@ import {
   ChevronDown,
   UserCog,
   Contact,
+  LineChart,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -37,6 +38,7 @@ import { useHasPermission } from './DashboardAuthContext'
 
 const navItems = [
   { href: '/dashboard', label: 'Visão geral', icon: LayoutDashboard, permission: null as 'blog' | 'finance' | 'crm' | 'projetos' | 'users' | null },
+  { href: '/dashboard/analytics', label: 'Análise de Tráfego', icon: LineChart, permission: null as any },
   { href: '/dashboard/crm', label: 'CRM', icon: Users, permission: 'crm' as const },
   { href: '/dashboard/finance', label: 'Financeiro', icon: Wallet, permission: 'finance' as const },
   { href: '/dashboard/users', label: 'Usuários', icon: UserCog, permission: 'users' as const },

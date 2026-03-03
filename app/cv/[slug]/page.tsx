@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { CVClient } from './CVClient'
 import type { Metadata } from 'next'
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> } | { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const p = await params
   const payload = await getPayloadClient()
   const result = await payload.find({
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
-export default async function CVPage({ params }: { params: Promise<{ slug: string }> } | { params: { slug: string } }) {
+export default async function CVPage({ params }: { params: Promise<{ slug: string }> }) {
   const p = await params
   const payload = await getPayloadClient()
   const result = await payload.find({
