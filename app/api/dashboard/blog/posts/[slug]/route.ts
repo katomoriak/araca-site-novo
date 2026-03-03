@@ -78,7 +78,9 @@ export async function PATCH(
       data: {
         title: body.title,
         excerpt: body.excerpt,
+        metaTitle: body.metaTitle != null ? (String(body.metaTitle).trim() || null) : undefined,
         metaDescription: body.metaDescription != null ? (String(body.metaDescription).trim() || null) : undefined,
+        metaKeywords: body.metaKeywords != null ? (String(body.metaKeywords).trim() || null) : undefined,
         ...(content !== undefined && { content }),
         status: body.status,
         category,

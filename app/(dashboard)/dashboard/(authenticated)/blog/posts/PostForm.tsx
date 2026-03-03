@@ -31,7 +31,9 @@ export interface PostFormData {
   title: string
   slug: string
   excerpt: string
+  metaTitle: string
   metaDescription: string
+  metaKeywords: string
   content: string
   status: 'draft' | 'published'
   categoryId?: string | null
@@ -108,7 +110,9 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
     title: initialData?.title ?? '',
     slug: initialData?.slug ?? '',
     excerpt: initialData?.excerpt ?? '',
+    metaTitle: initialData?.metaTitle ?? '',
     metaDescription: initialData?.metaDescription ?? '',
+    metaKeywords: initialData?.metaKeywords ?? '',
     content: initialData?.content ?? '',
     status: initialData?.status ?? 'draft',
     categoryId: normalizedCategoryId,
@@ -171,7 +175,9 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt,
+        metaTitle: data.metaTitle?.trim() || null,
         metaDescription: data.metaDescription?.trim() || null,
+        metaKeywords: data.metaKeywords?.trim() || null,
         content: contentStr,
         status: data.status,
         category: data.categoryId && data.categoryId !== 'none' ? data.categoryId : null,
@@ -294,8 +300,8 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
               onChange={(e) => setForm((p) => ({ ...p, excerpt: e.target.value }))}
               placeholder="Breve resumo do post"
               className={`w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ${form.excerpt.length > 0 && (form.excerpt.length < EXCERPT_IDEAL_MIN || form.excerpt.length > EXCERPT_IDEAL_MAX)
-                  ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
-                  : ''
+                ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
+                : ''
                 }`}
               rows={3}
               required
@@ -304,25 +310,6 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
               <span className={form.excerpt.length >= EXCERPT_IDEAL_MIN && form.excerpt.length <= EXCERPT_IDEAL_MAX ? 'text-green-600' : ''}>
                 {form.excerpt.length}/160
               </span>
-            </p>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">Meta description (opcional)</label>
-            <p className="mb-1 text-xs text-muted-foreground">
-              Se preenchido, usado em buscas no lugar do resumo. Ideal 150–160 caracteres.
-            </p>
-            <textarea
-              value={form.metaDescription}
-              onChange={(e) => setForm((p) => ({ ...p, metaDescription: e.target.value }))}
-              placeholder="Opcional"
-              className={`w-full min-h-[60px] rounded-md border border-input bg-background px-3 py-2 text-sm ${form.metaDescription.length > 0 && (form.metaDescription.length < EXCERPT_IDEAL_MIN || form.metaDescription.length > EXCERPT_IDEAL_MAX)
-                  ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
-                  : ''
-                }`}
-              rows={2}
-            />
-            <p className="mt-1 text-xs text-muted-foreground">
-              {form.metaDescription.length}/160
             </p>
           </div>
           <CoverImagePicker
@@ -352,6 +339,66 @@ export function PostForm({ initialData, isNew }: PostFormProps) {
             onChange={(value) => setForm((p) => ({ ...p, content: value }))}
             placeholder="Escreva o conteúdo do post aqui..."
           />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Otimização para Buscas (SEO)</CardTitle>
+          <CardDescription>
+            Defina como os motores de busca (como o Google) verão este conteúdo.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Título SEO (Opcional)</label>
+            <p className="mb-1 text-xs text-muted-foreground">
+              Ideal 50-60 caracteres. Se deixado em branco, o título do post será usado.
+            </p>
+            <Input
+              value={form.metaTitle}
+              onChange={(e) => setForm((p) => ({ ...p, metaTitle: e.target.value }))}
+              placeholder="Título otimizado para a página"
+              className={form.metaTitle.length > 60 ? 'border-amber-500/50 focus-visible:ring-amber-500/30' : ''}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span className={form.metaTitle.length > 0 && form.metaTitle.length <= 60 ? 'text-green-600' : ''}>
+                {form.metaTitle.length}/60
+              </span>
+            </p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Meta Description (Opcional)</label>
+            <p className="mb-1 text-xs text-muted-foreground">
+              A descrição que aparece nos resultados da busca. Ideal 150–160 caracteres. (Fallback em &quot;Resumo&quot; se em branco).
+            </p>
+            <textarea
+              value={form.metaDescription}
+              onChange={(e) => setForm((p) => ({ ...p, metaDescription: e.target.value }))}
+              placeholder="Descrição atrativa que resume o conteúdo"
+              className={`w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm ${form.metaDescription.length > 0 && (form.metaDescription.length < EXCERPT_IDEAL_MIN || form.metaDescription.length > EXCERPT_IDEAL_MAX)
+                ? 'border-amber-500/50 focus-visible:ring-amber-500/30'
+                : ''
+                }`}
+              rows={3}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              <span className={form.metaDescription.length >= EXCERPT_IDEAL_MIN && form.metaDescription.length <= EXCERPT_IDEAL_MAX ? 'text-green-600' : ''}>
+                {form.metaDescription.length}/160
+              </span>
+            </p>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Palavras-chave (Opcional)</label>
+            <p className="mb-1 text-xs text-muted-foreground">
+              Separe por vírgulas. Ex: arquitetura, design, interiores
+            </p>
+            <Input
+              value={form.metaKeywords}
+              onChange={(e) => setForm((p) => ({ ...p, metaKeywords: e.target.value }))}
+              placeholder="decoração, reforma, araca"
+            />
+          </div>
         </CardContent>
       </Card>
 

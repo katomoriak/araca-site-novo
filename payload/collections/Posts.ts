@@ -48,68 +48,101 @@ export const Posts: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
-      required: true,
-      label: { en: 'Title', pt: 'Título' },
-    },
-    {
-      name: 'slug',
-      type: 'text',
-      label: { en: 'Slug', pt: 'URL amigável' },
-      required: true,
-      unique: true,
-      admin: {
-        description: 'URL amigável (ex: meu-post)',
-      },
-    },
-    {
-      name: 'excerpt',
-      type: 'textarea',
-      required: true,
-      label: { en: 'Excerpt', pt: 'Resumo' },
-      admin: {
-        description: 'Ideal 150–160 caracteres para snippet em buscas.',
-      },
-    },
-    {
-      name: 'metaDescription',
-      type: 'textarea',
-      required: false,
-      label: { en: 'Meta description', pt: 'Meta description' },
-      admin: {
-        description: 'Opcional. Se preenchido, usado como description em buscas; senão usa o resumo. Ideal 150–160 caracteres.',
-      },
-    },
-    {
-      name: 'coverImage',
-      type: 'upload',
-      label: { en: 'Cover image', pt: 'Imagem de capa' },
-      relationTo: 'media',
-      required: false,
-      admin: {
-        description: 'Imagem de capa via Payload media. Se usar Supabase Storage (dashboard), será salva em coverImageUrl.',
-      },
-    },
-    {
-      name: 'coverImageUrl',
-      type: 'text',
-      label: { en: 'Cover image URL', pt: 'URL da imagem de capa' },
-      required: false,
-      admin: {
-        description: 'URL direta da imagem quando vem do Supabase Storage (preenchido automaticamente pelo dashboard).',
-        readOnly: true,
-        condition: (_, siblingData) => !siblingData?.coverImage,
-      },
-    },
-    {
-      name: 'content',
-      type: 'textarea',
-      required: true,
-      label: { en: 'Content', pt: 'Conteúdo' },
-      admin: {
-        description: 'Conteúdo HTML do post (gerado pelo editor Lexical no dashboard).',
-      },
+      type: 'tabs',
+      tabs: [
+        {
+          label: { en: 'Content', pt: 'Conteúdo' },
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              required: true,
+              label: { en: 'Title', pt: 'Título' },
+            },
+            {
+              name: 'slug',
+              type: 'text',
+              label: { en: 'Slug', pt: 'URL amigável' },
+              required: true,
+              unique: true,
+              admin: {
+                description: 'URL amigável (ex: meu-post)',
+              },
+            },
+            {
+              name: 'excerpt',
+              type: 'textarea',
+              required: true,
+              label: { en: 'Excerpt', pt: 'Resumo' },
+              admin: {
+                description: 'Ideal 150–160 caracteres para snippet em buscas.',
+              },
+            },
+            {
+              name: 'coverImage',
+              type: 'upload',
+              label: { en: 'Cover image', pt: 'Imagem de capa' },
+              relationTo: 'media',
+              required: false,
+              admin: {
+                description: 'Imagem de capa via Payload media. Se usar Supabase Storage (dashboard), será salva em coverImageUrl.',
+              },
+            },
+            {
+              name: 'coverImageUrl',
+              type: 'text',
+              label: { en: 'Cover image URL', pt: 'URL da imagem de capa' },
+              required: false,
+              admin: {
+                description: 'URL direta da imagem quando vem do Supabase Storage (preenchido automaticamente pelo dashboard).',
+                readOnly: true,
+                condition: (_, siblingData) => !siblingData?.coverImage,
+              },
+            },
+            {
+              name: 'content',
+              type: 'textarea',
+              required: true,
+              label: { en: 'Content', pt: 'Conteúdo' },
+              admin: {
+                description: 'Conteúdo HTML do post (gerado pelo editor Lexical no dashboard).',
+              },
+            },
+          ],
+        },
+        {
+          label: { en: 'SEO & Metadata', pt: 'SEO & Metadados' },
+          fields: [
+            {
+              name: 'metaTitle',
+              type: 'text',
+              required: false,
+              label: { en: 'Meta Title', pt: 'Título SEO' },
+              admin: {
+                description: 'Opcional. Se preenchido, será usado como a tag <title> para buscas. Ideal: 50-60 caracteres.',
+              },
+            },
+            {
+              name: 'metaDescription',
+              type: 'textarea',
+              required: false,
+              label: { en: 'Meta description', pt: 'Meta description' },
+              admin: {
+                description: 'Opcional. Se preenchido, usado como description em buscas; senão usa o resumo. Ideal 150–160 caracteres.',
+              },
+            },
+            {
+              name: 'metaKeywords',
+              type: 'text',
+              required: false,
+              label: { en: 'Keywords', pt: 'Palavras-chave' },
+              admin: {
+                description: 'Opcional. Palavras-chave separadas por vírgula (ex: arquitetura, design, interiores).',
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'author',

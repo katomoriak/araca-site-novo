@@ -10,6 +10,36 @@ function canManageUsers(user: { role?: string; permissions?: string[] }): boolea
 }
 
 /**
+ * GET /api/dashboard/users
+ * Retorna a lista de todos os usuários.
+ */
+export async function GET() {
+    const currentUser = await getDashboardUser()
+    if (!currentUser || !canManageUsers(currentUser)) {
+        return NextResponse.json({ message: 'Não autorizado.' }, { status: 401 })
+    }
+
+    try {
+        const payload = await getPayloadClient()
+        const result = await payload.find({
+            collection: 'users',
+            limit: 100,
+            pagination: false,
+            sort: 'name',
+            overrideAccess: true,
+        })
+
+        return NextResponse.json({ users: result.docs })
+    } catch (e) {
+        console.error('[api/dashboard/users GET]', e)
+        return NextResponse.json(
+            { message: 'Erro ao buscar usuários.' },
+            { status: 500 },
+        )
+    }
+}
+
+/**
  * POST /api/dashboard/users
  * Cria um novo usuário. Requer permissão "users" ou admin.
  */

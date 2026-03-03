@@ -19,6 +19,8 @@ import SlashCommandPlugin from './plugins/SlashCommandPlugin'
 import { ImageDialogProvider } from './ImageDialogContext'
 import LinkPlugin from './plugins/LinkPlugin'
 import { ListPlugin } from '@lexical/react/LexicalListPlugin'
+import { LinkPlugin as LexicalLinkPlugin } from '@lexical/react/LexicalLinkPlugin'
+import FloatingToolbarPlugin from './plugins/FloatingToolbarPlugin'
 
 interface RichTextEditorProps {
   value: string
@@ -29,32 +31,36 @@ interface RichTextEditorProps {
 // Plugin para carregar conteúdo inicial HTML
 function LoadInitialContentPlugin({ html }: { html: string }) {
   const [editor] = useLexicalComposerContext()
-  const isFirstRender = useRef(true)
+  const isLoaded = useRef(false)
 
   useEffect(() => {
-    if (!isFirstRender.current || !html) return
-    isFirstRender.current = false
+    // Carrega apenas uma vez
+    if (isLoaded.current) return
+    if (!html) return
+    isLoaded.current = true
 
-    try {
-      editor.update(() => {
-        const parser = new DOMParser()
-        const dom = parser.parseFromString(html, 'text/html')
-        const nodes = $generateNodesFromDOM(editor, dom)
-        const root = $getRoot()
-        root.clear()
-        if (nodes.length > 0) {
-          root.append(...nodes)
-        }
-      })
-    } catch (error) {
-      console.error('Erro ao carregar conteúdo:', error)
-    }
+    setTimeout(() => {
+      try {
+        editor.update(() => {
+          const parser = new DOMParser()
+          const dom = parser.parseFromString(html, 'text/html')
+          const nodes = $generateNodesFromDOM(editor, dom)
+          const root = $getRoot()
+          root.clear()
+          if (nodes.length > 0) {
+            root.append(...nodes)
+          }
+        })
+      } catch (error) {
+        console.error('Erro ao carregar conteúdo:', error)
+      }
+    }, 0)
   }, [editor, html])
 
   return null
 }
 
-/** Usa o editor do contexto (com nós registrados) para gerar HTML, evitando erro _nodes undefined. */
+/** Usa o editor do contexto para gerar HTML. Ignora alterações apenas de seleção. */
 function OnChangeHandler({ onChange }: { onChange: (value: string) => void }) {
   const [editor] = useLexicalComposerContext()
 
@@ -62,7 +68,6 @@ function OnChangeHandler({ onChange }: { onChange: (value: string) => void }) {
     try {
       editorState.read(() => {
         if (!editor) return
-        // Usar o editor do contexto (com ImageNode etc. registrados), não editorState._editor
         const html = $generateHtmlFromNodes(editor, null)
         onChange(html)
       })
@@ -71,10 +76,14 @@ function OnChangeHandler({ onChange }: { onChange: (value: string) => void }) {
     }
   }
 
-  return <OnChangePlugin onChange={handleChange} />
+  // ignoreSelectionChange={true} para não disparar atualizações desnecessárias
+  return <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
 }
 
 export function RichTextEditor({ value, onChange, placeholder = 'Escreva o conteúdo aqui...' }: RichTextEditorProps) {
+  // Guarda o valor exato que o componente recebeu ao montar (vazio no "Novo post", HTML no "Editar post")
+  const initialValueRef = useRef(value)
+
   const initialConfig = {
     namespace: 'PostEditor',
     theme: {
@@ -121,29 +130,31 @@ export function RichTextEditor({ value, onChange, placeholder = 'Escreva o conte
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <ImageDialogProvider>
-      <div className="relative rounded-md border border-input bg-background">
-        <ToolbarPlugin />
-        <div className="relative">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className="min-h-[300px] resize-none overflow-auto px-4 py-3 text-sm outline-none" />
-            }
-            placeholder={
-              <div className="pointer-events-none absolute left-4 top-3 text-sm text-muted-foreground">
-                {placeholder}
-              </div>
-            }
-            ErrorBoundary={({ children }: { children: React.ReactNode }) => <>{children}</>}
-          />
-          <OnChangeHandler onChange={onChange} />
-          <HistoryPlugin />
-          <ListPlugin />
-          <ImagePlugin />
-          <LinkPlugin />
-          <SlashCommandPlugin />
-          <LoadInitialContentPlugin html={value} />
+        <div className="relative rounded-md border border-input bg-background">
+          <ToolbarPlugin />
+          <div className="relative">
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable className="min-h-[300px] resize-none overflow-auto px-4 py-3 text-sm outline-none" />
+              }
+              placeholder={
+                <div className="pointer-events-none absolute left-4 top-3 text-sm text-muted-foreground">
+                  {placeholder}
+                </div>
+              }
+              ErrorBoundary={({ children }: { children: React.ReactNode }) => <>{children}</>}
+            />
+            <OnChangeHandler onChange={onChange} />
+            <HistoryPlugin />
+            <ListPlugin />
+            <LexicalLinkPlugin />
+            <ImagePlugin />
+            <LinkPlugin />
+            <SlashCommandPlugin />
+            <FloatingToolbarPlugin />
+            <LoadInitialContentPlugin html={initialValueRef.current} />
+          </div>
         </div>
-      </div>
       </ImageDialogProvider>
     </LexicalComposer>
   )

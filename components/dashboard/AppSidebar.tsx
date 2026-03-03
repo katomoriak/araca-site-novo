@@ -11,6 +11,7 @@ import {
   BookOpen,
   ChevronDown,
   UserCog,
+  Contact,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -39,6 +40,7 @@ const navItems = [
   { href: '/dashboard/crm', label: 'CRM', icon: Users, permission: 'crm' as const },
   { href: '/dashboard/finance', label: 'Financeiro', icon: Wallet, permission: 'finance' as const },
   { href: '/dashboard/users', label: 'Usuários', icon: UserCog, permission: 'users' as const },
+  { href: '/dashboard/business-cards', label: 'Cartões de Visitas', icon: Contact, permission: 'users' as const },
 ]
 
 const projetoItems = [
@@ -61,7 +63,7 @@ export function AppSidebar() {
   const canAccessCRM = useHasPermission('crm')
   const canAccessFinance = useHasPermission('finance')
   const canAccessUsers = useHasPermission('users')
-  
+
   const showNavItem = (permission: typeof navItems[number]['permission']) => {
     if (permission === null) return true
     if (permission === 'crm') return canAccessCRM
@@ -69,7 +71,7 @@ export function AppSidebar() {
     if (permission === 'users') return canAccessUsers
     return false
   }
-  
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="border-b border-sidebar-border px-4 py-3">
@@ -107,63 +109,63 @@ export function AppSidebar() {
               })}
 
               {canAccessProjetos && (
-              <Collapsible defaultOpen={pathname.startsWith('/dashboard/projetos')} className="group/collapsible">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton isActive={pathname.startsWith('/dashboard/projetos')}>
-                      <ImageIcon className="size-4" />
-                      <span>Gestão de Projetos</span>
-                      <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {projetoItems.map((item) => {
-                        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-                        return (
-                          <SidebarMenuSubItem key={item.href}>
-                            <SidebarMenuSubButton asChild isActive={isActive}>
-                              <Link href={item.href}>
-                                <span>{item.label}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        )
-                      })}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                <Collapsible defaultOpen={pathname.startsWith('/dashboard/projetos')} className="group/collapsible">
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton isActive={pathname.startsWith('/dashboard/projetos')}>
+                        <ImageIcon className="size-4" />
+                        <span>Gestão de Projetos</span>
+                        <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {projetoItems.map((item) => {
+                          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+                          return (
+                            <SidebarMenuSubItem key={item.href}>
+                              <SidebarMenuSubButton asChild isActive={isActive}>
+                                <Link href={item.href}>
+                                  <span>{item.label}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          )
+                        })}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               )}
-              
+
               {canAccessBlog && (
-              <Collapsible defaultOpen={isBlogActive} className="group/collapsible">
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton isActive={isBlogActive}>
-                      <BookOpen className="size-4" />
-                      <span>Gestão do Blog</span>
-                      <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenuSub>
-                      {blogItems.map((item) => {
-                        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-                        return (
-                          <SidebarMenuSubItem key={item.href}>
-                            <SidebarMenuSubButton asChild isActive={isActive}>
-                              <Link href={item.href}>
-                                <span>{item.label}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        )
-                      })}
-                    </SidebarMenuSub>
-                  </CollapsibleContent>
-                </SidebarMenuItem>
-              </Collapsible>
+                <Collapsible defaultOpen={isBlogActive} className="group/collapsible">
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton isActive={isBlogActive}>
+                        <BookOpen className="size-4" />
+                        <span>Gestão do Blog</span>
+                        <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {blogItems.map((item) => {
+                          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+                          return (
+                            <SidebarMenuSubItem key={item.href}>
+                              <SidebarMenuSubButton asChild isActive={isActive}>
+                                <Link href={item.href}>
+                                  <span>{item.label}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          )
+                        })}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               )}
             </SidebarMenu>
           </SidebarGroupContent>

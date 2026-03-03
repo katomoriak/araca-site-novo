@@ -2,8 +2,8 @@
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { $getSelection, $isRangeSelection } from 'lexical'
-import { useEffect, useState, type ReactElement } from 'react'
+import { $getSelection, $isRangeSelection, BaseSelection, $setSelection } from 'lexical'
+import { useEffect, useState, useRef, type ReactElement } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Link as LinkIcon, ExternalLink } from 'lucide-react'
@@ -55,20 +55,31 @@ export function LinkToolbarButton() {
   const [isLink, setIsLink] = useState(false)
   const [showLinkEditor, setShowLinkEditor] = useState(false)
   const [linkUrl, setLinkUrl] = useState('')
+  const [openInNewTab, setOpenInNewTab] = useState(false)
+
+  // Salva a seleção do Lexical para não perder quando o Input recebe foco
+  const lastSelectionRef = useRef<BaseSelection | null>(null)
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
         const selection = $getSelection()
+        // Só salva a seleção se ela for válida e estamos no editor
+        if (selection) {
+          lastSelectionRef.current = selection.clone()
+        }
+
         if ($isRangeSelection(selection)) {
           const node = selection.anchor.getNode()
           const parent = node.getParent()
           if ($isLinkNode(parent)) {
             setIsLink(true)
             setLinkUrl(parent.getURL())
+            setOpenInNewTab(parent.getTarget() === '_blank')
           } else if ($isLinkNode(node)) {
             setIsLink(true)
             setLinkUrl(node.getURL())
+            setOpenInNewTab(node.getTarget() === '_blank')
           } else {
             setIsLink(false)
             setLinkUrl('')
@@ -79,13 +90,24 @@ export function LinkToolbarButton() {
   }, [editor])
 
   const insertLink = () => {
+    // Restaura a seleção do Lexical antes de disparar o comando
+    editor.update(() => {
+      if (lastSelectionRef.current) {
+        $setSelection(lastSelectionRef.current.clone())
+      }
+    })
+
     if (!linkUrl) {
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)
       setShowLinkEditor(false)
       return
     }
 
-    editor.dispatchCommand(TOGGLE_LINK_COMMAND, linkUrl)
+    editor.dispatchCommand(TOGGLE_LINK_COMMAND, {
+      url: linkUrl,
+      target: openInNewTab ? '_blank' : undefined,
+      rel: openInNewTab ? 'noopener noreferrer' : undefined,
+    })
     setShowLinkEditor(false)
     setLinkUrl('')
   }
@@ -97,7 +119,13 @@ export function LinkToolbarButton() {
         variant={isLink ? 'secondary' : 'ghost'}
         size="sm"
         className="h-8 w-8 p-0"
-        onClick={() => setShowLinkEditor(!showLinkEditor)}
+        onClick={() => {
+          // Pega a seleção mais recente na hora de clicar no botão e abre o popover
+          editor.getEditorState().read(() => {
+            lastSelectionRef.current = $getSelection()?.clone() ?? null
+          })
+          setShowLinkEditor(!showLinkEditor)
+        }}
         aria-label="Inserir link"
       >
         <LinkIcon className="size-4" />
@@ -122,6 +150,18 @@ export function LinkToolbarButton() {
               }}
               autoFocus
             />
+            <div className="flex items-center space-x-2 py-2">
+              <input
+                type="checkbox"
+                id="openInNewTab"
+                checked={openInNewTab}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOpenInNewTab(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              <label htmlFor="openInNewTab" className="text-xs font-medium leading-none cursor-pointer">
+                Abrir em nova aba
+              </label>
+            </div>
             <div className="flex gap-2">
               <Button type="button" size="sm" onClick={insertLink}>
                 {isLink ? 'Atualizar' : 'Inserir'}

@@ -63,6 +63,7 @@ export const Users: CollectionConfig = {
         { label: { en: 'CRM', pt: 'CRM' }, value: 'crm' },
         { label: { en: 'Projects', pt: 'Projetos' }, value: 'projetos' },
         { label: { en: 'Users', pt: 'Usuários' }, value: 'users' },
+        { label: { en: 'Business Cards', pt: 'Cartões de Visitas' }, value: 'business-cards' },
       ],
       admin: {
         description: { pt: 'Módulos do dashboard que este usuário pode acessar. Admin ignora e tem acesso total.' },

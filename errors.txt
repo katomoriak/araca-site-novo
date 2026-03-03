@@ -1,0 +1,4 @@
+﻿.next/dev/types/app/marcoscv/layout.ts(2,24): error TS2307: Cannot find module '../../../../../app/marcoscv/layout.js' or its corresponding type declarations.
+.next/dev/types/app/marcoscv/layout.ts(7,29): error TS2307: Cannot find module '../../../../../app/marcoscv/layout.js' or its corresponding type declarations.
+.next/dev/types/app/marcoscv/page.ts(2,24): error TS2307: Cannot find module '../../../../../app/marcoscv/page.js' or its corresponding type declarations.
+.next/dev/types/app/marcoscv/page.ts(7,29): error TS2307: Cannot find module '../../../../../app/marcoscv/page.js' or its corresponding type declarations.

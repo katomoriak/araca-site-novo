@@ -253,7 +253,7 @@ export function Footer() {
                   Dashboard
                 </Link>
                 <a
-                  href="https://naut.design"
+                  href="https://www.agencianaut.com.br"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-araca-chocolate-amargo/70 hover:text-araca-laranja-queimado transition"
