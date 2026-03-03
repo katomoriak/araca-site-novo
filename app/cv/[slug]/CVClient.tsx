@@ -160,9 +160,13 @@ END:VCARD`
         {/* Footer */}
         <div className="mt-8 mb-6 pt-6 border-t border-araca-bege-medio/50 text-center animate-slide-up mx-6" style={{ animationDelay: '300ms' }}>
           <div className="flex justify-center mb-5">
-            <span className="font-display font-bold text-2xl tracking-tighter text-araca-cafe-escuro">
-              aracá.
-            </span>
+            <Image
+              src="/logotipos/LOGOTIPO_PRINCIPAL.svg"
+              alt="Aracá Interiores"
+              width={120}
+              height={48}
+              className="h-10 w-auto object-contain"
+            />
           </div>
 
           {/* Redes Sociais */}
