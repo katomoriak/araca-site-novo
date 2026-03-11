@@ -17,10 +17,10 @@ interface ScrollTextRevealProps {
   backgroundLogo?: string // URL do logo de fundo (ex.: SVG)
 }
 
-export function ScrollTextReveal({ 
-  texts, 
-  highlights = {}, 
-  className = '', 
+export function ScrollTextReveal({
+  texts,
+  highlights = {},
+  className = '',
   textColor = 'text-araca-cafe-escuro',
   highlightColors = {
     gradient1: '#FFD700',
@@ -33,7 +33,7 @@ export function ScrollTextReveal({
   const [activeIndex, setActiveIndex] = useState(0)
   const [hasBeenSeen, setHasBeenSeen] = useState(false)
   const [isInView, setIsInView] = useState(false)
-  
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ['start start', 'end start']
@@ -42,7 +42,7 @@ export function ScrollTextReveal({
   // Intersection Observer para detectar quando o componente está visível
   useEffect(() => {
     const currentRef = containerRef.current
-    
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -91,7 +91,7 @@ export function ScrollTextReveal({
   // Função para renderizar texto com highlights
   const renderTextWithHighlight = (text: string, index: number) => {
     const wordsToHighlight = highlights[index] || []
-    
+
     if (wordsToHighlight.length === 0) {
       return text
     }
@@ -99,33 +99,33 @@ export function ScrollTextReveal({
     // Divide o texto em palavras e verifica se alguma deve ser destacada
     const parts = text.split(' ')
     let highlightCounter = 0 // Contador para palavras destacadas
-    
+
     return (
       <>
         {parts.map((word, wordIndex) => {
           const cleanWord = word.toLowerCase().replace(/[.,!?]/g, '')
-          const shouldHighlight = wordsToHighlight.some(h => 
+          const shouldHighlight = wordsToHighlight.some(h =>
             cleanWord.includes(h.toLowerCase())
           )
-          
+
           if (shouldHighlight) {
             const isActive = activeIndex === index
             const highlightIndex = highlightCounter
             highlightCounter++
-            
+
             // Delay base de 0.3s + 0.4s para cada palavra subsequente
             const baseDelay = 0.3
             const delayPerWord = 0.4
             const totalDelay = baseDelay + (highlightIndex * delayPerWord)
-            
+
             // Só anima se o elemento está ativo E a seção já foi vista
             const shouldAnimate = isActive && hasBeenSeen
-            
+
             // Debug temporário
             if (isActive && wordIndex === 0) {
               console.log(`Texto ${index}: isActive=${isActive}, hasBeenSeen=${hasBeenSeen}, shouldAnimate=${shouldAnimate}`)
             }
-            
+
             return (
               <span key={wordIndex} className="relative inline-block mx-2">
                 <span className="relative z-10">{word}</span>
@@ -134,9 +134,10 @@ export function ScrollTextReveal({
                   className="absolute inset-0 -z-10"
                   initial={{ opacity: 0, scaleX: 0 }}
                   animate={shouldAnimate ? { opacity: 1, scaleX: 1 } : { opacity: 0, scaleX: 0 }}
-                  transition={{ 
-                    opacity: { duration: 0.1, delay: totalDelay },
-                    scaleX: { duration: 0.5, delay: totalDelay, ease: "easeOut" }
+                  transition={{
+                    duration: 0.5,
+                    delay: totalDelay,
+                    ease: "easeOut"
                   }}
                   style={{ transformOrigin: 'left' }}
                 >
@@ -164,7 +165,7 @@ export function ScrollTextReveal({
               </span>
             )
           }
-          
+
           return <span key={wordIndex} className="mx-1">{word}</span>
         })}
       </>
@@ -182,32 +183,23 @@ export function ScrollTextReveal({
               const isExiting = activeIndex > index
               // Detecta se é um texto longo (mais de 80 caracteres)
               const isLongText = text.length > 80
-              
+
               return (
                 <motion.p
                   key={index}
-                  className={`absolute inset-x-0 text-center font-display font-bold leading-tight ${textColor} px-[10%] ${
-                    isLongText 
-                      ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl' 
+                  className={`absolute inset-x-0 text-center font-display font-bold leading-tight ${textColor} px-[10%] ${isLongText
+                      ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
                       : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
-                  }`}
+                    }`}
                   initial={{ opacity: 0 }}
                   animate={{
                     opacity: isActive ? 1 : 0,
                     scale: isActive ? 1 : 0.95,
                   }}
                   transition={{
-                    opacity: {
-                      duration: 0.5,
-                      ease: 'easeInOut',
-                      // Adiciona delay na entrada, mas não na saída
-                      delay: isActive && !isExiting ? 0.3 : 0
-                    },
-                    scale: {
-                      duration: 0.5,
-                      ease: 'easeInOut',
-                      delay: isActive && !isExiting ? 0.3 : 0
-                    }
+                    duration: 0.5,
+                    ease: 'easeInOut',
+                    delay: isActive && !isExiting ? 0.3 : 0
                   }}
                 >
                   {renderTextWithHighlight(text, index)}
@@ -220,60 +212,59 @@ export function ScrollTextReveal({
 
       {/* Indicadores de progresso (dots) - Só visível quando está na seção */}
       {isInView && hasBeenSeen && (
-          <div className="fixed right-6 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3">
-            {texts.map((_, index) => {
-              const isPast = index < activeIndex
-              const isActive = index === activeIndex
-              const isFuture = index > activeIndex
-              
-              return (
-                <button
-                  key={index}
-                  onClick={() => {
-                    // Calcula a posição de scroll para este índice
-                    const container = containerRef.current
-                    if (container) {
-                      const scrollPerText = container.scrollHeight / texts.length
-                      const targetScroll = container.offsetTop + (scrollPerText * index)
-                      window.scrollTo({
-                        top: targetScroll,
-                        behavior: 'smooth'
-                      })
-                    }
-                  }}
-                  className="group relative flex items-center justify-center"
-                  aria-label={`Ir para texto ${index + 1}`}
-                >
-                  {/* Dot/Barra - só o ativo fica alongado */}
-                  <motion.span
-                    className={`block rounded-full transition-all duration-500 ease-out ${
-                      isActive
-                        ? 'bg-araca-cafe-escuro'
-                        : isPast
+        <div className="fixed right-6 top-1/2 z-30 flex -translate-y-1/2 flex-col items-center gap-3">
+          {texts.map((_, index) => {
+            const isPast = index < activeIndex
+            const isActive = index === activeIndex
+            const isFuture = index > activeIndex
+
+            return (
+              <button
+                key={index}
+                onClick={() => {
+                  // Calcula a posição de scroll para este índice
+                  const container = containerRef.current
+                  if (container) {
+                    const scrollPerText = container.scrollHeight / texts.length
+                    const targetScroll = container.offsetTop + (scrollPerText * index)
+                    window.scrollTo({
+                      top: targetScroll,
+                      behavior: 'smooth'
+                    })
+                  }
+                }}
+                className="group relative flex items-center justify-center"
+                aria-label={`Ir para texto ${index + 1}`}
+              >
+                {/* Dot/Barra - só o ativo fica alongado */}
+                <motion.span
+                  className={`block rounded-full transition-all duration-500 ease-out ${isActive
+                      ? 'bg-araca-cafe-escuro'
+                      : isPast
                         ? 'bg-araca-cafe-escuro hover:bg-araca-cafe-escuro'
                         : 'bg-gray-300 hover:bg-gray-400'
                     }`}
-                    animate={{
-                      width: isPast ? '7px' : '6px',
-                      height: isActive ? '32px' : isPast ? '7px' : '6px',
-                      opacity: 1,
-                    }}
-                    transition={{ 
-                      duration: 0.5,
-                      ease: [0.4, 0, 0.2, 1]
-                    }}
-                  />
-                  
-                  {/* Tooltip com número - aparece no hover */}
-                  <motion.span 
-                    className="pointer-events-none absolute right-10 whitespace-nowrap rounded-lg bg-araca-cafe-escuro px-3 py-1.5 text-xs font-medium text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  >
-                    <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-araca-cafe-escuro"></span>
-                    {index + 1} de {texts.length}
-                  </motion.span>
-                </button>
-              )
-            })}
+                  animate={{
+                    width: isPast ? '7px' : '6px',
+                    height: isActive ? '32px' : isPast ? '7px' : '6px',
+                    opacity: 1,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
+                />
+
+                {/* Tooltip com número - aparece no hover */}
+                <motion.span
+                  className="pointer-events-none absolute right-10 whitespace-nowrap rounded-lg bg-araca-cafe-escuro px-3 py-1.5 text-xs font-medium text-white shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                >
+                  <span className="absolute -right-1 top-1/2 h-2 w-2 -translate-y-1/2 rotate-45 bg-araca-cafe-escuro"></span>
+                  {index + 1} de {texts.length}
+                </motion.span>
+              </button>
+            )
+          })}
         </div>
       )}
     </div>

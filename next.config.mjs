@@ -24,6 +24,7 @@ const nextConfig = {
     return config
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
     localPatterns: [
       { pathname: '/api/image-proxy' },
       { pathname: '/logotipos/**' },
@@ -38,6 +39,23 @@ const nextConfig = {
       { protocol: 'https', hostname: 'img.araca.arq.br', pathname: '/**' },
       { protocol: 'https', hostname: 'pub-9ca9f8ba8c9d47518d53ef4b3818ed26.r2.dev', pathname: '/**' },
     ],
+  },
+  /**
+   * Rewrites: expõe /arquitetura-interiores-{slug} publicamente,
+   * mapeando para a rota interna /arquitetura-interiores/{slug}.
+   * O App Router exige que o segmento dinâmico [city] seja o nome completo da pasta,
+   * portanto a pasta interna é /arquitetura-interiores/[city] e os rewrites
+   * traduzem as URLs com hífen para a estrutura de barra.
+   */
+  async rewrites() {
+    const locations = [
+      'santo-andre', 'sao-caetano', 'sao-bernardo', 'sao-paulo',
+      'moema', 'brooklyn', 'pinheiros', 'zona-sul-sao-paulo'
+    ]
+    return locations.map((slug) => ({
+      source: `/arquitetura-interiores-${slug}`,
+      destination: `/arquitetura-interiores/${slug}`,
+    }))
   },
   async headers() {
     return [

@@ -36,40 +36,37 @@ const ProjectGallery = dynamic(
 
 /** Vídeo do hero via proxy por redirect: /api/hero-video → 302 para R2. Peso na Vercel é só o redirect. */
 const HERO_VIDEO_SRC = '/api/hero-video'
+const HERO_VIDEO_LOW_SRC = '/api/hero-video?quality=low'
+const HERO_POSTER_SRC = '/api/hero-video?quality=poster'
 
 function HeroVideo() {
-  const [shouldLoad, setShouldLoad] = useState(true)
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e?.isIntersecting) setShouldLoad(true)
-      },
-      { rootMargin: '50px', threshold: 0 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
   return (
-    <div ref={containerRef} className="absolute inset-0">
-      {shouldLoad ? (
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={HERO_VIDEO_SRC} type="video/mp4" />
-        </video>
-      ) : (
-        <div className="absolute inset-0 bg-neutral-900" aria-hidden />
-      )}
+    <div className="absolute inset-0 bg-neutral-900">
+      {/* Imagem super leve gerada do R2 que vai aparecer INSTATANEAMENTE na hidratação/SSR */}
+      <img
+        src={HERO_POSTER_SRC}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+        // Atributos favoráveis a LCP
+        fetchPriority="high"
+        decoding="sync"
+      />
+
+      {/* O Vídeo roda logo em seguida. Ele usa a imagem the poster como garantia adicional. */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster={HERO_POSTER_SRC}
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        {/* Para mobile (telas menores que 1024px), vamos puxar obrigatoriamente a versão ultra leve _low.mp4 */}
+        <source src={HERO_VIDEO_LOW_SRC} type="video/mp4" media="(max-width: 1024px)" />
+        {/* Para desktop, puxamos a versão original que carrega após o pôster ser renderizado */}
+        <source src={HERO_VIDEO_SRC} type="video/mp4" />
+      </video>
     </div>
   )
 }
@@ -337,6 +334,8 @@ export function HomePage({ initialProjects }: HomePageProps) {
                 <img
                   src="/logotipos/utilitaries/U_CAETE.svg"
                   alt=""
+                  width={840}
+                  height={840}
                   className="h-[min(140vh,840px)] w-auto opacity-30 object-contain object-left"
                 />
               </Parallax>
@@ -350,6 +349,8 @@ export function HomePage({ initialProjects }: HomePageProps) {
                 <img
                   src="/logotipos/utilitaries/U_CAETE.svg"
                   alt=""
+                  width={840}
+                  height={840}
                   className="h-[min(140vh,840px)] w-auto opacity-30 object-contain object-right"
                 />
               </Parallax>
@@ -373,8 +374,9 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     whileInView={{ opacity: 1, scaleX: 1 }}
                     viewport={{ once: true }}
                     transition={{
-                      opacity: { duration: 0.1, delay: 0.3 },
-                      scaleX: { duration: 0.5, delay: 0.3, ease: "easeOut" }
+                      duration: 0.5,
+                      delay: 0.3,
+                      ease: "easeOut"
                     }}
                     style={{ transformOrigin: 'left' }}
                   >
@@ -447,6 +449,8 @@ export function HomePage({ initialProjects }: HomePageProps) {
               <img
                 src="/logotipos/utilitaries/U_CAETE.svg"
                 alt=""
+                width={540}
+                height={540}
                 className="h-[min(90vh,540px)] w-auto opacity-[0.12] object-contain object-left"
               />
             </Parallax>
@@ -459,6 +463,8 @@ export function HomePage({ initialProjects }: HomePageProps) {
               <img
                 src="/logotipos/utilitaries/U_CAETE.svg"
                 alt=""
+                width={540}
+                height={540}
                 className="h-[min(90vh,540px)] w-auto opacity-[0.12] object-contain object-right"
               />
             </Parallax>
