@@ -43,5 +43,14 @@ export async function GET(request: Request) {
   if (!target) {
     return new NextResponse('Hero video not configured', { status: 503 })
   }
-  return NextResponse.redirect(target, 302)
+
+  // 308 (Permanent Redirect) + Cache-Control longo:
+  // 302 não é cacheado por browser/CDN — cada visita faz o round-trip novamente.
+  // 308 com max-age=604800 faz o browser cachear o redirect por 7 dias.
+  return NextResponse.redirect(target, {
+    status: 308,
+    headers: {
+      'Cache-Control': 'public, max-age=604800, stale-while-revalidate=2592000',
+    },
+  })
 }

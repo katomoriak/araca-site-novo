@@ -12,9 +12,11 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   reactCompiler: false, // Payload: desativado para compatibilidade (Next 16: chave no nível raiz)
   transpilePackages: ['swiper'],
-  // experimental: {
-  //   // proxyClientMaxBodySize: '4mb',
-  // },
+  // Tree-shaking de pacotes grandes — reduz bundle JS
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts', '@radix-ui/react-select', '@radix-ui/react-dialog'],
+  },
+  compress: true, // gzip/brotli nivel servidor
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -127,6 +129,46 @@ const nextConfig = {
             type: 'header',
             key: 'x-forwarded-proto',
             value: 'https',
+          },
+        ],
+      },
+      {
+        // Cache imútavel para assets estáticos Next.js (CSS/JS com hash no nome)
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache imútavel para fontes locais (Bellamora woff2 — 30 KiB no caminho crítico)
+        source: '/fonts/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        // Cache de 7 dias para o proxy de imagens (URLs têm parâmetros ?w=&q= únicos).
+        source: '/api/image-proxy',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000',
+          },
+        ],
+      },
+      {
+        // Cache de 7 dias para o redirect do hero-video (308 + Cache-Control).
+        source: '/api/hero-video',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=604800, s-maxage=604800, stale-while-revalidate=2592000',
           },
         ],
       },

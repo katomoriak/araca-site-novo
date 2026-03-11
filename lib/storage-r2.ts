@@ -73,7 +73,12 @@ export async function createSignedUploadUrlForBlog(
   const safeExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext) ? ext : 'jpg'
   const path = `blog/${timestamp}-${randomStr}.${safeExt}`
 
-  const command = new PutObjectCommand({ Bucket: bucket, Key: path })
+  // CacheControl longo: arquivos de mídia são imutáveis por URL (nome único com timestamp)
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: path,
+    CacheControl: 'public, max-age=31536000, immutable',
+  })
   const signedUrl = await getSignedUrl(client, command, { expiresIn: UPLOAD_EXPIRES })
   return { signedUrl, path, publicUrl: getR2PublicUrl(path) }
 }
@@ -87,7 +92,12 @@ export async function createSignedUploadUrl(
   if (!client) return null
 
   const path = `${slug}/${filename}`
-  const command = new PutObjectCommand({ Bucket: bucket, Key: path })
+  // CacheControl longo: garante que o R2 sirva com 1 ano de cache ao invés do default 4h
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: path,
+    CacheControl: 'public, max-age=31536000, immutable',
+  })
   const signedUrl = await getSignedUrl(client, command, { expiresIn: UPLOAD_EXPIRES })
   return { signedUrl, path, publicUrl: getR2PublicUrl(path) }
 }
@@ -110,7 +120,12 @@ export async function createSignedUploadUrlProjetosMedia(
     ? `${PROJETOS_MIDIAS_PREFIX}/${safeSub}/${safeName}`
     : `${PROJETOS_MIDIAS_PREFIX}/${safeName}`
 
-  const command = new PutObjectCommand({ Bucket: bucket, Key: path })
+  // CacheControl longo: imagens de projetos são imutáveis (nome do arquivo não muda)
+  const command = new PutObjectCommand({
+    Bucket: bucket,
+    Key: path,
+    CacheControl: 'public, max-age=31536000, immutable',
+  })
   const signedUrl = await getSignedUrl(client, command, { expiresIn: UPLOAD_EXPIRES })
   return { signedUrl, path, publicUrl: getR2PublicUrl(path) }
 }
@@ -287,6 +302,9 @@ export async function moveProjetosMediaInStorage(
         Bucket: bucket,
         CopySource: `${bucket}/${fromPath}`,
         Key: toPath,
+        // Preserva Cache-Control longo no arquivo copiado
+        CacheControl: 'public, max-age=31536000, immutable',
+        MetadataDirective: 'REPLACE',
       })
     )
     await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: fromPath }))
@@ -312,6 +330,8 @@ export async function uploadBlogFile(
         Key: path,
         Body: buffer,
         ContentType: contentType,
+        // Cache de 1 ano: arquivos de blog têm nome único (timestamp), são imutáveis
+        CacheControl: 'public, max-age=31536000, immutable',
       })
     )
     return { publicUrl: getR2PublicUrl(path) }

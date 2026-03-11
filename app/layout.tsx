@@ -133,6 +133,17 @@ export default function RootLayout({
       className={rubik.variable}
     >
       <head>
+        {/* Preconnect para origens críticas — reduz latência de rede */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preload da fonte display Bellamora (woff2 — no caminho crítico) */}
+        <link
+          rel="preload"
+          href="/fonts/Bellamora-Free-Personal-Use.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
         {/* Google Analytics */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}

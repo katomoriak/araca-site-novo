@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+/* Rubik é carregada via next/font/google no layout.tsx (sem request extra ao Google Fonts) */
 
 /* Bellamora – fonte display (arquivos com hífens: Bellamora-Free-Personal-Use.*) */
 @font-face {

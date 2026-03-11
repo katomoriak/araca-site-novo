@@ -9,15 +9,22 @@ const R2_ORIGIN = R2_PUBLIC ? new URL(R2_PUBLIC).origin : null
 /** Largura máxima permitida para resize (evita abuse). */
 const MAX_WIDTH = 3840
 
-/** Qualidade máxima. */
-const MAX_QUALITY = 90
+/** Qualidade padrão (se não especificada) — balance bom entre visual e tamanho. */
+const DEFAULT_QUALITY = 72
 
-/** Cache no CDN (Vercel) e no browser. Reduzido para não acumular tanto no Vercel. Configurável por env. */
+/** Qualidade máxima permitida (evita imagens muito pesadas). */
+const MAX_QUALITY = 82
+
+/**
+ * Cache no CDN (Vercel) e no browser.
+ * 7 dias (604800s) + stale-while-revalidate de 30 dias.
+ * As imagens são servidas com URL única (?w=&q=) portanto cache longo é seguro.
+ */
 const CACHE_MAX_AGE =
   typeof process.env.IMAGE_PROXY_CACHE_MAX_AGE !== 'undefined'
     ? Math.max(0, parseInt(process.env.IMAGE_PROXY_CACHE_MAX_AGE, 10) || 0)
-    : 86400 // padrão: 24 horas (86400s). 0 = no-store; 86400 = 1 dia
-const CACHE_SWR = 86400 // stale-while-revalidate até 24h
+    : 604800 // padrão: 7 dias (604800s)
+const CACHE_SWR = 2592000 // stale-while-revalidate: 30 dias
 const CACHE_HEADER =
   CACHE_MAX_AGE <= 0
     ? 'public, max-age=0, s-maxage=0, no-store'
@@ -42,7 +49,7 @@ export async function GET(request: NextRequest) {
     const qualityParam = request.nextUrl.searchParams.get('q')
 
     const width = widthParam ? Math.min(parseInt(widthParam, 10) || 0, MAX_WIDTH) : 0
-    const quality = qualityParam ? Math.min(Math.max(parseInt(qualityParam, 10) || 80, 1), MAX_QUALITY) : 80
+    const quality = qualityParam ? Math.min(Math.max(parseInt(qualityParam, 10) || DEFAULT_QUALITY, 1), MAX_QUALITY) : DEFAULT_QUALITY
     const shouldResize = width > 0
 
     // URL decoded by searchParams.get is enough. decoding again breaks encoded characters like %20 or %2B (plus)
@@ -186,6 +193,7 @@ export async function GET(request: NextRequest) {
         headers: {
           'Content-Type': 'image/webp',
           'Cache-Control': CACHE_HEADER,
+          'Vary': 'Accept',
         },
       })
     }

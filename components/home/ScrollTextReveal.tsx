@@ -30,6 +30,7 @@ export function ScrollTextReveal({
   backgroundLogo,
 }: ScrollTextRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null)
+  const containerTopRef = useRef<number>(0)
   const [activeIndex, setActiveIndex] = useState(0)
   const [hasBeenSeen, setHasBeenSeen] = useState(false)
   const [isInView, setIsInView] = useState(false)
@@ -39,6 +40,19 @@ export function ScrollTextReveal({
     offset: ['start start', 'end start']
   })
 
+  // Cacheia offsetTop do container para evitar reflow forçado nos event handlers
+  useEffect(() => {
+    const updateContainerTop = () => {
+      if (containerRef.current) {
+        containerTopRef.current = containerRef.current.getBoundingClientRect().top + window.scrollY
+      }
+    }
+    updateContainerTop()
+    const resizeObserver = new ResizeObserver(updateContainerTop)
+    if (containerRef.current) resizeObserver.observe(document.body)
+    return () => resizeObserver.disconnect()
+  }, [])
+
   // Intersection Observer para detectar quando o componente está visível
   useEffect(() => {
     const currentRef = containerRef.current
@@ -46,9 +60,7 @@ export function ScrollTextReveal({
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Detecta quando entra/sai da viewport
           if (entry.isIntersecting) {
-            console.log('Seção "Sobre Nós" está visível - ativando animações')
             setHasBeenSeen(true)
             setIsInView(true)
           } else {
@@ -57,7 +69,7 @@ export function ScrollTextReveal({
         })
       },
       {
-        threshold: 0.1, // Ativa quando 10% do elemento está visível
+        threshold: 0.1,
         rootMargin: '0px'
       }
     )
@@ -121,11 +133,6 @@ export function ScrollTextReveal({
             // Só anima se o elemento está ativo E a seção já foi vista
             const shouldAnimate = isActive && hasBeenSeen
 
-            // Debug temporário
-            if (isActive && wordIndex === 0) {
-              console.log(`Texto ${index}: isActive=${isActive}, hasBeenSeen=${hasBeenSeen}, shouldAnimate=${shouldAnimate}`)
-            }
-
             return (
               <span key={wordIndex} className="relative inline-block mx-2">
                 <span className="relative z-10">{word}</span>
@@ -188,8 +195,8 @@ export function ScrollTextReveal({
                 <motion.p
                   key={index}
                   className={`absolute inset-x-0 text-center font-display font-bold leading-tight ${textColor} px-[10%] ${isLongText
-                      ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
-                      : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
+                    ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
+                    : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
                     }`}
                   initial={{ opacity: 0 }}
                   animate={{
@@ -226,7 +233,8 @@ export function ScrollTextReveal({
                   const container = containerRef.current
                   if (container) {
                     const scrollPerText = container.scrollHeight / texts.length
-                    const targetScroll = container.offsetTop + (scrollPerText * index)
+                    // Usa offset cacheado — evita reflow forçado no event handler
+                    const targetScroll = containerTopRef.current + (scrollPerText * index)
                     window.scrollTo({
                       top: targetScroll,
                       behavior: 'smooth'
@@ -239,10 +247,10 @@ export function ScrollTextReveal({
                 {/* Dot/Barra - só o ativo fica alongado */}
                 <motion.span
                   className={`block rounded-full transition-all duration-500 ease-out ${isActive
-                      ? 'bg-araca-cafe-escuro'
-                      : isPast
-                        ? 'bg-araca-cafe-escuro hover:bg-araca-cafe-escuro'
-                        : 'bg-gray-300 hover:bg-gray-400'
+                    ? 'bg-araca-cafe-escuro'
+                    : isPast
+                      ? 'bg-araca-cafe-escuro hover:bg-araca-cafe-escuro'
+                      : 'bg-gray-300 hover:bg-gray-400'
                     }`}
                   animate={{
                     width: isPast ? '7px' : '6px',
