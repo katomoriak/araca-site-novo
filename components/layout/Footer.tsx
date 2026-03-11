@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Linkedin, Instagram, ArrowRight, Mail, Phone } from 'lucide-react'
 import { Container } from './Container'
+import { LOCATIONS } from '@/lib/seo-locations'
 
 /* Navegação do site (sem locais sensíveis). Equipe acessa pelo Dashboard. */
 const footerNavColumns = [
@@ -196,6 +197,25 @@ export function Footer() {
                   </ul>
                 </div>
               ))}
+
+              {/* Coluna SEO Local — Atuação por cidade */}
+              <div>
+                <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-araca-cafe-escuro">
+                  Atuação
+                </h3>
+                <ul className="mt-4 space-y-2">
+                  {LOCATIONS.map((loc) => (
+                    <li key={loc.slug}>
+                      <Link
+                        href={`/arquitetura-interiores-${loc.slug}`}
+                        className="text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
+                      >
+                        {loc.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
               <div>
                 <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-araca-cafe-escuro">
                   Contato

@@ -42,7 +42,7 @@ ORG:Aracá Interiores
 TITLE:${card.role}
 TEL;TYPE=CELL,VOICE:${telToSave}
 EMAIL:${card.email}
-URL:https://aracainteriores.com.br
+URL:https://araca.arq.br
 ADR;TYPE=WORK:;;Santo André;SP;;;Brasil
 END:VCARD`
 

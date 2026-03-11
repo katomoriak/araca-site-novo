@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: `${name} | Aracá Interiores`,
       description: `Cartão de Visitas Virtual - ${name}, ${role} na Aracá Interiores.`,
-      url: `https://aracainteriores.com.br/cv/${p.slug}`,
+      url: `https://araca.arq.br/cv/${p.slug}`,
       siteName: 'Aracá Interiores',
       type: 'profile',
     },

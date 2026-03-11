@@ -37,7 +37,7 @@ Configure no painel da Vercel (Settings → Environment Variables) para **Produc
 |----------|-------------|-----------|
 | `PAYLOAD_SECRET` | Sim | Segredo para sessões Payload. Use um valor aleatório longo (32+ caracteres). Nunca commitar. |
 | `DATABASE_URL` | Sim | Connection string do Postgres (Supabase Cloud). Em Project Settings → Database use **Session mode** (porta **6543**). Ex.: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require` |
-| `NEXT_PUBLIC_SITE_URL` | Sim | URL base do site em produção (ex.: `https://aracainteriores.com.br`). Usado em metadata, sitemap, links de e-mail. |
+| `NEXT_PUBLIC_SITE_URL` | Sim | URL base do site em produção (ex.: `https://araca.arq.br`). Usado em metadata, sitemap, links de e-mail. |
 
 ## Upload de mídia (admin Payload)
 
@@ -86,7 +86,7 @@ Antes de dar **Deploy** (ou push na branch conectada):
 1. **Variáveis no painel da Vercel** (Settings → Environment Variables) para **Production**:
    - `PAYLOAD_SECRET` (32+ caracteres)
    - `DATABASE_URL` (Supabase Cloud, Session mode, porta **6543**, com `?sslmode=require`)
-   - `NEXT_PUBLIC_SITE_URL` (ex.: `https://aracainteriores.com.br`)
+   - `NEXT_PUBLIC_SITE_URL` (ex.: `https://araca.arq.br`)
    - Upload: ou todas as `S3_*` (Supabase Storage) ou `BLOB_READ_WRITE_TOKEN` (Vercel Blob)
 
 2. **Migrações**: schema do Payload já aplicado no banco de produção (rodar `npx payload migrate` localmente com `DATABASE_URL` de produção).

@@ -31,14 +31,14 @@ const getPost = cache(async (slug: string) => {
       : null
     const authorId =
       typeof payloadPost.author === 'object' &&
-      payloadPost.author != null &&
-      'id' in payloadPost.author
+        payloadPost.author != null &&
+        'id' in payloadPost.author
         ? String((payloadPost.author as { id: string }).id)
         : undefined
     const showAsPublicAuthor =
       typeof payloadPost.author === 'object' &&
-      payloadPost.author != null &&
-      'showAsPublicAuthor' in payloadPost.author
+        payloadPost.author != null &&
+        'showAsPublicAuthor' in payloadPost.author
         ? (payloadPost.author as { showAsPublicAuthor?: boolean }).showAsPublicAuthor === true
         : false
     const categoryValue = payloadPost.category
@@ -57,14 +57,14 @@ const getPost = cache(async (slug: string) => {
       coverImage:
         payloadPost.coverImage?.url
           ? {
-              url: payloadPost.coverImage.url,
-              alt: stringFromLocale(payloadPost.coverImage?.alt ?? payloadPost.title),
-            }
+            url: payloadPost.coverImage.url,
+            alt: stringFromLocale(payloadPost.coverImage?.alt ?? payloadPost.title),
+          }
           : payloadPost.coverImageUrl
             ? {
-                url: payloadPost.coverImageUrl,
-                alt: stringFromLocale(payloadPost.title),
-              }
+              url: payloadPost.coverImageUrl,
+              alt: stringFromLocale(payloadPost.title),
+            }
             : null,
       content: payloadPost.content,
     }
@@ -86,7 +86,7 @@ const getPost = cache(async (slug: string) => {
   return null
 })
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params

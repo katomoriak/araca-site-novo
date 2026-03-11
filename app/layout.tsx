@@ -16,7 +16,7 @@ const rubik = Rubik({
 const siteName = 'Aracá Interiores'
 const siteDescription =
   'Aracá Interiores — projetos de interiores residenciais e comerciais. Projeto criativo, executivo, detalhamentos e acompanhamento de obra em um modelo inovador e sob medida.'
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 const jsonLdOrganization = {
   '@context': 'https://schema.org',

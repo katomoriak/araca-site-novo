@@ -18,7 +18,7 @@ function toCategoryLabel(cat: unknown): string {
   return String(cat ?? '')
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 export const metadata = {
   title: 'Blog',

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { getProjetosCachedForProjectsPage, getProjetoBySlug } from '@/lib/projetos-server'
 import { ProjetoDetailContent } from '@/components/projetos/ProjetoDetailContent'
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 interface PageProps {
   params: Promise<{ slug: string }>

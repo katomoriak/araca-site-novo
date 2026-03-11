@@ -2,8 +2,9 @@ import type { MetadataRoute } from 'next'
 import { getPosts } from '@/lib/payload'
 import { getProjetosCached } from '@/lib/projetos-server'
 import { MOCK_POSTS } from '@/lib/blog-mock'
+import { LOCATIONS } from '@/lib/seo-locations'
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://aracainteriores.com.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 const BLOG_CATEGORIES = ['design', 'dev', 'tutorial', 'news'] as const
 
@@ -14,6 +15,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/projetos`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${baseUrl}/contato`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    // SEO Local — páginas por cidade (fundo de funil)
+    ...LOCATIONS.map((loc) => ({
+      url: `${baseUrl}/arquitetura-interiores-${loc.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.85,
+    })),
   ]
 
   let blogUrls: MetadataRoute.Sitemap = []

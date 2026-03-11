@@ -34,7 +34,7 @@ export const BusinessCards: CollectionConfig = {
             unique: true,
             label: { en: 'URL Slug', pt: 'Slug (URL)' },
             admin: {
-                description: { pt: 'Ex: marcos (acessível via aracainteriores.com.br/cv/marcos)' }
+                description: { pt: 'Ex: marcos (acessível via araca.arq.br/cv/marcos)' }
             }
         },
         {
