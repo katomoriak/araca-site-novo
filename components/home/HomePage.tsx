@@ -34,7 +34,7 @@ const ProjectGallery = dynamic(
   { ssr: false }
 )
 
-/** Vídeo do hero via proxy por redirect: /api/hero-video → 302 para R2. Peso na Vercel é só o redirect. */
+/** Vídeo do hero via proxy por redirect: /api/hero-video → 308 para R2. Peso na Vercel é só o redirect. */
 const HERO_VIDEO_SRC = '/api/hero-video'
 const HERO_VIDEO_LOW_SRC = '/api/hero-video?quality=low'
 const HERO_POSTER_SRC = '/api/hero-video?quality=poster'

@@ -43,11 +43,24 @@ const nextConfig = {
     ],
   },
   /**
-   * Rewrites: expõe /arquitetura-interiores-{slug} publicamente,
-   * mapeando para a rota interna /arquitetura-interiores/{slug}.
-   * O App Router exige que o segmento dinâmico [city] seja o nome completo da pasta,
-   * portanto a pasta interna é /arquitetura-interiores/[city] e os rewrites
-   * traduzem as URLs com hífen para a estrutura de barra.
+   * Redirects: Garante que a versão "interna" (/arquitetura-interiores/cidade)
+   * sempre redirecione para a versão de ranqueamento (/arquitetura-interiores-cidade) com 301.
+   * Isso evita conteúdo duplicado e consolida o "link juice".
+   */
+  async redirects() {
+    return [
+      {
+        source: '/arquitetura-interiores/:city',
+        destination: '/arquitetura-interiores-:city',
+        permanent: true, // 301 Redirect
+      },
+    ]
+  },
+  /**
+   * Rewrites: Expõe /arquitetura-interiores-{slug} publicamente,
+   * mapeando internamente para a pasta /arquitetura-interiores/[city].
+   * Como o redirecionamento acima acontece antes do rewrite, o Google
+   * vê apenas a URL com hífen como a oficial.
    */
   async rewrites() {
     const locations = [

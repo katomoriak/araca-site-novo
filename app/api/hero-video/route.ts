@@ -5,7 +5,7 @@ const DEFAULT_HERO_VIDEO_KEY = 'FJO__VIDEOFACHADA_01_R00.mp4'
 /**
  * GET /api/hero-video
  * Aceita query ?quality=low (para mp4 comprimido) ou ?quality=poster (para webp)
- * Redireciona (302) para a URL real no R2 ou fallback.
+ * Redireciona (308) para a URL real no R2 ou fallback.
  */
 function getRedirectUrl(quality: string | null): string | null {
   let videoKey = process.env.NEXT_PUBLIC_HERO_VIDEO_FILENAME || DEFAULT_HERO_VIDEO_KEY
@@ -45,7 +45,7 @@ export async function GET(request: Request) {
   }
 
   // 308 (Permanent Redirect) + Cache-Control longo:
-  // 302 não é cacheado por browser/CDN — cada visita faz o round-trip novamente.
+  // 308 é cacheado por browser/CDN (diferente do 302) — evita round-trips extras.
   // 308 com max-age=604800 faz o browser cachear o redirect por 7 dias.
   return NextResponse.redirect(target, {
     status: 308,

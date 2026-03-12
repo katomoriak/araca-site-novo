@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
         // Se a miniatura já existe no R2, redirecionar o navegador para lá.
         // Isso economiza "Cached Egress" na Vercel.
         if (await fileExistsInStorage(thumbKey)) {
-          return NextResponse.redirect(getStoragePublicUrl(thumbKey), 307)
+          return NextResponse.redirect(getStoragePublicUrl(thumbKey), 308)
         }
       } catch (e) {
         console.error('[image-proxy] error checking thumbKey:', e)
