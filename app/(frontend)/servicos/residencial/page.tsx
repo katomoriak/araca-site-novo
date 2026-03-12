@@ -14,7 +14,7 @@ import { Parallax } from 'react-scroll-parallax'
 
 // Fallback image constants
 const HERO_RESIDENCIAL = 'https://img.araca.arq.br/midias/resindencia_feijo/araca_interiores_%20(17).png'
-const IMG_JAPANDI = 'https://img.araca.arq.br/midias/projetoaptoblack/ARACA_INTERIORES%20(33).png'
+const IMG_ALTO_PADRAO = 'https://img.araca.arq.br/midias/projetoaptoblack/ARACA_INTERIORES%20(33).png'
 const IMG_MINIMALIST = 'https://img.araca.arq.br/midias/resindencia_feijo/ARACA_INTERIORES%20(12).png'
 const IMG_NEOCLASSIC = 'https://img.araca.arq.br/midias/resindencia_feijo/araca_interiores_%20(14).png'
 
@@ -153,7 +153,7 @@ export default function ResidencialPage() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl">
               <Parallax speed={-5} className="absolute inset-0">
                 <Image
-                  src={IMG_JAPANDI}
+                  src={IMG_ALTO_PADRAO}
                   alt="Interior Residencial de Alto Padrão - Ninho Verde"
                   fill
                   className="object-cover"
@@ -188,7 +188,7 @@ export default function ResidencialPage() {
               },
               {
                  title: 'Alto Padrão',
-                 img: IMG_JAPANDI,
+                 img: IMG_ALTO_PADRAO,
                  desc: 'O equilíbrio perfeito entre a estética japonesa e o conforto escandinavo.'
               },
               {
