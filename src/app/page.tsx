@@ -245,7 +245,7 @@ function ProjectsSection() {
     },
     { 
       id: 3, 
-      title: 'Apartamento Minimalista', 
+      title: 'Apartamento de Alto Padrão', 
       image: 'https://images.unsplash.com/photo-1556020685-ae41abfc9365?w=800&q=80&fit=crop&auto=format'
     },
     { 

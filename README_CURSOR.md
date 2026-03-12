@@ -64,7 +64,7 @@ export default function RootLayout({ children }) {
 | **Complexidade** | Alta (clonagem DOM) | Baixa (apenas CSS) |
 | **Performance** | Média | Alta (GPU optimized) |
 | **Memória** | ~5-10 MB | < 1 MB |
-| **Estética** | Zoom com conteúdo | Glass puro minimalista |
+| **Estética** | Zoom com conteúdo | Glass puro e elegante |
 | **Movimento** | Linear | Física de mola |
 | **Manutenção** | Complexa | Simples |
 
@@ -242,7 +242,7 @@ Este cursor foi inspirado nos elementos de interface da Apple:
 
 - **macOS Cursor**: Movimento suave e responsivo
 - **iOS Glass**: Transparência com blur característico
-- **Apple Design Language**: Minimalismo e elegância premium
+- **Apple Design Language**: Sofisticação e elegância premium
 - **Liquid Motion**: Fluidez natural e orgânica
 
 ---
@@ -259,7 +259,7 @@ Este cursor foi inspirado nos elementos de interface da Apple:
 
 ### Mais Elegante
 - **Antes**: Zoom mostrando conteúdo da página
-- **Depois**: Glass puro minimalista estilo Apple
+- **Depois**: Glass puro e elegante estilo Apple
 
 ### Mais Fluido
 - **Antes**: Movimento linear
@@ -304,4 +304,4 @@ Possíveis melhorias:
 
 **✨ Feito com amor para o projeto Araçá Arquitetura**
 
-*Design minimalista. Movimento fluido. Estética Apple.*
+*Design de alto padrão. Movimento fluido. Estética Apple.*

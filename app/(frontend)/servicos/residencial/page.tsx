@@ -94,14 +94,14 @@ export default function ResidencialPage() {
             'Criamos espaços para a vida acontecer.',
             'Nossos serviços de arquitetura de interiores para residências...',
             '...focam na sua rotina e bem-estar.',
-            'Do apartamento estilo japandi à casa neoclássica.',
+            'Do apartamento de alto padrão à casa neoclássica.',
             'Transformamos cada detalhe com propósito.',
           ]}
           highlights={{
             0: ['espaços', 'vida'],
             1: ['arquitetura', 'interiores', 'residências'],
             2: ['rotina', 'bem-estar'],
-            3: ['japandi', 'neoclássica'],
+            3: ['alto padrão', 'neoclássica'],
             4: ['detalhe', 'propósito'],
           }}
           className="max-w-5xl text-center mx-auto"
@@ -122,12 +122,12 @@ export default function ResidencialPage() {
                 O Processo Aracá para seu Lar
               </h2>
               <p className="mt-6 text-lg text-araca-cafe-escuro/80">
-                Entendemos que cada família é única. Por isso, desenvolvemos desde projetos de <strong>apartamentos com estilo japandi</strong> — que prezam pelo minimalismo e aconchego — até <strong>casas de veraneio com toques neoclássicos</strong> de alta sofisticação.
+                Entendemos que cada família é única. Por isso, desenvolvemos desde projetos de <strong>apartamentos de alto padrão</strong> — que prezam pelo alto padrão e aconchego — até <strong>casas de veraneio com toques neoclássicos</strong> de alta sofisticação.
               </p>
               
               <ul className="mt-10 space-y-6">
                 {[
-                  { title: 'Análise de Estilo', desc: 'Identificamos se sua preferência é por uma arquitetura minimalista ou clássica.' },
+                  { title: 'Análise de Estilo', desc: 'Identificamos se sua preferência é por uma arquitetura de apartamentos ou clássica.' },
                   { title: 'Funcionalidade Total', desc: 'Otimização de layouts para apartamentos compactos ou grandes casas.' },
                   { title: 'Escolha de Materiais', desc: 'Seleção curada de texturas e cores que conferem personalidade ao imóvel.' },
                   { title: 'Acompanhamento', desc: 'Garantimos que o projeto seja executado exatamente como planejado.' }
@@ -154,7 +154,7 @@ export default function ResidencialPage() {
               <Parallax speed={-5} className="absolute inset-0">
                 <Image
                   src={IMG_JAPANDI}
-                  alt="Interior Residencial Estilo Japandi - Ninho Verde"
+                  alt="Interior Residencial de Alto Padrão - Ninho Verde"
                   fill
                   className="object-cover"
                 />
@@ -162,7 +162,7 @@ export default function ResidencialPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-8 left-8 text-white">
                 <p className="text-xs uppercase tracking-widest opacity-80">Projeto Recente</p>
-                <p className="text-xl font-display font-medium">Apartamento Estilo Japandi no ABC</p>
+                <p className="text-xl font-display font-medium">Apartamento de Alto Padrão no ABC</p>
               </div>
             </div>
           </div>
@@ -182,12 +182,12 @@ export default function ResidencialPage() {
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                 title: 'Minimalismo Moderno',
+                 title: 'Apartamentos Modernos',
                  img: IMG_MINIMALIST,
                  desc: 'Linhas limpas, cores sóbrias e máxima funcionalidade para seu dia a dia.'
               },
               {
-                 title: 'Estilo Japandi',
+                 title: 'Alto Padrão',
                  img: IMG_JAPANDI,
                  desc: 'O equilíbrio perfeito entre a estética japonesa e o conforto escandinavo.'
               },

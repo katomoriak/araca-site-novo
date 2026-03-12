@@ -29,14 +29,14 @@ export async function generateMetadata({
 
     return {
         title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-        description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em estilo Minimalista e Japandi. Agende sua consultoria com a Aracá Interiores.`,
+        description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.`,
         alternates: { canonical },
         openGraph: {
             type: 'website',
             locale: 'pt_BR',
             url: canonical,
             title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em estilo Minimalista e Japandi. Agende sua consultoria com a Aracá Interiores.`,
+            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.`,
             images: [
                 {
                     url: '/hero-interiores.jpg',
@@ -49,7 +49,7 @@ export async function generateMetadata({
         twitter: {
             card: 'summary_large_image',
             title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em estilos Minimalista e Japandi.`,
+            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos.`,
             images: ['/hero-interiores.jpg'],
         },
     }
@@ -76,7 +76,7 @@ export default async function CidadePage({
         '@type': 'InteriorDesigner',
         name: 'Aracá Interiores',
         url: baseUrl,
-        description: `Escritório de arquitetura de interiores em ${loc.label}. Projetos residenciais e comerciais com foco em estilo Minimalista e Japandi.`,
+        description: `Escritório de arquitetura de interiores em ${loc.label}. Projetos residenciais e comerciais com foco em estilo alto padrão e apartamentos.`,
         telephone: '+5511997458464',
         email: 'contato@araca.arq.br',
         areaServed: {
@@ -135,7 +135,7 @@ export default async function CidadePage({
                         A Aracá Interiores é o escritório de arquitetura de interiores referência em{' '}
                         <strong className="text-araca-creme">{loc.label}</strong> e região. Criamos projetos
                         residenciais e comerciais com foco em estilo{' '}
-                        <strong className="text-araca-creme">Minimalista e Japandi</strong> — ambientes que
+                        <strong className="text-araca-creme">Alto Padrão e Apartamentos</strong> — ambientes que
                         equilibram beleza, função e identidade.
                     </p>
 
@@ -210,11 +210,11 @@ export default async function CidadePage({
                                 desc: `Documentação técnica detalhada para obra: plantas, cortes, elevações e especificação de materiais.`,
                             },
                             {
-                                title: 'Estilo Minimalista',
+                                title: 'Apartamentos',
                                 desc: `Ambientes limpos, funcionais e atemporais. Cada elemento tem propósito. A forma segue a função.`,
                             },
                             {
-                                title: 'Estilo Japandi',
+                                title: 'Alto Padrão',
                                 desc: `A fusão entre o wabi-sabi japonês e a leveza escandinava. Naturalidade, textura e equilíbrio.`,
                             },
                             {
