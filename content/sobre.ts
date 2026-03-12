@@ -5,7 +5,7 @@
 
 export const sobreContent = {
   hero: {
-    title: 'Interiores que se adaptam ao seu momento',
+    title: 'Aracá Interiores: Projeto que se adapta ao seu momento',
     subtitle:
       'Na Aracá, combinamos estética, funcionalidade e execução. Você escolhe o que contratar — com clareza e um padrão de entrega consistente.',
     /** Imagem de fundo do hero (atrás do menu, P&B, multiply). */
@@ -13,15 +13,15 @@ export const sobreContent = {
     heroImageAlt: 'Projeto de interiores Aracá — área social residencial',
     /** Imagem em destaque após o texto (card). Se não definir, usa heroImage. */
     heroCardImage:
-      'https://trghyjzhxfyjgoitzfzh.supabase.co/storage/v1/object/public/a_public/aintima_residencianinhoverde/imagens_site_araca%20(17).png',
+      'https://img.araca.arq.br/midias/veraneio-ninho-verde/ARACA_INTERIORES%20(26).png',
     heroCardImageAlt: 'Projeto Aracá — residência Ninho Verde, interiores',
   },
 
   quemSomos: {
     title: 'Quem somos',
     paragraphs: [
-      'Somos Aracá Interiores. Nosso modelo é totalmente inovador: oferecemos projeto criativo, projeto executivo, detalhamentos e acompanhamento de obra de forma modular.',
-      'Você pode contratar o processo completo ou apenas o que faz sentido para o seu momento. Trabalhamos em projetos residenciais e comerciais, com foco em ambientes que unem beleza e funcionalidade.',
+      'Somos a Aracá Interiores, um escritório de arquitetura de interiores em Santo André com atuação em toda a região de São Paulo SP. Nosso modelo é totalmente inovador: oferecemos projeto criativo, projeto executivo, detalhamentos e acompanhamento de obra de forma modular.',
+      'Como arquitetos e designer de interiores em Santo André, buscamos traduzir a identidade de cada cliente em espaços únicos. Trabalhamos em projetos residenciais e comerciais, garantindo que você contrate apenas o que faz sentido para o seu momento.',
     ],
   },
 

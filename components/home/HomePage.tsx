@@ -227,11 +227,10 @@ export function HomePage({ initialProjects }: HomePageProps) {
               ARACÁ INTERIORES
             </p>
             <h1 className="mt-5 font-display text-4xl font-bold sm:text-5xl md:text-6xl">
-              Interiores com um modelo flexível: você escolhe o que quer contratar.
+              {"Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP"}
             </h1>
             <p className="mt-6 text-lg text-white/90 sm:text-xl">
-              Projeto criativo, executivo, detalhamentos e acompanhamento de obra — do
-              conceito ao último acabamento.
+              {"Arquitetura de interiores com um modelo flexível: você escolhe o que quer contratar. Do projeto criativo ao acompanhamento de obra."}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
@@ -269,20 +268,22 @@ export function HomePage({ initialProjects }: HomePageProps) {
       <section className="relative bg-araca-bege-claro">
         <ScrollTextReveal
           texts={[
-            'Somos Aracá Interiores.',
-            'Nosso modelo é totalmente inovador: você escolhe o que quer contratar.',
-            'Projeto criativo + Projeto executivo',
-            'Detalhamentos + Acompanhamento de obra',
-            'Na Aracá, combinamos estética, funcionalidade e execução. Você contrata o processo completo ou apenas o que faz sentido para o seu momento.',
-            'Cada espaço conta uma história.',
+            'Somos a Aracá Interiores.',
+            'Escritório de arquitetura e design de interiores em Santo André e SP.',
+            'Nosso modelo é totalmente inovador.',
+            'Você escolhe o que quer contratar.',
+            'Projeto criativo + Projeto executivo.',
+            'Detalhamentos + Acompanhamento de obra.',
+            'Criamos espaços com alma em toda São Paulo.',
           ]}
           highlights={{
             0: ['Aracá', 'Interiores'],
-            1: ['modelo', 'inovador', 'escolhe', 'leva'],
-            2: ['criativo', 'executivo'],
-            3: ['Detalhamentos', 'Acompanhamento'],
-            4: ['estética', 'funcionalidade', 'execução', 'completo', 'sentido', 'momento'],
-            5: ['história'],
+            1: ['arquitetura', 'design', 'interiores', 'Santo André'],
+            2: ['modelo', 'inovador'],
+            3: ['escolhe', 'contratar'],
+            4: ['criativo', 'executivo'],
+            5: ['Detalhamentos', 'Acompanhamento'],
+            6: ['espaços', 'alma', 'São Paulo'],
           }}
           highlightColors={{
             gradient1: '#3C5945',
@@ -369,7 +370,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
                 Veja o que já <span className="relative inline-block mx-2">
                   <span className="relative z-10">criamos</span>
                   <motion.span
-                    className="absolute inset-0 -z-10"
+                    className="absolute inset-x-[-0.2em] bottom-[0.05em] h-[0.65em] -z-10"
                     initial={{ opacity: 0, scaleX: 0 }}
                     whileInView={{ opacity: 1, scaleX: 1 }}
                     viewport={{ once: true }}
@@ -381,21 +382,15 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     style={{ transformOrigin: 'left' }}
                   >
                     <span
-                      className="absolute bottom-[0.05em] left-[-0.2em] right-[-0.2em] h-[0.65em]"
+                      className="absolute inset-0 opacity-60 rounded-[40%_60%_45%_55%]"
                       style={{
                         background: 'linear-gradient(to bottom, transparent 0%, #1a0a05 15%, #0f0502 85%, transparent 100%)',
-                        opacity: 0.6,
-                        transform: 'skewY(-0.5deg)',
-                        borderRadius: '40% 60% 45% 55%',
                       }}
                     />
                     <span
-                      className="absolute bottom-[0.08em] left-[-0.15em] right-[-0.15em] h-[0.55em]"
+                      className="absolute inset-[-0.1em] opacity-70 rounded-[50%_40%_55%_45%]"
                       style={{
                         background: 'linear-gradient(90deg, #251208 0%, #1a0a05 20%, #0f0502 40%, #1a0a05 60%, #251208 80%, #0f0502 100%)',
-                        opacity: 0.7,
-                        transform: 'skewY(0.3deg)',
-                        borderRadius: '50% 40% 55% 45%',
                       }}
                     />
                   </motion.span>
@@ -473,7 +468,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
         <Container className="relative z-20">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="font-display text-4xl font-bold text-araca-chocolate-amargo sm:text-5xl">
-              Quem atendemos
+              Arquitetos em Santo André e Região
             </h2>
             <p className="mt-3 text-araca-chocolate-amargo/90">
               Soluções completas para diferentes escalas e necessidades.

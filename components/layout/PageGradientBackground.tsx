@@ -12,6 +12,8 @@ const ROUTE_GRADIENTS: Record<string, string> = {
   '/sobre': 'linear-gradient(140deg, rgba(236,229,219,0.5) 0%, rgba(120,80,60,0.08) 50%, rgba(236,229,219,0.2) 100%)',
   '/blog': 'linear-gradient(180deg, rgba(255,252,248,0.6) 0%, rgba(236,229,219,0.3) 30%, rgba(48,22,12,0.04) 100%)',
   '/design-system': 'linear-gradient(135deg, rgba(236,229,219,0.35) 0%, rgba(200,180,160,0.1) 50%, rgba(236,229,219,0.25) 100%)',
+  '/politica-privacidade': 'linear-gradient(160deg, rgba(236,229,219,0.5) 0%, rgba(200,180,160,0.1) 50%, rgba(236,229,219,0.25) 100%)',
+  '/termos': 'linear-gradient(160deg, rgba(236,229,219,0.5) 0%, rgba(200,180,160,0.1) 50%, rgba(236,229,219,0.25) 100%)',
 }
 
 const DEFAULT_GRADIENT =

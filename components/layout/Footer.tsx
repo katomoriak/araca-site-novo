@@ -14,6 +14,8 @@ const footerNavColumns = [
     links: [
       { href: '/', label: 'Home' },
       { href: '/sobre', label: 'Sobre nós' },
+      { href: '/servicos/residencial', label: 'Arquitetura Residencial' },
+      { href: '/servicos/comercial', label: 'Arquitetura Comercial' },
       { href: '/projetos', label: 'Projetos' },
       { href: '/contato', label: 'Contato' },
       { href: '/blog', label: 'Blog' },

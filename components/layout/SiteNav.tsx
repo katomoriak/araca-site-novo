@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { X, ChevronDown } from 'lucide-react'
 import { Container } from './Container'
 import { cn } from '@/lib/utils'
 import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
@@ -15,11 +15,20 @@ export type SiteNavTheme = 'dark-bg' | 'light-bg'
 export interface SiteNavLink {
   href: string
   label: string
+  children?: { href: string; label: string }[]
 }
 
 const DEFAULT_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'Sobre nós' },
+  {
+    href: '#servicos',
+    label: 'Serviços',
+    children: [
+      { href: '/servicos/residencial', label: 'Arquitetura Residencial' },
+      { href: '/servicos/comercial', label: 'Arquitetura Comercial' },
+    ],
+  },
   { href: '/projetos', label: 'Projetos' },
   { href: '/contato', label: 'Contato' },
   { href: '/blog', label: 'Blog' },
@@ -83,6 +92,8 @@ export function SiteNav({
 }: SiteNavProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null)
   const { galleryOpen } = useGalleryOpen()
   const allLinks = extraLinks ? [...links, ...extraLinks] : links
 
@@ -129,12 +140,13 @@ export function SiteNav({
               />
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {allLinks.map((link) => {
                 const active = isActive(link.href)
                 const isHash = link.href.startsWith('#')
                 const href = isHash ? `/${link.href}` : link.href
                 const isBlog = link.href === '/blog'
+                const hasChildren = !!link.children?.length
 
                 /* Blog: destaque verde com hover mais escuro e scale */
                 if (isBlog) {
@@ -150,6 +162,77 @@ export function SiteNav({
                     >
                       <span className="relative z-10">{link.label}</span>
                     </Link>
+                  )
+                }
+
+                if (hasChildren) {
+                  const anyChildActive = link.children?.some(child => pathname.startsWith(child.href))
+                  return (
+                    <div
+                      key={link.href}
+                      className="relative"
+                      onMouseEnter={() => setActiveDropdown(link.label)}
+                      onMouseLeave={() => setActiveDropdown(null)}
+                    >
+                      <button
+                        className={cn(
+                          'group relative flex items-center gap-1 overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 hover:scale-[1.05]',
+                          (anyChildActive || active) 
+                            ? (isDark ? 'text-neutral-900' : 'text-white')
+                            : (isDark ? 'text-white/95 hover:text-white' : 'text-neutral-700 hover:text-neutral-900')
+                        )}
+                        style={
+                          (anyChildActive || active)
+                            ? (isDark 
+                                ? { background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)', boxShadow: '0 2px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)' }
+                                : { background: 'linear-gradient(135deg, rgba(48, 22, 12, 0.9) 0%, rgba(48, 22, 12, 0.75) 100%)', boxShadow: '0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)' }
+                              )
+                            : (isDark ? { textShadow: '0 1px 2px rgba(0, 0, 0, 0.3)' } : undefined)
+                        }
+                      >
+                        <span className="relative z-10">{link.label}</span>
+                        <ChevronDown className={cn("relative z-10 h-3.5 w-3.5 transition-transform duration-300", activeDropdown === link.label && "rotate-180")} />
+                        {!active && !anyChildActive && (
+                          <div
+                            className="absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                            style={{
+                              background:
+                                theme === 'dark-bg'
+                                  ? 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%)'
+                                  : 'radial-gradient(circle at center, rgba(0,0,0,0.06) 0%, transparent 70%)',
+                            }}
+                          />
+                        )}
+                      </button>
+
+                      <AnimatePresence>
+                        {activeDropdown === link.label && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-2xl p-1.5 shadow-2xl"
+                            style={barStyle}
+                          >
+                            {link.children?.map((child) => (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className={cn(
+                                  "block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
+                                  pathname === child.href
+                                    ? (isDark ? "bg-white/20 text-white" : "bg-araca-cafe-escuro/10 text-araca-cafe-escuro")
+                                    : (isDark ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-neutral-700 hover:bg-black/5 hover:text-neutral-900")
+                                )}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   )
                 }
 
@@ -281,27 +364,75 @@ export function SiteNav({
 
               <nav className="flex flex-1 items-center justify-center">
                 <ul className="space-y-6 text-center">
-                  {allLinks.map((link, i) => (
-                    <motion.li
-                      key={link.href}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.05 * (i + 1) }}
-                    >
-                      <Link
-                        href={link.href.startsWith('#') ? `/${link.href}` : link.href}
-                        className={cn(
-                          'block font-display text-3xl font-semibold transition-colors',
-                          isDark
-                            ? 'text-white hover:text-araca-dourado-ocre'
-                            : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
-                        )}
-                        onClick={() => setMobileOpen(false)}
+                  {allLinks.map((link, i) => {
+                    const hasChildren = !!link.children?.length
+                    const isExpanded = mobileAccordion === link.label
+
+                    return (
+                      <motion.li
+                        key={link.href}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.05 * (i + 1) }}
+                        className="w-full"
                       >
-                        {link.label}
-                      </Link>
-                    </motion.li>
-                  ))}
+                        {hasChildren ? (
+                          <div className="flex flex-col items-center">
+                            <button
+                              onClick={() => setMobileAccordion(isExpanded ? null : link.label)}
+                              className={cn(
+                                'flex items-center gap-2 font-display text-3xl font-semibold transition-colors',
+                                isDark
+                                  ? 'text-white hover:text-araca-dourado-ocre'
+                                  : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
+                              )}
+                            >
+                              {link.label}
+                              <ChevronDown className={cn("h-6 w-6 transition-transform duration-300", isExpanded && "rotate-180")} />
+                            </button>
+                            <AnimatePresence>
+                              {isExpanded && (
+                                <motion.ul
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: 'auto', opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="mt-4 space-y-3 overflow-hidden text-center"
+                                >
+                                  {link.children?.map((child) => (
+                                    <li key={child.href}>
+                                      <Link
+                                        href={child.href}
+                                        className={cn(
+                                          'text-xl font-medium transition-colors',
+                                          isDark ? 'text-white/70 hover:text-white' : 'text-araca-cafe-escuro/70 hover:text-araca-cafe-escuro'
+                                        )}
+                                        onClick={() => setMobileOpen(false)}
+                                      >
+                                        {child.label}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </motion.ul>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ) : (
+                          <Link
+                            href={link.href.startsWith('#') ? `/${link.href}` : link.href}
+                            className={cn(
+                              'block font-display text-3xl font-semibold transition-colors',
+                              isDark
+                                ? 'text-white hover:text-araca-dourado-ocre'
+                                : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
+                            )}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </motion.li>
+                    )
+                  })}
                 </ul>
               </nav>
             </div>

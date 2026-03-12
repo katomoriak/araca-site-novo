@@ -40,19 +40,18 @@ const jsonLdWebSite = {
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: `${siteName} — Projetos de interiores residenciais e comerciais`,
-    template: `%s | ${siteName}`,
+    default: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
+    template: `%s | Aracá Interiores`,
   },
-  description: siteDescription,
+  description: 'A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.',
   keywords: [
-    'interiores',
-    'design de interiores',
-    'projeto residencial',
-    'projeto comercial',
-    'arquitetura de interiores',
-    'decoración',
-    'consultoria de interiores',
-    'Aracá',
+    'aracá interiores',
+    'escritório aracá interiores santo andré',
+    'arquitetos em santo andré',
+    'arquitetura de interiores são paulo sp',
+    'arquitetura e design de interiores',
+    'design de interiores santo andré',
+    'projeto de interiores sp'
   ],
   authors: [{ name: siteName, url: baseUrl }],
   creator: siteName,
@@ -132,33 +131,7 @@ export default function RootLayout({
       lang="pt-BR"
       className={rubik.variable}
     >
-      <head>
-        {/* Preconnect para origens críticas — reduz latência de rede */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Preload da fonte display Bellamora (woff2 — no caminho crítico) */}
-        <link
-          rel="preload"
-          href="/fonts/Bellamora-Free-Personal-Use.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        {/* Google Analytics */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-          strategy="lazyOnload"
-        />
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaId}');
-          `}
-        </Script>
-      </head>
-      <body>
+      <body className="antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -171,6 +144,19 @@ export default function RootLayout({
             __html: JSON.stringify(jsonLdWebSite),
           }}
         />
+        {/* Google Analytics - Script do Next.js pode ficar fora do head */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}');
+          `}
+        </Script>
         <BodyScope>{children}</BodyScope>
       </body>
     </html>

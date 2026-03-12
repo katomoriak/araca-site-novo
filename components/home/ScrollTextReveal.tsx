@@ -89,10 +89,10 @@ export function ScrollTextReveal({
     return scrollYProgress.on('change', (latest) => {
       // Divide o progresso do scroll pelo número de textos
       const progress = latest * texts.length * 1.2
-      const newIndex = Math.min(
+      const newIndex = Math.max(0, Math.min(
         Math.floor(progress),
         texts.length - 1
-      )
+      ))
       setActiveIndex(newIndex)
     })
   }, [scrollYProgress, texts.length])
@@ -103,10 +103,6 @@ export function ScrollTextReveal({
   // Função para renderizar texto com highlights
   const renderTextWithHighlight = (text: string, index: number) => {
     const wordsToHighlight = highlights[index] || []
-
-    if (wordsToHighlight.length === 0) {
-      return text
-    }
 
     // Divide o texto em palavras e verifica se alguma deve ser destacada
     const parts = text.split(' ')
@@ -169,11 +165,12 @@ export function ScrollTextReveal({
                     }}
                   />
                 </motion.span>
+                {" "}
               </span>
             )
           }
 
-          return <span key={wordIndex} className="mx-1">{word}</span>
+          return <span key={wordIndex} className="mx-1">{word}{" "}</span>
         })}
       </>
     )
@@ -181,8 +178,15 @@ export function ScrollTextReveal({
 
   return (
     <div ref={containerRef} className="relative" style={{ height: sectionHeight }}>
+      {/* Background Logo se existir */}
+      {backgroundLogo && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 z-0">
+          <img src={backgroundLogo} alt="" className="w-[80%] h-auto max-w-[800px] object-contain sticky top-1/2 -translate-y-1/2" />
+        </div>
+      )}
+
       {/* Container sticky que mantém o texto fixo na viewport */}
-      <div className="sticky top-0 flex min-h-screen items-center justify-center py-8">
+      <div className="sticky top-0 flex h-screen items-center justify-center z-10 overflow-hidden">
         <Container className="relative w-full flex items-center justify-center">
           <div className={`relative w-full flex items-center justify-center ${className}`}>
             {texts.map((text, index) => {
@@ -194,7 +198,7 @@ export function ScrollTextReveal({
               return (
                 <motion.p
                   key={index}
-                  className={`absolute inset-x-0 text-center font-display font-bold leading-tight ${textColor} px-[10%] ${isLongText
+                  className={`absolute inset-x-0 top-1/2 -translate-y-1/2 text-center font-display font-bold leading-tight ${textColor} px-[10%] ${isLongText
                     ? 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
                     : 'text-4xl sm:text-5xl md:text-6xl lg:text-7xl'
                     }`}
@@ -223,7 +227,6 @@ export function ScrollTextReveal({
           {texts.map((_, index) => {
             const isPast = index < activeIndex
             const isActive = index === activeIndex
-            const isFuture = index > activeIndex
 
             return (
               <button
