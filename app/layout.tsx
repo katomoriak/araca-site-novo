@@ -15,7 +15,7 @@ const rubik = Rubik({
 
 const siteName = 'Aracá Interiores'
 const siteDescription =
-  'Aracá Interiores — projetos de interiores residenciais e comerciais. Projeto criativo, executivo, detalhamentos e acompanhamento de obra em um modelo inovador e sob medida.'
+  'A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.'
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
 
 const jsonLdOrganization = {
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     url: baseUrl,
     siteName,
-    title: `${siteName} — Projetos de interiores residenciais e comerciais`,
+    title: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
     description: siteDescription,
     images: [
       {
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${siteName} — Projetos de interiores`,
+    title: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
     description: siteDescription,
     images: ['/hero-interiores.jpg'],
   },
