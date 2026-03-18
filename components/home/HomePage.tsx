@@ -23,28 +23,29 @@ import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
 
 const GalleryCarousel = dynamic(
   () => import('@/components/home/GalleryCarousel').then((m) => ({ default: m.GalleryCarousel })),
-  { ssr: true }
+  { ssr: false }
 )
 const TestimonialsMarquee = dynamic(
   () => import('@/components/home/TestimonialsMarquee').then((m) => ({ default: m.TestimonialsMarquee })),
-  { ssr: true }
+  { ssr: false }
 )
 const ProjectGallery = dynamic(
   () => import('@/components/home/ProjectGallery').then((m) => ({ default: m.ProjectGallery })),
   { ssr: false }
 )
 
-/** Vídeo do hero via proxy por redirect: /api/hero-video → 308 para R2. Peso na Vercel é só o redirect. */
-const HERO_VIDEO_SRC = '/api/hero-video'
-const HERO_VIDEO_LOW_SRC = '/api/hero-video?quality=low'
-const HERO_POSTER_SRC = '/api/hero-video?quality=poster'
+import { getHeroVideoUrl } from '@/lib/hero-video'
 
 function HeroVideo() {
+  const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
+  const lowUrl = getHeroVideoUrl('low') || '/api/hero-video?quality=low'
+  const defaultUrl = getHeroVideoUrl('default') || '/api/hero-video'
+
   return (
     <div className="absolute inset-0 bg-neutral-900">
       {/* Imagem super leve gerada do R2 que vai aparecer INSTATANEAMENTE na hidratação/SSR */}
       <img
-        src={HERO_POSTER_SRC}
+        src={posterUrl}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
         // Atributos favoráveis a LCP
@@ -59,13 +60,13 @@ function HeroVideo() {
         muted
         playsInline
         preload="metadata"
-        poster={HERO_POSTER_SRC}
+        poster={posterUrl}
         className="absolute inset-0 h-full w-full object-cover"
       >
         {/* Para mobile (telas menores que 1024px), vamos puxar obrigatoriamente a versão ultra leve _low.mp4 */}
-        <source src={HERO_VIDEO_LOW_SRC} type="video/mp4" media="(max-width: 1024px)" />
+        <source src={lowUrl} type="video/mp4" media="(max-width: 1024px)" />
         {/* Para desktop, puxamos a versão original que carrega após o pôster ser renderizado */}
-        <source src={HERO_VIDEO_SRC} type="video/mp4" />
+        <source src={defaultUrl} type="video/mp4" />
       </video>
     </div>
   )
