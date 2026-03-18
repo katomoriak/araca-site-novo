@@ -136,8 +136,15 @@ export default function RootLayout({
       className={rubik.variable}
     >
       <head>
-        <link rel="preconnect" href={r2Url} crossOrigin="anonymous" />
+        <link rel="preconnect" href={r2Url} />
         <link rel="dns-prefetch" href={r2Url} />
+        <link 
+          rel="preload" 
+          href="/fonts/Bellamora-Free-Personal-Use.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
       </head>
       <body className="antialiased">
         <script

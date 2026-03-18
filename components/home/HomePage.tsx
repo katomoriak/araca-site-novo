@@ -43,24 +43,23 @@ function HeroVideo() {
 
   return (
     <div className="absolute inset-0 bg-neutral-900">
-      {/* Imagem super leve gerada do R2 que vai aparecer INSTATANEAMENTE na hidratação/SSR */}
-      <img
+      {/* Imagem LCP otimizada servida como poster antes da hidratação do vídeo */}
+      <Image
         src={posterUrl}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover"
-        // Atributos favoráveis a LCP
-        fetchPriority="high"
-        decoding="sync"
+        alt="Aracá Interiores Hero"
+        fill
+        sizes="100vw"
+        priority
+        className="object-cover"
       />
 
-      {/* O Vídeo roda logo em seguida. Ele usa a imagem the poster como garantia adicional. */}
+      {/* O Vídeo roda logo em seguida. Sem atributo poster para evitar download duplo do arquivo cru. */}
       <video
         autoPlay
         loop
         muted
         playsInline
         preload="metadata"
-        poster={posterUrl}
         className="absolute inset-0 h-full w-full object-cover"
       >
         {/* Para mobile (telas menores que 1024px), vamos puxar obrigatoriamente a versão ultra leve _low.mp4 */}
