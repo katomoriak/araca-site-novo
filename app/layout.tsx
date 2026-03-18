@@ -136,8 +136,6 @@ export default function RootLayout({
       className={rubik.variable}
     >
       <head>
-        <link rel="preconnect" href={r2Url} />
-        <link rel="dns-prefetch" href={r2Url} />
         <link 
           rel="preload" 
           href="/fonts/Bellamora-Free-Personal-Use.woff2" 

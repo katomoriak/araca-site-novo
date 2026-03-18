@@ -139,7 +139,6 @@ export function SiteNav({
                 priority
               />
             </Link>
-
             <div className="flex items-center gap-1">
               {allLinks.map((link) => {
                 const active = isActive(link.href)
@@ -296,14 +295,14 @@ export function SiteNav({
           {/* Mobile - Logo + Toggle */}
           <div className="flex w-full items-center justify-between md:hidden">
             <Link href="/" className="relative flex items-center">
-              <Image
+              <img
                 src="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg"
                 alt="Aracá Interiores"
                 width={60}
                 height={50}
                 className="h-auto w-[55px]"
                 style={mobileLogoStyle}
-                priority
+                fetchPriority="high"
               />
             </Link>
             <button
@@ -347,6 +346,7 @@ export function SiteNav({
                     height={60}
                     className="h-auto w-[65px]"
                     style={mobileLogoStyle}
+                    priority
                   />
                 </Link>
                 <button
@@ -447,13 +447,13 @@ export function SiteNav({
   }
 
   return (
-    <motion.div
-      className={cn('relative z-20', className)}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
+    <div
+      className={cn(
+        'relative z-20 animate-in fade-in slide-in-from-top-4 duration-500 fill-mode-both',
+        className
+      )}
     >
       {navContent}
-    </motion.div>
+    </div>
   )
 }

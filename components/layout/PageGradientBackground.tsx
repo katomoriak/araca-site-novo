@@ -36,14 +36,10 @@ export function PageGradientBackground({ children }: { children: React.ReactNode
 
   return (
     <div className="relative min-h-screen overflow-visible">
-      {/* Fundo em gradiente que varia por rota e transiciona */}
-      <motion.div
+      {/* Fundo em gradiente que varia por rota e transiciona via CSS para não bloquear FCP */}
+      <div
         key={pathname}
-        className="pointer-events-none fixed inset-0 z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, ease: 'easeInOut' }}
+        className="pointer-events-none fixed inset-0 z-0 transition-opacity duration-500 ease-in-out animate-in fade-in fill-mode-both"
         style={{
           background: gradient,
         }}
