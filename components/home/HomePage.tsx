@@ -218,12 +218,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
         {/* Conteúdo do Hero */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-4">
-          <motion.div
-            className="max-w-3xl text-center"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
+          <div className="max-w-3xl text-center animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 fill-mode-both">
             <p className="text-sm font-medium tracking-[0.25em] text-white/85">
               ARACÁ INTERIORES
             </p>
@@ -251,7 +246,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
                 Ver projetos
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         <ScrollIndicator />
