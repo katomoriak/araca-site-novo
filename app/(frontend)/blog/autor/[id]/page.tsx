@@ -34,9 +34,13 @@ export async function generateMetadata({ params }: AuthorPageProps) {
   const { id } = await params
   const author = await getAuthorById(id)
   if (!author) return { title: 'Autor não encontrado' }
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
   return {
     title: `${author.name} | Blog`,
     description: author.bio ?? `Posts de ${author.name} no blog.`,
+    alternates: {
+      canonical: `${baseUrl}/blog/autor/${id}`,
+    },
   }
 }
 

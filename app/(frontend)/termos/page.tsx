@@ -1,9 +1,14 @@
 import { Metadata } from 'next'
 import { Container } from '@/components/layout/Container'
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+
 export const metadata: Metadata = {
   title: 'Termos de Uso | Aracá Interiores',
   description: 'Leia os termos de uso do site da Aracá Interiores.',
+  alternates: {
+    canonical: `${baseUrl}/termos`,
+  },
 }
 
 export default function TermsPage() {

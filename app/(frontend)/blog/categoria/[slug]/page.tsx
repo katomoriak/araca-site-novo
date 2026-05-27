@@ -27,9 +27,13 @@ export async function generateMetadata({ params }: BlogCategoryPageProps) {
   const category = getCategoryBySlug(slug)
   if (!category) return { title: 'Categoria não encontrada' }
   const label = getCategoryLabel(category)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
   return {
     title: `${label} | Blog`,
     description: `Posts da categoria ${label} no blog da Aracá Interiores.`,
+    alternates: {
+      canonical: `${baseUrl}/blog/categoria/${slug}`,
+    },
   }
 }
 

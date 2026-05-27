@@ -24,6 +24,9 @@ export const metadata = {
   title: 'Blog',
   description:
     'Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.',
+  alternates: {
+    canonical: `${baseUrl}/blog`,
+  },
   openGraph: {
     title: 'Blog | Aracá Interiores',
     description:

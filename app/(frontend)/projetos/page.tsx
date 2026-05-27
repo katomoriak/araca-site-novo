@@ -5,10 +5,15 @@ import { ProjetosGrid } from '@/components/projetos/ProjetosGrid'
 
 export const revalidate = 60
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+
 export const metadata = {
   title: 'Projetos',
   description:
     'Projetos de interiores residenciais e comerciais da Aracá. Do conceito ao acabamento.',
+  alternates: {
+    canonical: `${baseUrl}/projetos`,
+  },
 }
 
 export default async function ProjetosPage() {

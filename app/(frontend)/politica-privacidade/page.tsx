@@ -1,9 +1,14 @@
 import { Metadata } from 'next'
 import { Container } from '@/components/layout/Container'
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+
 export const metadata: Metadata = {
   title: 'Política de Privacidade | Aracá Interiores',
   description: 'Saiba como a Aracá Interiores coleta e protege seus dados de acordo com a LGPD.',
+  alternates: {
+    canonical: `${baseUrl}/politica-privacidade`,
+  },
 }
 
 export default function PrivacyPolicyPage() {
