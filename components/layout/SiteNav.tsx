@@ -295,14 +295,14 @@ export function SiteNav({
           {/* Mobile - Logo + Toggle */}
           <div className="flex w-full items-center justify-between md:hidden">
             <Link href="/" className="relative flex items-center">
-              <img
+              <Image
                 src="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg"
                 alt="Aracá Interiores"
                 width={60}
                 height={50}
                 className="h-auto w-[55px]"
                 style={mobileLogoStyle}
-                fetchPriority="high"
+                priority={true}
               />
             </Link>
             <button

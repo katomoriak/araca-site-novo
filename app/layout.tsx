@@ -128,7 +128,7 @@ export default function RootLayout({
 }) {
   const r2Url = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
     ? process.env.NEXT_PUBLIC_R2_PUBLIC_URL.replace(/\/$/, '')
-    : 'https://pub-9ca9f8ba8c9d47518d53ef4b3818ed26.r2.dev'
+    : 'https://img.araca.arq.br'
 
   return (
     <html

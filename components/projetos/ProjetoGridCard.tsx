@@ -10,9 +10,10 @@ interface ProjetoGridCardProps {
   project: ProjectGalleryItem
   /** Ao clicar em "Ver galeria", abre o modal da galeria em vez de navegar. */
   onOpenGallery?: (project: ProjectGalleryItem) => void
+  priority?: boolean
 }
 
-export function ProjetoGridCard({ project, onOpenGallery }: ProjetoGridCardProps) {
+export function ProjetoGridCard({ project, onOpenGallery, priority = false }: ProjetoGridCardProps) {
   const handleVerGaleriaClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -55,6 +56,7 @@ export function ProjetoGridCard({ project, onOpenGallery }: ProjetoGridCardProps
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover h-full w-full"
             blurPlaceholderUrl={getBlurPlaceholderUrl(project.coverImage)}
+            priority={priority}
           />
           {/* Overlay (texto na imagem): some primeiro ao hover, sem delay; na saída volta depois (delay no CSS) */}
           <div className="projeto-card-overlay absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-black/20 to-transparent p-6">

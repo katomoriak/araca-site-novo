@@ -3,6 +3,8 @@
  * Não exige autenticação aqui: a proteção fica em (dashboard)/dashboard/layout.tsx.
  * Rotas como /dashboard/login ficam sem guard; /dashboard/* exigem login.
  */
+export const metadata = { robots: { index: false, follow: false } }
+
 export default function DashboardLayout({
   children,
 }: {

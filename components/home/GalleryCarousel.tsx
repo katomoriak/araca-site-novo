@@ -79,6 +79,7 @@ export function GalleryCarousel({
                     onClick={() => onSelectProject(project)}
                     reverse={false}
                     showContent={true}
+                    priority={index < 2}
                   />
                 </div>
               </SwiperSlide>

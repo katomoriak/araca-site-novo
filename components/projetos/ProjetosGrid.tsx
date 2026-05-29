@@ -53,6 +53,7 @@ export function ProjetosGrid({ projects }: ProjetosGridProps) {
             <ProjetoGridCard
               project={project}
               onOpenGallery={openGallery}
+              priority={index < 2}
             />
           </motion.div>
         ))}
