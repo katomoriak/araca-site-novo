@@ -103,15 +103,15 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // Scripts: Next.js requer 'unsafe-eval' e 'unsafe-inline' para dev/HMR
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.googletagmanager.com https://*.google-analytics.com",
               // Estilos: inline styles usados pelo Next.js e componentes
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Imagens: self + data URIs + Unsplash
               "img-src 'self' data: https: https://images.unsplash.com",
               // Fontes: self + data URIs + Google Fonts
               "font-src 'self' data: https://fonts.gstatic.com",
-              // Conexões: self + Supabase Cloud (deploy apenas Vercel + Supabase Cloud)
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              // Conexões: self + Supabase Cloud + Google Analytics
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
               // Media: self
               "media-src 'self'",
               // Frames: nenhum (DENY)

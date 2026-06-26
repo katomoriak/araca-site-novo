@@ -23,7 +23,9 @@ import { Media } from './payload/collections/Media'
 import { Users } from './payload/collections/Users'
 import { Subscribers } from './payload/collections/Subscribers'
 import { Newsletters } from './payload/collections/Newsletters'
-// Leads e Negociacoes removidos do Payload — gerenciados pelo ERP Aracá via Supabase
+// Leads e Negociacoes re-adicionados temporariamente para evitar conflito de migração do banco
+import { Leads } from './payload/collections/Leads'
+import { Negociacoes } from './payload/collections/Negociacoes'
 import { Transactions } from './payload/collections/Transactions'
 import { AuditLogs } from './payload/collections/AuditLogs'
 import { Projetos } from './payload/collections/Projetos'
@@ -32,7 +34,7 @@ import { BusinessCards } from './payload/collections/BusinessCards'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 function getCollections(): CollectionConfig[] {
-  return [Posts, Categories, Media, Users, Subscribers, Newsletters, Transactions, AuditLogs, Projetos, BusinessCards]
+  return [Posts, Categories, Media, Users, Subscribers, Newsletters, Transactions, AuditLogs, Projetos, BusinessCards, Leads, Negociacoes]
 }
 
 // Fallback para desenvolvimento/build sem banco
@@ -118,7 +120,8 @@ export default buildConfig({
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
-    schemaName: 'payload',
+    // schemaName: 'payload', // Comentado para voltar ao schema original ('public') onde os dados estão
+    push: false, // Desativa push automático (evita erro de ALTER TABLE)
     pool: {
       connectionString: databaseURL,
       // Session mode (Supabase/Neon pooler porta 6543): limite de conexões por cliente.

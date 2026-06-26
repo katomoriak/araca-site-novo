@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
-import { fileExistsInStorage, uploadFileToStorage, getStoragePublicUrl } from '@/lib/storage-server'
+import { fileExistsInStorage, uploadFileToStorage, getStoragePublicUrl, downloadFileFromStorage } from '@/lib/storage-server'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const R2_PUBLIC = process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/$/, '')
@@ -133,8 +133,6 @@ export async function GET(request: NextRequest) {
         if (decoded === cleanPath) break
         cleanPath = decoded
       }
-      // Check import path. It should be from '@/lib/storage-server'
-      const { downloadFileFromStorage } = await import('@/lib/storage-server')
 
       const file = await downloadFileFromStorage(cleanPath)
       if (!file) {
@@ -177,25 +175,35 @@ export async function GET(request: NextRequest) {
         })
       }
 
-      const output = await sharp(buffer)
-        .resize(width, undefined, { withoutEnlargement: true })
-        .webp({ quality })
-        .toBuffer()
+      try {
+        const output = await sharp(buffer)
+          .resize(width, undefined, { withoutEnlargement: true })
+          .webp({ quality })
+          .toBuffer()
 
-      // Se for R2, salvar a miniatura para o próximo request (em background)
-      if (isR2 && thumbKey) {
-        uploadFileToStorage(thumbKey, output, 'image/webp').catch((e) => {
-          console.error('[image-proxy] background upload failed:', e)
+        // Se for R2, salvar a miniatura para o próximo request (em background)
+        if (isR2 && thumbKey) {
+          uploadFileToStorage(thumbKey, output, 'image/webp').catch((e) => {
+            console.error('[image-proxy] background upload failed:', e)
+          })
+        }
+
+        return new NextResponse(new Uint8Array(output), {
+          headers: {
+            'Content-Type': 'image/webp',
+            'Cache-Control': CACHE_HEADER,
+            'Vary': 'Accept',
+          },
+        })
+      } catch (sharpError) {
+        console.error('[image-proxy] sharp error, falling back to original image:', sharpError)
+        return new NextResponse(new Uint8Array(buffer), {
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': CACHE_HEADER,
+          },
         })
       }
-
-      return new NextResponse(new Uint8Array(output), {
-        headers: {
-          'Content-Type': 'image/webp',
-          'Cache-Control': CACHE_HEADER,
-          'Vary': 'Accept',
-        },
-      })
     }
 
     return new NextResponse(new Uint8Array(buffer), {
@@ -206,6 +214,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (e) {
     console.error('[image-proxy]', e)
-    return new NextResponse('Proxy error', { status: 500 })
+    return new NextResponse(`Proxy error: ${e instanceof Error ? e.message : String(e)}`, { status: 500 })
   }
 }
