@@ -12,26 +12,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import type { LeadStatus, LeadSource } from '@/lib/payload'
-
-const STATUS_OPTIONS: { value: LeadStatus; label: string }[] = [
-  { value: 'contacted', label: 'Contatado' },
-  { value: 'qualified', label: 'Qualificado' },
-  { value: 'proposal_sent', label: 'Proposta enviada' },
-  { value: 'negotiation', label: 'Negociação' },
-  { value: 'won', label: 'Ganho' },
-  { value: 'lost', label: 'Perdido' },
-]
-
-const SOURCE_OPTIONS: { value: LeadSource; label: string }[] = [
-  { value: 'website', label: 'Site' },
-  { value: 'social', label: 'Redes sociais' },
-  { value: 'referral', label: 'Indicação' },
-  { value: 'other', label: 'Outro' },
-]
+import { LEAD_ADDED_EVENT } from '@/components/dashboard/LeadsRecentCard'
 
 type AddLeadSheetProps = {
-  /** Chamado após criar um lead com sucesso; use para atualizar a lista (ex.: refetch). */
   onLeadAdded?: () => void
 }
 
@@ -42,9 +25,11 @@ export function AddLeadSheet({ onLeadAdded }: AddLeadSheetProps) {
   const [form, setForm] = useState({
     name: '',
     email: '',
-    company: '',
-    status: 'contacted' as LeadStatus,
-    source: 'website' as LeadSource,
+    phone: '',
+    projectName: '',
+    projectType: 'Residencial' as 'Residencial' | 'Comercial',
+    notes: '',
+    origin: 'Dashboard',
   })
 
   async function handleSubmit(e: React.FormEvent) {
@@ -52,143 +37,112 @@ export function AddLeadSheet({ onLeadAdded }: AddLeadSheetProps) {
     setError(null)
     setLoading(true)
     try {
-      const res = await fetch('/api/leads', {
+      const res = await fetch('/api/crm/leads', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: form.name.trim(),
-          email: form.email.trim(),
-          company: form.company.trim() || undefined,
-          status: form.status,
-          source: form.source,
+          email: form.email.trim() || null,
+          phone: form.phone.trim() || null,
+          origin: form.origin,
+          projectName: form.projectName.trim() || 'Novo lead',
+          projectType: form.projectType,
+          notes: form.notes.trim() || null,
         }),
       })
+      const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.errors?.[0]?.message ?? data.message ?? `Erro ${res.status}`)
+        setError(data.error ?? 'Não foi possível criar o lead.')
+        return
       }
-      setForm({ name: '', email: '', company: '', status: 'contacted', source: 'website' })
       setOpen(false)
+      setForm({ name: '', email: '', phone: '', projectName: '', projectType: 'Residencial', notes: '', origin: 'Dashboard' })
+      window.dispatchEvent(new Event(LEAD_ADDED_EVENT))
       onLeadAdded?.()
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('lead-added'))
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Falha ao criar lead.')
+    } catch {
+      setError('Erro de conexão.')
     } finally {
       setLoading(false)
     }
   }
 
+  function field(id: keyof typeof form) {
+    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+      setForm((p) => ({ ...p, [id]: e.target.value }))
+  }
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button className="inline-flex items-center gap-2">
-          <Plus className="size-4" />
-          Adicionar lead
+        <Button size="sm" variant="outline">
+          <Plus className="mr-2 h-4 w-4" />
+          Novo lead
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="flex flex-col sm:max-w-md border-araca-bege-medio/30 bg-araca-creme text-araca-cafe-escuro shadow-xl"
-      >
+      <SheetContent>
         <SheetHeader>
-          <SheetTitle className="text-araca-cafe-escuro">Novo lead</SheetTitle>
-          <SheetDescription className="text-araca-chocolate-amargo/90">
-            Preencha os dados para adicionar o lead à tabela.
+          <SheetTitle>Novo lead</SheetTitle>
+          <SheetDescription>
+            Cria um contato e uma negociação no ERP Aracá.
           </SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-1 flex-col gap-4">
-          <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              Nome *
-            </label>
-            <Input
-              id="name"
-              required
-              value={form.name}
-              onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-              placeholder="Nome do lead"
-            />
+        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Nome *</label>
+            <Input value={form.name} onChange={field('name')} placeholder="Nome completo" required />
           </div>
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              E-mail *
-            </label>
-            <Input
-              id="email"
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-              placeholder="email@exemplo.com"
-            />
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <Input type="email" value={form.email} onChange={field('email')} placeholder="email@exemplo.com" />
           </div>
-          <div className="space-y-2">
-            <label htmlFor="company" className="text-sm font-medium">
-              Empresa
-            </label>
-            <Input
-              id="company"
-              value={form.company}
-              onChange={(e) => setForm((p) => ({ ...p, company: e.target.value }))}
-              placeholder="Empresa (opcional)"
-            />
+          <div>
+            <label className="block text-sm font-medium mb-1">Telefone</label>
+            <Input type="tel" value={form.phone} onChange={field('phone')} placeholder="+55 11 99999-9999" />
           </div>
-          <div className="space-y-2">
-            <label htmlFor="status" className="text-sm font-medium">
-              Status
-            </label>
+          <div>
+            <label className="block text-sm font-medium mb-1">Projeto / Consulta</label>
+            <Input value={form.projectName} onChange={field('projectName')} placeholder="Ex.: Residência Vila Mariana" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Tipo</label>
             <select
-              id="status"
-              value={form.status}
-              onChange={(e) => setForm((p) => ({ ...p, status: e.target.value as LeadStatus }))}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              value={form.projectType}
+              onChange={field('projectType')}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
-              {STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
+              <option value="Residencial">Residencial</option>
+              <option value="Comercial">Comercial</option>
             </select>
           </div>
-          <div className="space-y-2">
-            <label htmlFor="source" className="text-sm font-medium">
-              Origem
-            </label>
+          <div>
+            <label className="block text-sm font-medium mb-1">Origem</label>
             <select
-              id="source"
-              value={form.source}
-              onChange={(e) => setForm((p) => ({ ...p, source: e.target.value as LeadSource }))}
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              value={form.origin}
+              onChange={field('origin')}
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
-              {SOURCE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
+              <option value="Dashboard">Dashboard</option>
+              <option value="Indicação">Indicação</option>
+              <option value="Site">Site</option>
+              <option value="Redes sociais">Redes sociais</option>
+              <option value="Outro">Outro</option>
             </select>
           </div>
-          {error && (
-            <p className="text-sm text-destructive" role="alert">
-              {error}
-            </p>
-          )}
-          <div className="mt-auto flex gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" className="flex-1" disabled={loading} loading={loading}>
-              Adicionar
-            </Button>
+          <div>
+            <label className="block text-sm font-medium mb-1">Notas</label>
+            <textarea
+              value={form.notes}
+              onChange={field('notes')}
+              rows={3}
+              placeholder="Observações sobre o lead..."
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-y"
+            />
           </div>
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          <Button type="submit" disabled={loading} className="mt-2">
+            {loading ? 'Salvando…' : 'Criar lead'}
+          </Button>
         </form>
       </SheetContent>
     </Sheet>

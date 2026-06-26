@@ -137,6 +137,7 @@ export function SiteNav({
                 )}
                 style={desktopLogoStyle}
                 priority
+                fetchPriority="high"
               />
             </Link>
             <div className="flex items-center gap-1">
@@ -303,6 +304,7 @@ export function SiteNav({
                 className="h-auto w-[55px]"
                 style={mobileLogoStyle}
                 priority={true}
+                fetchPriority="high"
               />
             </Link>
             <button
@@ -347,6 +349,7 @@ export function SiteNav({
                     className="h-auto w-[65px]"
                     style={mobileLogoStyle}
                     priority
+                    fetchPriority="high"
                   />
                 </Link>
                 <button

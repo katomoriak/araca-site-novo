@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
-import { getPayloadClient } from '@/lib/payload'
 import { contactFormSchema, validateWithSchema } from '@/lib/validation-schemas'
 import { checkRateLimit, getClientIdentifier } from '@/lib/rate-limit'
 import { handleApiError, validationError, rateLimitError } from '@/lib/error-handler'
+import { createErpLead } from '@/lib/erp-supabase'
 
 /**
  * POST /api/contact
- * Formulário da home: cria um lead e uma negociação vinculada (origem site).
+ * Formulário de contato do site.
+ * Cria contact + deal diretamente no Supabase do ERP Aracá.
+ * Os dados aparecem imediatamente no dashboard do site e no ERP.
  * Público (sem autenticação). Rate limit: 5 envios por minuto por IP.
  */
 export async function POST(request: Request) {
@@ -35,40 +37,25 @@ export async function POST(request: Request) {
     }
 
     const data = validation.data
-    const fullName = [data.nome, data.sobrenome].filter(Boolean).join(' ').trim()
-    const notesParts: string[] = []
-    if (data.tipoConsulta) notesParts.push(`Tipo: ${data.tipoConsulta}`)
-    if (data.pais) notesParts.push(`País: ${data.pais}`)
-    if (data.telefone) notesParts.push(`Telefone: ${data.telefone}`)
-    if (data.mensagem) notesParts.push(`Mensagem: ${data.mensagem}`)
-    const notes = notesParts.join('\n') || undefined
 
-    const payload = await getPayloadClient()
-
-    const lead = await payload.create({
-      collection: 'leads',
-      data: {
-        name: fullName,
-        email: data.email,
-        company: undefined,
-        status: 'contacted',
-        source: 'website',
-        notes,
-        lastActivity: new Date().toISOString(),
-      },
-      overrideAccess: true,
+    // Cria contact + deal no Supabase (ERP Aracá)
+    const result = await createErpLead({
+      nome: data.nome,
+      sobrenome: data.sobrenome,
+      email: data.email,
+      telefone: data.telefone,
+      tipoConsulta: data.tipoConsulta,
+      mensagem: data.mensagem,
+      pais: data.pais,
     })
 
-    const leadId = (lead as { id: string | number }).id
-    await payload.create({
-      collection: 'negociacoes',
-      data: {
-        lead: leadId,
-        stage: 'prospeccao',
-        notes: data.mensagem || undefined,
-      },
-      overrideAccess: true,
-    })
+    if (!result.ok) {
+      console.error('[api/contact] Falha ao criar lead no ERP:', result.error)
+      return NextResponse.json(
+        { ok: false, error: 'Não foi possível registrar sua mensagem. Tente novamente.' },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({
       ok: true,

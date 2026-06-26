@@ -11,23 +11,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
-import type { PayloadLead, LeadStatus, LeadSource } from '@/lib/payload'
-
-const STATUS_LABELS: Record<LeadStatus, string> = {
-  contacted: 'Contatado',
-  qualified: 'Qualificado',
-  proposal_sent: 'Proposta enviada',
-  negotiation: 'Negociação',
-  won: 'Ganho',
-  lost: 'Perdido',
-}
-
-const SOURCE_LABELS: Record<LeadSource, string> = {
-  website: 'Site',
-  social: 'Redes sociais',
-  referral: 'Indicação',
-  other: 'Outro',
-}
+import type { CrmDeal } from '@/lib/supabase-crm'
 
 function formatRelativeTime(dateStr: string | null | undefined) {
   if (!dateStr) return '—'
@@ -40,50 +24,33 @@ function formatRelativeTime(dateStr: string | null | undefined) {
   if (diffMins < 60) return `${diffMins}m atrás`
   if (diffHours < 24) return `${diffHours}h atrás`
   if (diffDays < 7) return `${diffDays}d atrás`
-  return new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: 'short',
-  }).format(d)
+  return new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short' }).format(d)
 }
 
-function leadRef(id: string | number | undefined | null): string {
-  const s = id != null ? String(id) : ''
-  const num = s.replace(/\D/g, '').slice(-4) || s.slice(-4) || '—'
-  return `L-${num}`
+function dealRef(id: string): string {
+  return `D-${id.slice(-4).toUpperCase()}`
 }
 
-const LEADS_API = '/api/leads?limit=500&sort=-createdAt'
-
-async function fetchLeads(): Promise<PayloadLead[]> {
-  const res = await fetch(LEADS_API, {
-    credentials: 'include',
-    cache: 'no-store',
-  })
-  if (!res.ok) return []
-  const data = (await res.json()) as { docs?: PayloadLead[] }
-  return data.docs ?? []
-}
-
-/** Disparado quando um novo lead é criado (ex.: pelo AddLeadSheet). */
+/** Disparado quando um novo lead é criado pelo AddLeadSheet. */
 export const LEAD_ADDED_EVENT = 'lead-added'
 
 export function LeadsRecentCard() {
-  const [leads, setLeads] = useState<PayloadLead[]>([])
+  const [deals, setDeals] = useState<CrmDeal[]>([])
   const [loading, setLoading] = useState(true)
 
   const refetch = useCallback(async () => {
     setLoading(true)
     try {
-      const list = await fetchLeads()
-      setLeads(list)
+      const res = await fetch('/api/crm/contacts', { credentials: 'include', cache: 'no-store' })
+      if (!res.ok) { setDeals([]); return }
+      const data = await res.json() as { docs?: CrmDeal[] }
+      setDeals(data.docs ?? [])
     } finally {
       setLoading(false)
     }
   }, [])
 
-  useEffect(() => {
-    refetch()
-  }, [refetch])
+  useEffect(() => { refetch() }, [refetch])
 
   useEffect(() => {
     const handler = () => refetch()
@@ -91,18 +58,12 @@ export function LeadsRecentCard() {
     return () => window.removeEventListener(LEAD_ADDED_EVENT, handler)
   }, [refetch])
 
-  const sorted = [...leads].sort((a, b) => {
-    const da = a.createdAt ? new Date(a.createdAt).getTime() : 0
-    const db = b.createdAt ? new Date(b.createdAt).getTime() : 0
-    return db - da
-  })
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>Leads recentes</CardTitle>
         <CardDescription>
-          Todos os leads adicionados, do mais recente ao mais antigo.
+          Todos os deals cadastrados, do mais recente ao mais antigo. Dados do ERP Aracá.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -115,44 +76,39 @@ export function LeadsRecentCard() {
             <TableHeader>
               <TableRow>
                 <TableHead>Ref</TableHead>
-                <TableHead>Nome</TableHead>
-                <TableHead>Empresa</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Contato</TableHead>
+                <TableHead>Projeto</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead>Origem</TableHead>
-                <TableHead>Última atividade</TableHead>
+                <TableHead>Criado em</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sorted.length === 0 ? (
+              {deals.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                     Nenhum lead cadastrado.
                   </TableCell>
                 </TableRow>
               ) : (
-                sorted.map((lead: PayloadLead) => (
-                  <TableRow key={lead.id}>
+                deals.map((deal) => (
+                  <TableRow key={deal.id}>
                     <TableCell className="font-mono text-muted-foreground">
-                      {leadRef(lead.id)}
+                      {dealRef(deal.id)}
                     </TableCell>
-                    <TableCell className="font-medium">{lead.name}</TableCell>
-                    <TableCell>{lead.company ?? '—'}</TableCell>
+                    <TableCell className="font-medium">
+                      <div>{deal.contacts?.name ?? '—'}</div>
+                      <div className="text-xs text-muted-foreground">{deal.contacts?.email ?? deal.contacts?.phone ?? ''}</div>
+                    </TableCell>
+                    <TableCell>{deal.project_name}</TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          lead.status === 'won'
-                            ? 'success'
-                            : lead.status === 'lost'
-                              ? 'error'
-                              : 'default'
-                        }
-                      >
-                        {STATUS_LABELS[lead.status]}
+                      <Badge variant={deal.project_type === 'Comercial' ? 'default' : 'outline'}>
+                        {deal.project_type}
                       </Badge>
                     </TableCell>
-                    <TableCell>{SOURCE_LABELS[lead.source ?? 'other']}</TableCell>
+                    <TableCell>{deal.contacts?.origin ?? '—'}</TableCell>
                     <TableCell className="text-muted-foreground">
-                      {formatRelativeTime(lead.lastActivity ?? lead.createdAt)}
+                      {formatRelativeTime(deal.created_at)}
                     </TableCell>
                   </TableRow>
                 ))

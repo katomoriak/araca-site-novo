@@ -38,12 +38,10 @@ import { getHeroVideoUrl } from '@/lib/hero-video'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
-  const lowUrl = getHeroVideoUrl('low') || '/api/hero-video?quality=low'
-  const defaultUrl = getHeroVideoUrl('default') || '/api/hero-video'
 
   return (
     <div className="absolute inset-0 bg-neutral-900">
-      {/* Imagem LCP otimizada servida como poster antes da hidratação do vídeo */}
+      {/* Imagem estática como hero background — vídeo desativado para melhor performance */}
       <Image
         src={posterUrl}
         alt="Aracá Interiores Hero"
@@ -52,21 +50,6 @@ function HeroVideo() {
         priority
         className="object-cover"
       />
-
-      {/* O Vídeo roda logo em seguida. Sem atributo poster para evitar download duplo do arquivo cru. */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        className="absolute inset-0 h-full w-full object-cover"
-      >
-        {/* Para mobile (telas menores que 1024px), vamos puxar obrigatoriamente a versão ultra leve _low.mp4 */}
-        <source src={lowUrl} type="video/mp4" media="(max-width: 1024px)" />
-        {/* Para desktop, puxamos a versão original que carrega após o pôster ser renderizado */}
-        <source src={defaultUrl} type="video/mp4" />
-      </video>
     </div>
   )
 }
@@ -264,21 +247,11 @@ export function HomePage({ initialProjects }: HomePageProps) {
         <ScrollTextReveal
           texts={[
             'Somos a Aracá Interiores.',
-            'Escritório de arquitetura e design de interiores em Santo André e SP.',
-            'Nosso modelo é totalmente inovador.',
-            'Você escolhe o que quer contratar.',
-            'Projeto criativo + Projeto executivo.',
-            'Detalhamentos + Acompanhamento de obra.',
             'Criamos espaços com alma em toda São Paulo.',
           ]}
           highlights={{
             0: ['Aracá', 'Interiores'],
-            1: ['arquitetura', 'design', 'interiores', 'Santo André'],
-            2: ['modelo', 'inovador'],
-            3: ['escolhe', 'contratar'],
-            4: ['criativo', 'executivo'],
-            5: ['Detalhamentos', 'Acompanhamento'],
-            6: ['espaços', 'alma', 'São Paulo'],
+            1: ['espaços', 'alma', 'São Paulo'],
           }}
           highlightColors={{
             gradient1: '#3C5945',

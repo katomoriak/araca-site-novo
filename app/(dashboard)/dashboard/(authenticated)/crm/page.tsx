@@ -1,12 +1,11 @@
-import Link from 'next/link'
-import { getCrmKanbanData } from '@/lib/payload'
+import { getCrmKanban } from '@/lib/supabase-crm'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card'
 import { CrmKanban } from '@/components/dashboard/CrmKanban'
 import { CrmPageActions } from '@/components/dashboard/CrmPageActions'
 import { LeadsRecentCard } from '@/components/dashboard/LeadsRecentCard'
 
 export default async function CrmPage() {
-  const kanbanColumns = await getCrmKanbanData()
+  const kanbanColumns = await getCrmKanban()
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
@@ -14,15 +13,7 @@ export default async function CrmPage() {
         <div>
           <h1 className="text-2xl font-semibold">CRM</h1>
           <p className="text-muted-foreground">
-            Leads e pipeline. Gerencie no{' '}
-            <Link href="/admin/collections/leads" className="text-primary underline">
-              Admin Payload
-            </Link>
-            {' '}e{' '}
-            <Link href="/admin/collections/negociacoes" className="text-primary underline">
-              Negociações
-            </Link>
-            .
+            Leads e pipeline. Os dados são compartilhados com o ERP Aracá em tempo real.
           </p>
         </div>
         <CrmPageActions />
@@ -32,7 +23,7 @@ export default async function CrmPage() {
         <CardHeader>
           <CardTitle>Pipeline de fechamento</CardTitle>
           <CardDescription>
-            Kanban por etapa da negociação. Valor acumulado em cada coluna. Clique no card para editar a negociação.
+            Kanban por etapa da negociação. Arraste para mover entre colunas.
           </CardDescription>
         </CardHeader>
         <CardContent>

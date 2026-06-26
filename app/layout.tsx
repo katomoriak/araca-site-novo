@@ -143,6 +143,13 @@ export default function RootLayout({
           type="font/woff2" 
           crossOrigin="anonymous" 
         />
+        <link 
+          rel="preload" 
+          href="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg" 
+          as="image" 
+          type="image/svg+xml" 
+          fetchPriority="high" 
+        />
       </head>
       <body className="antialiased">
         <script

@@ -65,12 +65,11 @@ export const Transactions: CollectionConfig = {
     },
     {
       name: 'lead',
-      type: 'relationship',
-      label: { en: 'Lead', pt: 'Lead' },
-      relationTo: 'leads',
+      type: 'text',
+      label: { en: 'Lead ID', pt: 'ID do Lead (Supabase)' },
       required: false,
       admin: {
-        description: 'Opcional: associar a um lead.',
+        description: 'Opcional: ID do deal/contato no Supabase.',
       },
     },
     {

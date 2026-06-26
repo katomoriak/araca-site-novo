@@ -1,6 +1,6 @@
 import { DashboardShell } from '@/components/dashboard/DashboardShell'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { headers } from 'next/headers'
 import { getPayloadClient } from '@/lib/payload'
 import { canAccessDashboard, type UserWithPermissions } from '@/payload/access/permissions'
 
@@ -14,19 +14,12 @@ export default async function DashboardInnerLayout({
 }: {
   children: React.ReactNode
 }) {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('payload-token')?.value
-
-  if (!token) {
-    redirect('/dashboard/login')
-  }
-
   let dashboardUser: { id: string; role?: string; permissions?: string[] } | null = null
 
   try {
     const payload = await getPayloadClient()
     const { user } = await payload.auth({
-      headers: new Headers({ cookie: `payload-token=${token}` }),
+      headers: await headers(),
     })
 
     if (!user) {

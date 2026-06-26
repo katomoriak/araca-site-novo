@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { getPayloadClient } from '@/lib/payload'
-import { getLeads, getTransactions } from '@/lib/payload'
+import { getTransactions } from '@/lib/payload'
+import { getCrmKanban } from '@/lib/supabase-crm'
 import { getDashboardUser } from '@/lib/dashboard-auth'
 import { hasPermission } from '@/payload/access/permissions'
 import type { UserWithPermissions } from '@/payload/access/permissions'
@@ -45,7 +46,7 @@ export default async function DashboardPage() {
 
   const payload = await getPayloadClient()
 
-  const [postsResult, projetosResult, leads, transactions] = await Promise.all([
+  const [postsResult, projetosResult, kanbanData, transactions] = await Promise.all([
     canBlog
       ? payload.find({
           collection: 'posts',
@@ -61,7 +62,7 @@ export default async function DashboardPage() {
           pagination: true,
         })
       : Promise.resolve(null),
-    canCRM || canFinance ? getLeads() : Promise.resolve([]),
+    canCRM || canFinance ? getCrmKanban() : Promise.resolve([]),
     canCRM || canFinance ? getTransactions() : Promise.resolve([]),
   ])
 
@@ -84,9 +85,18 @@ export default async function DashboardPage() {
     }
   }
 
-  const pipelineLeads = leads.filter(
-    (l) => l.status !== 'won' && l.status !== 'lost'
-  ).length
+  const totalLeads = kanbanData.reduce((sum, col) => sum + col.deals.length, 0)
+  const pipelineLeads = kanbanData
+    .filter((col) => {
+      const name = col.name.toLowerCase()
+      return (
+        !name.includes('fechado') &&
+        !name.includes('perdido') &&
+        !name.includes('won') &&
+        !name.includes('lost')
+      )
+    })
+    .reduce((sum, col) => sum + col.deals.length, 0)
 
   const monthsMap = new Map<string, { receita: number; despesas: number }>()
   for (let i = 5; i >= 0; i--) {
@@ -168,7 +178,7 @@ export default async function DashboardPage() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent className="flex-1">
-              <div className="text-2xl font-bold">{leads.length}</div>
+              <div className="text-2xl font-bold">{totalLeads}</div>
               <p className="text-xs text-muted-foreground">
                 {pipelineLeads} no pipeline
               </p>

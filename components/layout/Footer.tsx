@@ -26,8 +26,8 @@ const footerNavColumns = [
 const footerContact = {
   email: 'contato@araca.arq.br',
   emailLabel: 'contato@araca.arq.br',
-  phone: '(11) 99745-8464',
-  whatsappHref: 'https://wa.me/5511997458464',
+  phone: '(11) 93915-5979',
+  whatsappHref: 'https://wa.me/5511939155979',
 }
 
 const socialLinks = [
@@ -229,7 +229,7 @@ export function Footer() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
-                      aria-label="WhatsApp: (11) 99745-8464"
+                      aria-label="WhatsApp: (11) 93915-5979"
                     >
                       <Phone className="h-4 w-4" />
                       {footerContact.phone}

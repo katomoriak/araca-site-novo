@@ -1,6 +1,6 @@
 'use client'
 
-const WHATSAPP_NUMBER = '5511997458464'
+const WHATSAPP_NUMBER = '5511939155979'
 const DEFAULT_MESSAGE = 'Olá, vim pelo site e gostaria de mais informações.'
 
 function buildWhatsAppUrl(): string {
