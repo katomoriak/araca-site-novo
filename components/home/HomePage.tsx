@@ -38,10 +38,21 @@ import { getHeroVideoUrl } from '@/lib/hero-video'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
+  const videoUrl = getHeroVideoUrl('video') || '/api/hero-video?quality=video'
+
+  const [loadVideo, setLoadVideo] = useState(false)
+
+  useEffect(() => {
+    // Retarda o carregamento do vídeo para depois da renderização inicial
+    const timer = setTimeout(() => {
+      setLoadVideo(true)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <div className="absolute inset-0 bg-neutral-900">
-      {/* Imagem estática como hero background — vídeo desativado para melhor performance */}
+      {/* Imagem estática carrega primeiro (LCP) */}
       <Image
         src={posterUrl}
         alt="Aracá Interiores Hero"
@@ -50,6 +61,17 @@ function HeroVideo() {
         priority
         className="object-cover"
       />
+      {/* Vídeo carrega lazymente depois por cima */}
+      {loadVideo && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover animate-in fade-in duration-1000"
+          src={videoUrl}
+        />
+      )}
     </div>
   )
 }
@@ -200,7 +222,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
         {/* Conteúdo do Hero */}
         <div className="relative z-10 flex flex-1 items-center justify-center px-4">
-          <div className="max-w-3xl text-center animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200 fill-mode-both">
+          <div className="max-w-3xl text-center">
             <p className="text-sm font-medium tracking-[0.25em] text-white/85">
               ARACÁ INTERIORES
             </p>
