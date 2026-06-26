@@ -141,7 +141,8 @@ export async function getProjetosFromPayload(
       docs = docs.filter((d) => d.showOnProjectsPage !== false)
     }
     return docs.map((doc) => docToGalleryItem(doc))
-  } catch {
+  } catch (err) {
+    console.error('[getProjetosFromPayload] Error fetching projects from database:', err)
     return []
   }
 }
