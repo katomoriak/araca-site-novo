@@ -38,7 +38,7 @@ import { getHeroVideoUrl } from '@/lib/hero-video'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
-  const videoUrl = getHeroVideoUrl('video') || '/api/hero-video?quality=video'
+  const videoUrl = getHeroVideoUrl('default') || '/api/hero-video'
 
   const [loadVideo, setLoadVideo] = useState(false)
 

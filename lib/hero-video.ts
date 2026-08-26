@@ -5,7 +5,7 @@ const DEFAULT_HERO_VIDEO_KEY = 'FJO__VIDEOFACHADA_01_R00.mp4'
  * evitando um redirecionamento 308 via API.
  * Suporta 'low' (para mp4 comprimido) e 'poster' (para webp).
  */
-export function getHeroVideoUrl(quality: 'default' | 'low' | 'poster' = 'default'): string | null {
+export function getHeroVideoUrl(quality: 'default' | 'low' | 'poster' | 'video' = 'default'): string | null {
   let videoKey = process.env.NEXT_PUBLIC_HERO_VIDEO_FILENAME || DEFAULT_HERO_VIDEO_KEY
   let heroUrl = process.env.NEXT_PUBLIC_HERO_VIDEO_URL?.trim()
 
