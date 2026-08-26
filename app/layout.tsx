@@ -16,7 +16,7 @@ const rubik = Rubik({
 const siteName = 'Aracá Interiores'
 const siteDescription =
   'A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.'
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 const jsonLdOrganization = {
   '@context': 'https://schema.org',

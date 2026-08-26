@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { ArquitetoSantoAndreClient } from './ArquitetoSantoAndreClient'
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
+
 /* ─────────────────────────────────────────────
    Metadata & SEO (Server-side)
 ───────────────────────────────────────────── */
@@ -8,12 +10,12 @@ export const metadata: Metadata = {
   title: 'Arquiteto em Santo André | Aracá Interiores — Design Biofílico',
   description: 'Aracá Interiores atua em Santo André com projetos de design de interiores, arquitetura biofílica e sustentável. Residencial, comercial, reforma e construção. Solicite seu orçamento.',
   alternates: {
-    canonical: 'https://araca.arq.br/arquiteto-em-santo-andre/',
+    canonical: `${baseUrl}/arquiteto-em-santo-andre`,
   },
   openGraph: {
     title: 'Arquiteto em Santo André | Aracá Interiores',
     description: 'Design de Interiores Biofílico e Sustentável em Santo André. Projetos que conectam pessoas e natureza.',
-    url: 'https://araca.arq.br/arquiteto-em-santo-andre/',
+    url: `${baseUrl}/arquiteto-em-santo-andre`,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',
     type: 'website',
@@ -30,7 +32,7 @@ export default function ArquitetoSantoAndrePage() {
     "@context": "https://schema.org",
     "@type": "InteriorDesigner",
     "name": "Aracá Interiores",
-    "url": "https://araca.arq.br/arquiteto-em-santo-andre/",
+    "url": `${baseUrl}/arquiteto-em-santo-andre`,
     "telephone": "+5511997458464",
     "address": {
       "@type": "PostalAddress",

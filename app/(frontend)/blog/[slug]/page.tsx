@@ -86,7 +86,7 @@ const getPost = cache(async (slug: string) => {
   return null
 })
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params

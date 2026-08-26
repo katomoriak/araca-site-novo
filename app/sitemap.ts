@@ -4,7 +4,7 @@ import { getProjetosCached } from '@/lib/projetos-server'
 import { MOCK_POSTS } from '@/lib/blog-mock'
 import { LOCATIONS } from '@/lib/seo-locations'
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 const BLOG_CATEGORIES = ['design', 'dev', 'tutorial', 'news'] as const
 
@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/servicos/residencial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/servicos/comercial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${baseUrl}/arquiteto-em-santo-andre`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/politica-privacidade`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${baseUrl}/termos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     // SEO Local — páginas por cidade (fundo de funil)

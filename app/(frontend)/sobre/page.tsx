@@ -1,6 +1,6 @@
 import { SobrePageContent } from '@/components/sobre/SobrePageContent'
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 export const metadata = {
   title: 'Sobre a Aracá Interiores | Arquitetos em Santo André',

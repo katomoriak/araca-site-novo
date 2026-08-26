@@ -23,7 +23,7 @@ export async function generateMetadata({
     const loc = getLocationBySlug(city)
     if (!loc) return {}
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
     const canonical = `${baseUrl}/arquitetura-interiores-${loc.slug}`
 
     return {
@@ -66,7 +66,7 @@ export default async function CidadePage({
     const loc = getLocationBySlug(city)
     if (!loc) notFound()
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://araca.arq.br'
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
     const canonical = `${baseUrl}/arquitetura-interiores-${loc.slug}`
 
     /* Schema JSON-LD: LocalBusiness por cidade */
