@@ -1,7 +1,7 @@
 {
-  "buildCommand": "npm install --legacy-peer-deps && next build --webpack",
+  "buildCommand": "next build --webpack",
   "devCommand": "npm run dev",
-  "installCommand": "npm install --legacy-peer-deps",
+  "installCommand": "npm install",
   "framework": "nextjs",
   "headers": [
     {
