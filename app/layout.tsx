@@ -18,24 +18,6 @@ const siteDescription =
   'Projetos autorais de design de interiores e reformas residenciais de alto padrão em SP e ABC. Solicite sua proposta comercial.'
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
-const jsonLdOrganization = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: siteName,
-  url: baseUrl,
-  description: siteDescription,
-  logo: `${baseUrl}/logotipos/LOGOTIPO%20REDONDO@300x.png`,
-}
-
-const jsonLdWebSite = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: siteName,
-  url: baseUrl,
-  description: siteDescription,
-  publisher: { '@id': `${baseUrl}#organization` },
-  inLanguage: 'pt-BR',
-}
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -133,6 +115,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={rubik.variable}
+      data-scroll-behavior="smooth"
     >
       <head>
         <link 
@@ -151,18 +134,6 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLdOrganization),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLdWebSite),
-          }}
-        />
         {/* Google Analytics - Script do Next.js pode ficar fora do head */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}

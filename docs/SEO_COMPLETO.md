@@ -181,10 +181,21 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 
 ## 7. Dados Estruturados (Schema.org / JSON-LD)
 
-1. **`Organization` e `WebSite` (Global):** Reconhecimento de marca e logotipo nos buscadores.
-2. **`InteriorDesigner` / `LocalBusiness`:** Configurado nas páginas de cidades e `/arquiteto-em-santo-andre` com telefone `+5511939155979`, endereço, área atendida e redes sociais.
-3. **`FAQPage` (`/arquiteto-em-santo-andre`):** 5 perguntas e respostas para gerar Rich Snippets sanfonados nos resultados do Google.
-4. **`BlogPosting` & `BreadcrumbList`:** Em todos os artigos do blog com autor, datas e navegação estruturada.
+A arquitetura de dados estruturados segue a padronização canônica unificada via `@graph`:
+
+1. **Unificação via `@graph`:** Cada página do site renderiza apenas **um único bloco `<script type="application/ld+json">`**, consolidando as entidades dentro de um array `@graph` para evitar fragmentação e duplicidades nos validadores do Google.
+2. **Entidade Canônica Única (`#organization`):**
+   - `@id`: `"https://www.araca.arq.br/#organization"`
+   - `url`: `"https://www.araca.arq.br/"` (sempre apontando para a raiz)
+3. **Tipagem Híbrida do Negócio:**
+   - `@type`: `["HomeAndConstructionBusiness", "ProfessionalService"]` (abrangendo reforma/execução e projeto de interiores).
+4. **Contexto por Página:**
+   - **Home (`/`):** Declara `WebSite` e a entidade central `#organization`.
+   - **Sobre Nós (`/sobre`):** Declara `WebSite`, `AboutPage` (com `isPartOf: #website` e `about: #organization`) e `#organization` com fundadores (`founder`), área atendida e catálogo de serviços (`hasOfferCatalog`).
+   - **Portfólio (`/projetos/...`):** Declara `CreativeWork` ou `VisualArtwork` com criador apontando para `#organization`.
+   - **Contato (`/contato`):** Declara `ContactPage`.
+   - **Landing Pages Regionais:** Declaram serviços locais integrados ao grafo institucional.
+   - **Blog (`/blog/[slug]`):** Declara `BlogPosting` & `BreadcrumbList`.
 
 ---
 

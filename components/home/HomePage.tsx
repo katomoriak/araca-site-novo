@@ -10,6 +10,7 @@ import {
   Home,
   Store,
   Leaf,
+  Instagram,
 } from 'lucide-react'
 import { Container } from '@/components/layout/Container'
 import { ScrollIndicator } from '@/components/layout/ScrollIndicator'
@@ -36,6 +37,8 @@ const ProjectGallery = dynamic(
 
 import { getHeroVideoUrl } from '@/lib/hero-video'
 import { avaliacoesGoogle } from '@/content/depoimentos'
+import { LatestBlogSection } from '@/components/home/LatestBlogSection'
+import type { Post } from '@/lib/blog-mock'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
@@ -128,9 +131,11 @@ const GALLERY_FALLBACK: ProjectGalleryItem[] = [
 export interface HomePageProps {
   /** Projetos carregados no servidor (evita waterfall no cliente). */
   initialProjects?: ProjectGalleryItem[] | null
+  /** Posts do blog para exibição na seção da home (até 3). */
+  latestPosts?: Post[] | null
 }
 
-export function HomePage({ initialProjects }: HomePageProps) {
+export function HomePage({ initialProjects, latestPosts }: HomePageProps) {
   const [selectedProject, setSelectedProject] = useState<ProjectGalleryItem | null>(null)
   const { setGalleryOpen } = useGalleryOpen()
   const openGallery = useCallback((project: ProjectGalleryItem | null) => {
@@ -575,14 +580,117 @@ export function HomePage({ initialProjects }: HomePageProps) {
             items={avaliacoesGoogle}
           />
         </Container>
-        {/* Gradiente de transição para a seção Contato */}
+        {/* Gradiente de transição para a próxima seção */}
         <div
           className="absolute bottom-0 left-0 right-0 z-0 h-32 pointer-events-none"
           style={{
-            background: 'linear-gradient(to bottom, transparent 0%, rgba(236, 229, 219, 0.4) 50%, var(--araca-bege-claro) 100%)',
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(236, 229, 219, 0.4) 50%, var(--araca-mineral-green) 100%)',
           }}
           aria-hidden
         />
+      </section>
+
+      {/* SEÇÃO BLOG / ÚLTIMAS POSTAGENS */}
+      <LatestBlogSection posts={latestPosts} />
+
+      {/* SEÇÃO INSTAGRAM */}
+      <section
+        className="relative py-20 sm:py-24 bg-araca-creme overflow-hidden border-t border-b border-border/40"
+        aria-labelledby="instagram-heading"
+      >
+        <Container>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14">
+            {/* Texto & Chamada */}
+            <div className="max-w-xl text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 rounded-full border border-araca-laranja-queimado/30 bg-araca-laranja-queimado/10 px-3.5 py-1 text-xs text-araca-laranja-queimado font-medium mb-4 shadow-sm">
+                <Instagram className="h-4 w-4" />
+                <span>@aracainteriores</span>
+              </div>
+              <h2
+                id="instagram-heading"
+                className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-araca-cafe-escuro tracking-tight"
+              >
+                Acompanhe Nossos Bastidores no Instagram
+              </h2>
+              <p className="mt-4 text-base sm:text-lg text-araca-chocolate-amargo/85 font-body leading-relaxed">
+                Compartilhamos transformações de ambientes, visitas de obra, escolhas de materiais, detalhes de marcenaria e o dia a dia do nosso estúdio de interiores.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <a
+                  href="https://www.instagram.com/aracainteriores/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-araca-cafe-escuro text-white font-medium text-base shadow-md transition-all duration-300 hover:bg-gradient-to-r hover:from-[#833ab4] hover:via-[#fd1d1d] hover:to-[#fcb045] hover:shadow-xl hover:scale-105 group"
+                >
+                  <Instagram className="h-5 w-5 transition-transform duration-300 group-hover:rotate-6 text-[#E8B56F] group-hover:text-white" />
+                  <span>Seguir @aracainteriores</span>
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </a>
+              </div>
+            </div>
+
+            {/* Grid Visual de Posts Reais */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 w-full max-w-lg lg:max-w-md shrink-0">
+              {[
+                {
+                  src: '/instagram/post-1.png',
+                  alt: 'Luminária pendente helicoidal e painel ripado - Aracá Interiores',
+                  tag: 'Iluminação & Painel',
+                },
+                {
+                  src: '/instagram/post-2.png',
+                  alt: 'Quarto aconchegante com poltrona e manta terracota - Aracá Interiores',
+                  tag: 'Suíte & Texturas',
+                },
+                {
+                  src: '/instagram/post-3.png',
+                  alt: 'Equipe fundadora Aracá Interiores - Marcos Paulo e Rafaela Garbuio',
+                  tag: 'Quem Cria',
+                },
+                {
+                  src: '/instagram/post-4.png',
+                  alt: 'Antes e Depois / Cozinha e Sala Integradas - Aracá Interiores',
+                  tag: 'Antes & Depois',
+                },
+                {
+                  src: '/instagram/post-5.png',
+                  alt: '10 coisas que você deveria fazer antes de começar sua obra - Dicas Aracá',
+                  tag: 'Dicas de Obra',
+                },
+                {
+                  src: '/instagram/post-1.png',
+                  alt: 'Conceito e Composição de Interiores - Aracá',
+                  tag: 'Composição & Arte',
+                },
+              ].map((item, idx) => (
+                <a
+                  key={idx}
+                  href="https://www.instagram.com/aracainteriores/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative aspect-square overflow-hidden rounded-2xl bg-muted shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 block"
+                >
+                  <Image
+                    src={item.src}
+                    alt={item.alt}
+                    fill
+                    sizes="(max-width: 640px) 45vw, 150px"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex flex-col justify-end p-2.5">
+                    <span className="text-[10px] sm:text-xs text-white/90 font-medium">
+                      {item.tag}
+                    </span>
+                    <span className="text-white text-xs font-semibold flex items-center gap-1 mt-0.5">
+                      <Instagram className="h-3 w-3" />
+                      Ver post
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </Container>
       </section>
 
       {/* CONTATO - fundo da section (placeholder) + bloco com cantos arredondados e glass contendo a imagem */}
@@ -651,6 +759,15 @@ export function HomePage({ initialProjects }: HomePageProps) {
                           aria-label="LinkedIn"
                         >
                           LinkedIn
+                        </a>
+                        <a
+                          href="https://br.pinterest.com/aracainteriores/_created/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-white/90 hover:text-white underline underline-offset-2"
+                          aria-label="Pinterest"
+                        >
+                          Pinterest
                         </a>
                       </p>
                     </div>

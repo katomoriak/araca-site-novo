@@ -159,6 +159,9 @@ export function ProgressiveImage({
           src={previewUrl}
           alt=""
           aria-hidden
+          loading={rest.priority ? 'eager' : undefined}
+          // @ts-ignore
+          fetchPriority={rest.priority ? 'high' : undefined}
           className={cn(layerClass, 'transition-opacity duration-200', previewLoaded ? 'opacity-100' : 'opacity-0')}
           onLoad={handlePreviewLoad}
           onError={handlePreviewError}
@@ -170,6 +173,7 @@ export function ProgressiveImage({
         <Image
           src={fullSrc}
           alt={alt}
+          loading={rest.priority ? 'eager' : rest.loading}
           {...rest}
           // Se a imagem já vem do nosso proxy (redimensionada), não usar otimização do Next.js
           // Isso evita o erro 400 Bad Request ao tentar otimizar uma URL que já é um proxy

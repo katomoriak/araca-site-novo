@@ -51,5 +51,61 @@ export default async function ProjetoPage({ params }: PageProps) {
   const project = await getProjetoBySlug(slug)
   if (!project) notFound()
 
-  return <ProjetoDetailContent project={project} />
+  const projectUrl = `${baseUrl}/projetos/${slug}`
+  const coverImageUrl = project.coverImage
+    ? (project.coverImage.startsWith('http')
+        ? project.coverImage
+        : `${baseUrl}${project.coverImage.startsWith('/') ? '' : '/'}${project.coverImage}`)
+    : `${baseUrl}/projetos/areasocial_residencia-ninhoverce/cover.png`
+
+  const projectSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Início',
+            item: 'https://www.araca.arq.br/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Projetos',
+            item: 'https://www.araca.arq.br/projetos',
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: project.title,
+            item: projectUrl,
+          },
+        ],
+      },
+      {
+        '@type': 'CreativeWork',
+        name: `Projeto de Interiores ${project.title}`,
+        description:
+          project.description ||
+          `Projeto autoral de design de interiores ${project.title} desenvolvido pelo estúdio Aracá Interiores.`,
+        url: projectUrl,
+        image: coverImageUrl,
+        creator: {
+          '@id': 'https://www.araca.arq.br/#organization',
+        },
+      },
+    ],
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectSchema) }}
+      />
+      <ProjetoDetailContent project={project} />
+    </>
+  )
 }

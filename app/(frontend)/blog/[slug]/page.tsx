@@ -228,6 +228,7 @@ export default async function PostPage({ params }: PageProps) {
                 fill
                 className="object-cover"
                 priority
+                loading="eager"
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 blurPlaceholderUrl={getBlurPlaceholderUrl(post.coverImage.url)}
               />

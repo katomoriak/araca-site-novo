@@ -34,6 +34,13 @@ export function BodyScope({ children }: { children: ReactNode }) {
     }
   }, [isPayload])
 
+  useEffect(() => {
+    // Garante que ao navegar entre páginas o scroll fique no topo imediatamente
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [pathname])
+
   return (
     <>
       {!isPayload && <LiquidGlassCursor />}

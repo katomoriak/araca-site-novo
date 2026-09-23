@@ -32,9 +32,22 @@ const footerContact = {
   whatsappHref: 'https://wa.me/5511939155979',
 }
 
+const PinterestIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.688 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.094.399-.303 1.236-.346 1.417-.056.236-.184.288-.429.174-1.604-.748-2.607-3.098-2.607-4.99 0-4.067 2.956-7.809 8.536-7.809 4.492 0 7.989 3.2 7.989 7.472 0 4.467-2.812 8.067-6.723 8.067-1.313 0-2.548-.682-2.972-1.492l-.809 3.085c-.292 1.114-1.085 2.508-1.618 3.36 1.247.388 2.571.597 3.939.597 6.627 0 12-5.373 12-12s-5.373-12-12-12z" />
+  </svg>
+)
+
 const socialLinks = [
   { href: 'https://www.instagram.com/aracainteriores/', icon: Instagram, label: 'Instagram' },
   { href: 'https://www.linkedin.com/company/araca-arq', icon: Linkedin, label: 'LinkedIn' },
+  { href: 'https://br.pinterest.com/aracainteriores/_created/', icon: PinterestIcon, label: 'Pinterest' },
 ]
 
 export function Footer() {
@@ -138,11 +151,11 @@ export function Footer() {
         >
           <Image
             src="/logotipos/LOGOTIPO_PRINCIPAL.svg"
-            alt=""
+            alt="Marca d'água Aracá Interiores"
             width={400}
             height={200}
             className="h-auto max-h-[60%] w-auto max-w-[80%] opacity-10"
-            style={{ objectFit: 'contain', objectPosition: 'bottom center' }}
+            style={{ width: 'auto', height: 'auto', objectFit: 'contain', objectPosition: 'bottom center' }}
           />
         </div>
 
@@ -157,6 +170,7 @@ export function Footer() {
                   width={180}
                   height={60}
                   className="h-auto w-44"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
               </Link>
               <p className="mt-3 text-sm text-araca-chocolate-amargo/90">

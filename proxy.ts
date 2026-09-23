@@ -31,7 +31,6 @@ function checkDashboardRateLimit(ip: string): boolean {
     for (const [key, times] of dashboardAttempts.entries()) {
       const filtered = times.filter((t) => now - t < 60000)
       if (filtered.length === 0) {
-        dashboardAttempts.delete(key)
       } else {
         dashboardAttempts.set(key, filtered)
       }
@@ -88,7 +87,7 @@ export function proxy(request: NextRequest) {
     console.warn(`[proxy] Access denied - no token for IP: ${clientIP}, path: ${pathname}`)
     import('@/lib/audit-log')
       .then(({ logAccessDenied }) => logAccessDenied(pathname, undefined, clientIP, 'Token ausente'))
-      .catch(() => {})
+      .catch(() => { })
     return redirectToLogin(request, pathname)
   }
 
@@ -96,7 +95,7 @@ export function proxy(request: NextRequest) {
     console.warn(`[proxy] Access denied - invalid token format for IP: ${clientIP}, path: ${pathname}`)
     import('@/lib/audit-log')
       .then(({ logAccessDenied }) => logAccessDenied(pathname, undefined, clientIP, 'Token inválido (formato)'))
-      .catch(() => {})
+      .catch(() => { })
     return redirectToLogin(request, pathname)
   }
 

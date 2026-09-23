@@ -23,6 +23,7 @@ export const contatoContent = {
     phoneHref: 'tel:+5511939155979',
     instagram: 'https://www.instagram.com/aracainteriores/',
     linkedin: 'https://www.linkedin.com/company/araca-arq',
+    pinterest: 'https://br.pinterest.com/aracainteriores/_created/',
   },
   form: {
     title: 'Conte-nos o que você precisa',

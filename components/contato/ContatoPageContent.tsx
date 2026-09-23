@@ -154,6 +154,15 @@ export function ContatoPageContent() {
                       >
                         LinkedIn
                       </a>
+                      <a
+                        href={contact.pinterest}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-white/90 hover:text-white underline underline-offset-2"
+                        aria-label="Pinterest"
+                      >
+                        Pinterest
+                      </a>
                     </p>
                   </motion.div>
                   <motion.div {...fadeInUp} transition={{ delay: 0.2 }}>

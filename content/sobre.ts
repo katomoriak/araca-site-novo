@@ -5,9 +5,9 @@
 
 export const sobreContent = {
   hero: {
-    title: 'Aracá Interiores: Projeto que se adapta ao seu momento',
+    title: 'Aracá Interiores | Estúdio de Design de Interiores no ABC e São Paulo',
     subtitle:
-      'Na Aracá, combinamos estética, funcionalidade e execução. Você escolhe o que contratar — com clareza e um padrão de entrega consistente.',
+      'Prazer, nós somos a <strong>Aracá</strong>. Acreditamos que o <strong>design de interiores</strong> é, antes de tudo, sobre pessoas e afeto. Não criamos apenas ambientes bonitos: traduzimos histórias reais em <strong>espaços acolhedores</strong>, funcionais e cheios de alma para você viver bem.',
     /** Imagem de fundo do hero (atrás do menu, P&B, multiply). */
     heroImage: '/projetos/areasocial_residencia-ninhoverce/cover.png',
     heroImageAlt: 'Projeto de interiores Aracá — área social residencial',
@@ -18,42 +18,40 @@ export const sobreContent = {
   },
 
   quemSomos: {
-    title: 'Quem somos',
+    title: 'Quem Somos: Espaços Interiores Feitos de Histórias Reais',
     paragraphs: [
-      'Somos a Aracá Interiores, um escritório de Decoração e Design de Interiores com atuação no Grande ABC e em São Paulo. Nosso modelo é totalmente inovador: oferecemos projeto criativo, projeto executivo, detalhamentos e acompanhamento de obra de forma modular.',
-      'Como Decoradores e Designers de Interiores no Grande ABC e em São Paulo, buscamos traduzir a identidade de cada cliente em espaços únicos com vida e personalidade. Trabalhamos em projetos residenciais e comerciais, garantindo que você contrate apenas o que faz sentido para o seu momento.',
+      'A <strong>Aracá Interiores</strong> é um <strong>estúdio de design e decoração de interiores</strong> com atuação em todo o <strong>Grande ABC</strong> (Santo André, São Bernardo, São Caetano) e na capital paulista. Desenvolvemos <strong>projetos residenciais e comerciais</strong> através de um modelo modular e transparente: do conceito criativo ao projeto executivo, detalhamento de marcenaria e acompanhamento de obra. Nosso objetivo é garantir que seu lar reflita sua verdadeira essência, contratando exatamente o que faz sentido para o seu momento.',
     ],
   },
 
   valores: [
     {
-      title: 'Estética',
-      description: 'Cada espaço reflete identidade e intenção, com materiais e luz pensados para o seu dia a dia.',
+      title: 'Estética com Significado',
+      description: 'Cada detalhe reflete sua identidade. Escolhemos paletas, materiais e iluminação que criam aconchego imediato.',
     },
     {
-      title: 'Funcionalidade',
-      description: 'Planejamento que antecipa uso real: circulação, armazenamento e conforto em primeiro lugar.',
+      title: 'Funcionalidade e Ergonomia Real',
+      description: 'Espaços pensados para a rotina: circulação fluida, marcenaria inteligente e aproveitamento máximo dos ambientes internos.',
     },
     {
-      title: 'Execução',
-      description: 'Detalhamento e acompanhamento de obra para que o projeto saia do papel com previsibilidade.',
+      title: 'Detalhamento e Execução Sem Surpresas',
+      description: 'Projetos executivos precisos para marcenaria, marmoraria e elétrica, garantindo que o planejado seja fielmente executado na obra.',
     },
     {
-      title: 'Clareza',
-      description: 'Processo transparente, escopo definido e comunicação constante em todas as etapas.',
+      title: 'Clareza e Liberdade de Escolha',
+      description: 'Processo modular e transparente. Você entende cada etapa, controla seu investimento e acompanha o cronograma com tranquilidade.',
     },
   ],
 
   processo: {
-    title: 'Como trabalhamos',
+    title: 'Como Transformamos Seu Ambiente: Nosso Método',
     steps: [
-      { number: 1, title: 'Escuta', description: 'Entendemos seu estilo de vida, referências e prioridades para o espaço.' },
-      { number: 2, title: 'Projeto', description: 'Desenvolvemos o conceito criativo e, se desejar, o projeto executivo.' },
-      { number: 3, title: 'Detalhamento', description: 'Especificações técnicas e materiais para orçamento e execução.' },
-      { number: 4, title: 'Obra', description: 'Acompanhamento na obra para garantir que o resultado reflita o projeto.' },
+      { number: 1, title: '1. Escuta e Diagnóstico de Estilo', description: 'Mergulhamos no seu dia a dia, rotina e preferências estéticas para definir as prioridades do espaço.' },
+      { number: 2, title: '2. Conceito Criativo e Layout', description: 'Apresentação visual, estudo de layout, volumetria e definição da personalidade de cada cômodo.' },
+      { number: 3, title: '3. Projeto Executivo e Detalhamentos', description: 'Caderno técnico completo com especificações de revestimentos, iluminação, pontos elétricos e mobiliário sob medida.' },
+      { number: 4, title: '4. Acompanhamento de Obra e Produção', description: 'Suporte próximo na execução e produção final dos ambientes para que o resultado saia exatamente como sonhado.' },
     ],
   },
-
 
   depoimentos: [
     {
@@ -115,31 +113,34 @@ export const sobreContent = {
   ],
 
   equipe: {
-    title: 'Quem está por trás da Aracá',
+    title: 'Quem Cria: A Essência e os Estilos por Trás da Aracá',
     subtitle:
-      'Uma visão compartilhada de design, funcionalidade e sensibilidade na transformação de ambientes.',
+      'Duas visões complementares que transformam ambientes internos em lares autênticos.',
     membros: [
       {
         nome: 'Marcos Paulo',
-        cargo: 'Designer & Decorador',
+        cargo: 'Harmonia Clássica e Precisão Atemporal',
         subtitulo: 'Co-fundador | Graduando em Arquitetura e Urbanismo (FSA 2028)',
         foto: '/equipe/marcos-paulo.jpg',
-        fotoAlt: 'Foto de Marcos Paulo — Co-fundador, Designer & Decorador da Aracá Interiores',
-        bio: 'Com olhar apurado para harmonia estética, curadoria de texturas e composição de mobiliário, une criatividade e sensibilidade artística para conceber atmosferas acolhedoras e autênticas. Atualmente cursa Arquitetura e Urbanismo na Fundação Santo André (formação prevista para 2028), unindo o rigor técnico da arquitetura ao dinamismo da decoração contemporânea.',
+        fotoAlt: 'Foto de Marcos Paulo — Harmonia Clássica e Precisão Atemporal | Aracá Interiores',
+        bio: 'Designer apaixonado pelas linhas do <strong>clássico e neoclássico</strong>, Marcos é movido pela harmonia das proporções, pela elegância dos boiseries e pela <strong>curadoria refinada de texturas e mobiliário</strong>. Aliando sua sensibilidade estética ao rigor técnico de sua formação em Arquitetura e Urbanismo (FSA), cria <strong>composições equilibradas, sofisticadas e acolhedoras</strong>.',
       },
       {
         nome: 'Rafaela Garbuio',
-        cargo: 'Designer de Interiores',
+        cargo: 'Maximalismo, Texturas e Personalidade Vibrante',
         subtitulo: 'Co-fundadora | Graduanda em Arquitetura e Urbanismo (FSA 2028)',
         foto: '/equipe/rafaela-garbuio.jpg',
-        fotoAlt: 'Foto de Rafaela Garbuio — Co-fundadora & Designer de Interiores da Aracá Interiores',
-        bio: 'Especialista em unir funcionalidade inteligente à expressividade do espaço. Conduz o desenvolvimento de projetos executivos com foco em ergonomia, iluminação e detalhamento minucioso. Também graduanda em Arquitetura e Urbanismo pela Fundação Santo André (conclusão em 2028), traz para cada projeto uma visão estruturada que equilibra beleza e praticidade no dia a dia.',
+        fotoAlt: 'Foto de Rafaela Garbuio — Maximalismo, Texturas e Personalidade Vibrante | Aracá Interiores',
+        bio: 'Amante do <strong>maximalismo</strong>, Rafaela explora camadas, cores, iluminação cênica e riqueza de texturas que dão calor e vida aos espaços. Também graduanda em Arquitetura e Urbanismo (FSA), conduz o <strong>detalhamento executivo e a ergonomia</strong> de forma minuciosa, assegurando que a expressividade e a ousadia visual andem de mãos dadas com a <strong>praticidade do dia a dia</strong>.',
       },
     ],
   },
 
   cta: {
-    primary: { label: 'Ver projetos', href: '/projetos' },
-    secondary: { label: 'Fale conosco', href: '/contato' },
+    title: 'Pronto Para Viver Bem? Vamos Conversar Sobre o Seu Projeto',
+    description:
+      'Seja para reformar um apartamento novo ou renovar a decoração da sua casa no ABC ou em São Paulo, estamos prontos para ouvir sua história.',
+    primary: { label: 'Solicitar um Orçamento via WhatsApp', href: 'https://wa.me/5511939155979?text=Ol%C3%A1%2C%20gostaria%20de%20solicitar%20um%20or%C3%A7amento%20para%20o%20meu%20projeto.' },
+    secondary: { label: 'Conhecer Nossos Projetos', href: '/projetos' },
   },
 } as const

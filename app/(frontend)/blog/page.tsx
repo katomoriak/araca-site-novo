@@ -81,6 +81,7 @@ export default async function BlogPage() {
             className="object-cover object-center"
             sizes="100vw"
             priority
+            loading="eager"
             blurPlaceholderUrl={getBlurPlaceholderUrl(heroImageUrl)}
           />
         </div>
