@@ -10,17 +10,29 @@ import { LOCATIONS, getLocationHref } from '@/lib/seo-locations'
 /* Navegação do site (sem locais sensíveis). Equipe acessa pelo Dashboard. */
 const footerNavColumns = [
   {
-    title: 'Navegação',
+    title: 'Serviços',
+    links: [
+      { href: '/servicos', label: 'Serviços de Interiores (Geral)' },
+      { href: '/servicos/residencial', label: 'Projetos Residenciais' },
+      { href: '/servicos/residencial/casas', label: '• Casas & Sobrados' },
+      { href: '/servicos/residencial/apartamentos', label: '• Apartamentos' },
+      { href: '/servicos/residencial/coberturas', label: '• Coberturas & Penthouses' },
+      { href: '/servicos/residencial/reformas-retrofit', label: '• Reformas & Retrofit' },
+      { href: '/servicos/comercial-corporativo', label: 'Projetos Comerciais & Corporativos' },
+      { href: '/servicos/comercial-corporativo/escritorios', label: '• Escritórios & Sedes' },
+      { href: '/servicos/comercial-corporativo/clinicas-consultorios', label: '• Clínicas & Consultórios' },
+      { href: '/servicos/comercial-corporativo/lojas-varejo', label: '• Lojas & Varejo' },
+      { href: '/servicos/gestao-acompanhamento-de-obra', label: 'Gestão de Obras de Interiores' },
+    ],
+  },
+  {
+    title: 'Institucional',
     links: [
       { href: '/', label: 'Home' },
-      { href: '/sobre', label: 'Sobre nós' },
-      { href: '/servicos/residencial', label: 'Arquitetura Residencial' },
-      { href: '/reforma-de-interiores-residencial', label: 'Reforma de Interiores' },
-      { href: '/design-de-interiores-classico-neoclassico', label: 'Clássico & Neoclássico' },
-      { href: '/servicos/comercial', label: 'Arquitetura Comercial' },
-      { href: '/projetos', label: 'Projetos' },
-      { href: '/contato', label: 'Contato' },
-      { href: '/blog', label: 'Blog' },
+      { href: '/sobre', label: 'Sobre a Aracá' },
+      { href: '/projetos', label: 'Projetos Autorais' },
+      { href: '/blog', label: 'Blog de Decoração' },
+      { href: '/contato', label: 'Contato & Propostas' },
     ],
   },
 ]

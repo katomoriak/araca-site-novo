@@ -15,3 +15,5 @@ export {
 } from './LiquidGlass'
 export { TypewriterEffect } from './typewriter-effect'
 export { ProgressiveImage } from './ProgressiveImage'
+export { Breadcrumbs } from './Breadcrumbs'
+export type { BreadcrumbItem, BreadcrumbsProps } from './Breadcrumbs'

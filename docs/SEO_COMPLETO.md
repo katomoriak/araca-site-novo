@@ -125,8 +125,17 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 | `https://www.araca.arq.br/reforma-de-interiores-residencial` (LP 3 - Obra) | `0.95` | Mensal |
 | `https://www.araca.arq.br/design-de-interiores-classico-neoclassico` (LP 4 - Nicho) | `0.90` | Mensal |
 | `https://www.araca.arq.br/projetos` | `0.9` | Semanal |
+| `https://www.araca.arq.br/servicos` | `0.9` | Mensal |
 | `https://www.araca.arq.br/servicos/residencial` | `0.9` | Mensal |
-| `https://www.araca.arq.br/servicos/comercial` | `0.9` | Mensal |
+| `https://www.araca.arq.br/servicos/residencial/casas` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/residencial/apartamentos` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/residencial/coberturas` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/residencial/reformas-retrofit` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/comercial-corporativo` | `0.9` | Mensal |
+| `https://www.araca.arq.br/servicos/comercial-corporativo/escritorios` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/comercial-corporativo/clinicas-consultorios` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/comercial-corporativo/lojas-varejo` | `0.85` | Mensal |
+| `https://www.araca.arq.br/servicos/gestao-acompanhamento-de-obra` | `0.9` | Mensal |
 | `https://www.araca.arq.br/blog` | `0.9` | Semanal |
 | `https://www.araca.arq.br/sobre` | `0.8` | Mensal |
 | `https://www.araca.arq.br/contato` | `0.8` | Mensal |
@@ -165,8 +174,17 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 | `/sobre` | `Sobre a Aracá Interiores \| Decoradores e Designers de Interiores no Grande ABC e em São Paulo \| Aracá Interiores` | *Conheça a Aracá Interiores, seu escritório de Decoração e Design de Interiores no Grande ABC e em São Paulo. Especialistas em projetos residenciais e comerciais sob medida.* | `https://www.araca.arq.br/sobre` |
 | `/projetos` | `Projetos \| Aracá Interiores` | *Projetos de interiores residenciais e comerciais da Aracá. Do conceito ao acabamento.* | `https://www.araca.arq.br/projetos` |
 | `/projetos/[slug]` | `[Título do Projeto] \| Aracá Interiores` | *Descrição específica cadastrada no projeto.* | `https://www.araca.arq.br/projetos/[slug]` |
-| `/servicos/residencial` | `Arquitetura Residencial \| Aracá Interiores` | *Projetos de interiores residenciais sob medida em Santo André e SP. Transformamos seu apartamento ou casa em um refúgio funcional com alma e estilo.* | `https://www.araca.arq.br/servicos/residencial` |
-| `/servicos/comercial` | `Arquitetura Comercial e Corporativa \| Aracá Interiores` | *Projetos de arquitetura comercial e corporativa em Santo André e SP. Espaços estratégicos que geram conversão, produtividade e valorizam sua marca.* | `https://www.araca.arq.br/servicos/comercial` |
+| `/servicos` | `Serviços de Interiores no ABC e SP \| Aracá Interiores` | *Projetos de interiores residenciais, comerciais e gestão de obra no Grande ABC e São Paulo. Conheça nossos serviços sob medida.* | `https://www.araca.arq.br/servicos` |
+| `/servicos/residencial` | `Design de Interiores Residencial \| Aracá Interiores` | *Projetos de interiores para casas e apartamentos no Grande ABC e SP. Ambientes acolhedores, funcionais e sob medida para seu lar.* | `https://www.araca.arq.br/servicos/residencial` |
+| `/servicos/residencial/casas` | `Design de Interiores para Casas no ABC e SP \| Aracá Interiores` | *Projetos de interiores para casas e sobrados de alto padrão em SP e Grande ABC. Ambientes integrados, espaço gourmet, suítes e marcenaria sob medida.* | `https://www.araca.arq.br/servicos/residencial/casas` |
+| `/servicos/residencial/apartamentos` | `Design de Interiores para Apartamentos em SP e ABC \| Aracá Interiores` | *Projetos de interiores para apartamentos novos e na planta em SP e Grande ABC. Integração de varanda gourmet, marcenaria milimétrica e layout inteligente.* | `https://www.araca.arq.br/servicos/residencial/apartamentos` |
+| `/servicos/residencial/coberturas` | `Design de Interiores para Coberturas e Penthouses \| Aracá Interiores` | *Projetos exclusivos para coberturas duplex e penthouses em SP e ABC. Áreas externas com piscina privativa, espaço gourmet e livings integrados.* | `https://www.araca.arq.br/servicos/residencial/coberturas` |
+| `/servicos/residencial/reformas-retrofit` | `Reforma e Retrofit de Interiores Residencial \| Aracá Interiores` | *Projetos de reforma completa e retrofit para casas e apartamentos no ABC e SP. Modernização estrutural, acabamentos nobres e gestão sem imprevistos.* | `https://www.araca.arq.br/servicos/residencial/reformas-retrofit` |
+| `/servicos/comercial-corporativo` | `Design de Interiores Comercial \| Aracá Interiores` | *Projetos de interiores para escritórios, clínicas e lojas no ABC e SP. Espaços corporativos que valorizam a sua marca.* | `https://www.araca.arq.br/servicos/comercial-corporativo` |
+| `/servicos/comercial-corporativo/escritorios` | `Design de Interiores para Escritórios e Sedes \| Aracá Interiores` | *Projetos corporativos para escritórios e sedes empresariais no ABC e SP. Ergonomia NR-17, acústica, salas de reunião e open space integrado.* | `https://www.araca.arq.br/servicos/comercial-corporativo/escritorios` |
+| `/servicos/comercial-corporativo/clinicas-consultorios` | `Design de Interiores para Clínicas e Consultórios \| Aracá Interiores` | *Arquitetura de interiores para clínicas médicas e consultórios em SP e ABC. Conformidade total com normas da ANVISA, acolhimento e requinte.* | `https://www.araca.arq.br/servicos/comercial-corporativo/clinicas-consultorios` |
+| `/servicos/comercial-corporativo/lojas-varejo` | `Design de Interiores para Lojas e Showrooms \| Aracá Interiores` | *Arquitetura comercial e retail design para lojas e showrooms em SP e ABC. Visual merchandising, fluxo de clientes e experiência de compra.* | `https://www.araca.arq.br/servicos/comercial-corporativo/lojas-varejo` |
+| `/servicos/gestao-acompanhamento-de-obra` | `Gestão e Acompanhamento de Obra \| Aracá Interiores` | *Acompanhamento presencial e gestão técnica de obras no ABC e SP. Controle de prazos, acabamentos e fidelidade ao projeto.* | `https://www.araca.arq.br/servicos/gestao-acompanhamento-de-obra` |
 | `/contato` | `Contato \| Aracá Interiores` | *Entre em contato com a Aracá Interiores. Envie sua mensagem ou fale por e-mail e WhatsApp. Projetos de interiores residenciais e comerciais.* | `https://www.araca.arq.br/contato` |
 | `/blog` | `Blog \| Aracá Interiores` | *Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.* | `https://www.araca.arq.br/blog` |
 | `/blog/[slug]` | `[Título do Artigo] \| Aracá Interiores` | *Meta description personalizada do artigo ou resumo (excerpt).* | `https://www.araca.arq.br/blog/[slug]` |

@@ -16,7 +16,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/contato`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/servicos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
     { url: `${baseUrl}/servicos/residencial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
-    { url: `${baseUrl}/servicos/comercial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/servicos/comercial-corporativo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/servicos/gestao-acompanhamento-de-obra`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.9 },
+    // Subpáginas Temáticas Residenciais
+    { url: `${baseUrl}/servicos/residencial/casas`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/servicos/residencial/apartamentos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/servicos/residencial/coberturas`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/servicos/residencial/reformas-retrofit`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    // Subpáginas Temáticas Comerciais & Corporativas
+    { url: `${baseUrl}/servicos/comercial-corporativo/escritorios`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/servicos/comercial-corporativo/clinicas-consultorios`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${baseUrl}/servicos/comercial-corporativo/lojas-varejo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     // 4 Landing Pages Estratégicas de Fundo de Funil (Alta Conversão)
     { url: `${baseUrl}/design-de-interiores-sao-paulo`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },

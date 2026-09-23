@@ -5,28 +5,79 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronDown } from 'lucide-react'
+import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat } from 'lucide-react'
 import { Container } from './Container'
 import { cn } from '@/lib/utils'
 import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
 
 export type SiteNavTheme = 'dark-bg' | 'light-bg'
 
+export interface SiteNavChildItem {
+  href: string
+  label: string
+  groupHeader?: string
+  indent?: boolean
+  subIndent?: boolean
+  dividerBefore?: boolean
+}
+
 export interface SiteNavLink {
   href: string
   label: string
-  children?: { href: string; label: string }[]
+  children?: SiteNavChildItem[]
 }
+
+export const RESIDENCIAL_SUBITEMS = [
+  {
+    href: '/servicos/residencial/casas',
+    title: 'Casas & Sobrados',
+    desc: 'Grandes metragens, livings e áreas gourmet',
+  },
+  {
+    href: '/servicos/residencial/apartamentos',
+    title: 'Apartamentos',
+    desc: 'Novos na planta, varanda integrada e marcenaria',
+  },
+  {
+    href: '/servicos/residencial/coberturas',
+    title: 'Coberturas & Penthouses',
+    desc: 'Exclusividade nas alturas, decks e spas privativos',
+  },
+  {
+    href: '/servicos/residencial/reformas-retrofit',
+    title: 'Reformas & Retrofit',
+    desc: 'Modernização estrutural sem imprevistos',
+  },
+]
+
+export const COMERCIAL_SUBITEMS = [
+  {
+    href: '/servicos/comercial-corporativo/escritorios',
+    title: 'Escritórios & Sedes',
+    desc: 'Ergonomia NR-17 e salas de reunião com acústica',
+  },
+  {
+    href: '/servicos/comercial-corporativo/clinicas-consultorios',
+    title: 'Clínicas & Consultórios',
+    desc: 'Conformidade ANVISA e acolhimento humanizado',
+  },
+  {
+    href: '/servicos/comercial-corporativo/lojas-varejo',
+    title: 'Lojas & Varejo',
+    desc: 'Retail design e fluxo focado em vendas',
+  },
+]
 
 const DEFAULT_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'Sobre nós' },
   {
-    href: '#servicos',
+    href: '/servicos',
     label: 'Serviços',
     children: [
-      { href: '/servicos/residencial', label: 'Arquitetura Residencial' },
-      { href: '/servicos/comercial', label: 'Arquitetura Comercial' },
+      { href: '/servicos/residencial', label: 'Projetos Residenciais' },
+      { href: '/servicos/comercial-corporativo', label: 'Projetos Comerciais & Corporativos' },
+      { href: '/servicos/gestao-acompanhamento-de-obra', label: 'Gestão de Obras de Interiores' },
     ],
   },
   { href: '/projetos', label: 'Projetos' },
@@ -78,6 +129,23 @@ const liquidGlassBarStyles = (theme: SiteNavTheme) =>
         border: '1px solid rgba(0, 0, 0, 0.08)',
       }
 
+const dropdownCardStyle = (theme: SiteNavTheme) =>
+  theme === 'dark-bg'
+    ? {
+        background: 'linear-gradient(150deg, rgba(28, 20, 16, 0.98) 0%, rgba(16, 12, 10, 0.99) 100%)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)' as const,
+        boxShadow: '0 24px 60px -12px rgba(0, 0, 0, 0.85), 0 2px 10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+        border: '1px solid rgba(255, 255, 255, 0.16)',
+      }
+    : {
+        background: 'linear-gradient(150deg, rgba(255, 255, 255, 0.99) 0%, rgba(250, 248, 245, 0.98) 100%)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)' as const,
+        boxShadow: '0 20px 50px -12px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9)',
+        border: '1px solid rgba(0, 0, 0, 0.08)',
+      }
+
 // Filtro para o SVG do logo (#d9b38a) ficar no tom café (#30160C): normaliza para preto e aplica filtro que gera o marrom
 const LOGO_CAFE_FILTER =
   'brightness(0) saturate(100%) invert(9%) sepia(63%) saturate(1000%) hue-rotate(315deg) brightness(95%) contrast(92%)'
@@ -107,6 +175,7 @@ export function SiteNav({
 
   const isDark = theme === 'dark-bg'
   const barStyle = liquidGlassBarStyles(theme)
+  const dropStyle = dropdownCardStyle(theme)
   const useCafeLogo = logoVariant === 'cafe'
   const desktopLogoStyle = isDark ? { filter: 'brightness(0) invert(1)' } : useCafeLogo ? { filter: LOGO_CAFE_FILTER } : undefined
   const mobileLogoStyle = isDark ? { filter: 'brightness(0) invert(1)' } : useCafeLogo ? { filter: LOGO_CAFE_FILTER } : undefined
@@ -174,7 +243,8 @@ export function SiteNav({
                       onMouseEnter={() => setActiveDropdown(link.label)}
                       onMouseLeave={() => setActiveDropdown(null)}
                     >
-                      <button
+                      <Link
+                        href={link.href}
                         className={cn(
                           'group relative flex items-center gap-1 overflow-hidden rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 hover:scale-[1.05]',
                           (anyChildActive || active) 
@@ -203,32 +273,165 @@ export function SiteNav({
                             }}
                           />
                         )}
-                      </button>
+                      </Link>
 
                       <AnimatePresence>
                         {activeDropdown === link.label && (
                           <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            initial={{ opacity: 0, y: 10, scale: 0.97 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.97 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute left-1/2 top-full mt-2 w-56 -translate-x-1/2 overflow-hidden rounded-2xl p-1.5 shadow-2xl"
-                            style={barStyle}
+                            className="absolute left-1/2 top-full mt-2 w-[580px] lg:w-[620px] -translate-x-1/2 overflow-hidden rounded-2xl shadow-2xl z-50 text-left"
+                            style={dropStyle}
                           >
-                            {link.children?.map((child) => (
+                            <div className="grid grid-cols-2 gap-5 p-4 sm:p-5">
+                              {/* Coluna 1: Residencial */}
+                              <div className="flex flex-col justify-between">
+                                <div>
+                                  <Link
+                                    href="/servicos/residencial"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
+                                      isDark
+                                        ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
+                                        : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
+                                    )}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Home className="h-4 w-4" />
+                                      <span className="text-xs font-bold uppercase tracking-wider">Projetos Residenciais</span>
+                                    </div>
+                                    <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                  </Link>
+
+                                  <div className="space-y-1">
+                                    {RESIDENCIAL_SUBITEMS.map((item) => (
+                                      <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setActiveDropdown(null)}
+                                        className={cn(
+                                          'group block rounded-xl px-3 py-2 transition-all',
+                                          isDark
+                                            ? 'hover:bg-white/10 text-white'
+                                            : 'hover:bg-black/5 text-neutral-900',
+                                          pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
+                                        )}
+                                      >
+                                        <div className={cn(
+                                          'text-[13.5px] font-medium transition-colors',
+                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                        )}>
+                                          {item.title}
+                                        </div>
+                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                          {item.desc}
+                                        </div>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Coluna 2: Comercial & Obras */}
+                              <div className="flex flex-col justify-between">
+                                <div>
+                                  <Link
+                                    href="/servicos/comercial-corporativo"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
+                                      isDark
+                                        ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
+                                        : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
+                                    )}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <Briefcase className="h-4 w-4" />
+                                      <span className="text-xs font-bold uppercase tracking-wider">Comercial & Corporativo</span>
+                                    </div>
+                                    <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                  </Link>
+
+                                  <div className="space-y-1">
+                                    {COMERCIAL_SUBITEMS.map((item) => (
+                                      <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setActiveDropdown(null)}
+                                        className={cn(
+                                          'group block rounded-xl px-3 py-2 transition-all',
+                                          isDark
+                                            ? 'hover:bg-white/10 text-white'
+                                            : 'hover:bg-black/5 text-neutral-900',
+                                          pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
+                                        )}
+                                      >
+                                        <div className={cn(
+                                          'text-[13.5px] font-medium transition-colors',
+                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                        )}>
+                                          {item.title}
+                                        </div>
+                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                          {item.desc}
+                                        </div>
+                                      </Link>
+                                    ))}
+                                  </div>
+
+                                  {/* Card Gestão de Obras */}
+                                  <div className="mt-2.5 pt-2.5 border-t border-white/10">
+                                    <Link
+                                      href="/servicos/gestao-acompanhamento-de-obra"
+                                      onClick={() => setActiveDropdown(null)}
+                                      className={cn(
+                                        'group flex items-start gap-2.5 rounded-xl p-2.5 transition-all',
+                                        isDark
+                                          ? 'bg-white/5 hover:bg-white/10 text-white'
+                                          : 'bg-black/5 hover:bg-black/10 text-neutral-900',
+                                        pathname === '/servicos/gestao-acompanhamento-de-obra' && (isDark ? 'bg-white/20' : 'bg-black/10')
+                                      )}
+                                    >
+                                      <div className="h-7 w-7 rounded-lg bg-araca-mineral-green/20 flex items-center justify-center shrink-0 text-araca-mineral-green mt-0.5">
+                                        <HardHat className="h-3.5 w-3.5" />
+                                      </div>
+                                      <div>
+                                        <div className={cn(
+                                          'text-xs font-semibold transition-colors',
+                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                        )}>
+                                          Gestão de Obras de Interiores
+                                        </div>
+                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                          Acompanhamento técnico presencial
+                                        </div>
+                                      </div>
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Rodapé do Menu */}
+                            <div className={cn(
+                              'px-5 py-2.5 border-t flex items-center justify-between text-xs',
+                              isDark ? 'border-white/10 bg-white/5 text-neutral-400' : 'border-black/5 bg-black/5 text-neutral-600'
+                            )}>
+                              <span>Aracá Interiores · Projetos sob medida</span>
                               <Link
-                                key={child.href}
-                                href={child.href}
+                                href="/servicos"
+                                onClick={() => setActiveDropdown(null)}
                                 className={cn(
-                                  "block rounded-xl px-4 py-2.5 text-sm font-medium transition-colors",
-                                  pathname === child.href
-                                    ? (isDark ? "bg-white/20 text-white" : "bg-araca-cafe-escuro/10 text-araca-cafe-escuro")
-                                    : (isDark ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-neutral-700 hover:bg-black/5 hover:text-neutral-900")
+                                  'font-semibold flex items-center gap-1 transition-colors hover:underline',
+                                  isDark ? 'text-araca-dourado-ocre' : 'text-araca-mineral-green'
                                 )}
                               >
-                                {child.label}
+                                Conhecer todos os serviços <ArrowRight className="h-3 w-3" />
                               </Link>
-                            ))}
+                            </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -381,41 +584,133 @@ export function SiteNav({
                       >
                         {hasChildren ? (
                           <div className="flex flex-col items-center">
-                            <button
-                              onClick={() => setMobileAccordion(isExpanded ? null : link.label)}
-                              className={cn(
-                                'flex items-center gap-2 font-display text-3xl font-semibold transition-colors',
-                                isDark
-                                  ? 'text-white hover:text-araca-dourado-ocre'
-                                  : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
-                              )}
-                            >
-                              {link.label}
-                              <ChevronDown className={cn("h-6 w-6 transition-transform duration-300", isExpanded && "rotate-180")} />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  'font-display text-3xl font-semibold transition-colors',
+                                  isDark
+                                    ? 'text-white hover:text-araca-dourado-ocre'
+                                    : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
+                                )}
+                                onClick={() => setMobileOpen(false)}
+                              >
+                                {link.label}
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => setMobileAccordion(isExpanded ? null : link.label)}
+                                className={cn(
+                                  'p-1.5 rounded-full transition-colors',
+                                  isDark ? 'text-white/80 hover:bg-white/10' : 'text-neutral-700 hover:bg-black/5'
+                                )}
+                                aria-label="Expandir submenu"
+                              >
+                                <ChevronDown className={cn("h-6 w-6 transition-transform duration-300", isExpanded && "rotate-180")} />
+                              </button>
+                            </div>
                             <AnimatePresence>
                               {isExpanded && (
-                                <motion.ul
+                                <motion.div
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: 'auto', opacity: 1 }}
                                   exit={{ height: 0, opacity: 0 }}
-                                  className="mt-4 space-y-3 overflow-hidden text-center"
+                                  className={cn(
+                                    'mt-4 rounded-2xl p-4 text-left max-w-sm mx-auto space-y-4 overflow-hidden shadow-lg',
+                                    isDark
+                                      ? 'bg-neutral-900/90 border border-white/15'
+                                      : 'bg-neutral-100/90 border border-neutral-300'
+                                  )}
                                 >
-                                  {link.children?.map((child) => (
-                                    <li key={child.href}>
-                                      <Link
-                                        href={child.href}
-                                        className={cn(
-                                          'text-xl font-medium transition-colors',
-                                          isDark ? 'text-white/70 hover:text-white' : 'text-araca-cafe-escuro/70 hover:text-araca-cafe-escuro'
-                                        )}
-                                        onClick={() => setMobileOpen(false)}
-                                      >
-                                        {child.label}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </motion.ul>
+                                  {/* Bloco Residencial */}
+                                  <div>
+                                    <Link
+                                      href="/servicos/residencial"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
+                                        isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
+                                      )}
+                                    >
+                                      <Home className="h-3.5 w-3.5" />
+                                      <span>Projetos Residenciais</span>
+                                    </Link>
+                                    <div className="pl-5 space-y-2 border-l-2 border-white/15">
+                                      {RESIDENCIAL_SUBITEMS.map((item) => (
+                                        <Link
+                                          key={item.href}
+                                          href={item.href}
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'block text-sm py-0.5 transition-colors font-medium',
+                                            isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                          )}
+                                        >
+                                          {item.title}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Bloco Comercial */}
+                                  <div>
+                                    <Link
+                                      href="/servicos/comercial-corporativo"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
+                                        isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
+                                      )}
+                                    >
+                                      <Briefcase className="h-3.5 w-3.5" />
+                                      <span>Comercial & Corporativo</span>
+                                    </Link>
+                                    <div className="pl-5 space-y-2 border-l-2 border-white/15">
+                                      {COMERCIAL_SUBITEMS.map((item) => (
+                                        <Link
+                                          key={item.href}
+                                          href={item.href}
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'block text-sm py-0.5 transition-colors font-medium',
+                                            isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                          )}
+                                        >
+                                          {item.title}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </div>
+
+                                  {/* Bloco Gestão de Obra */}
+                                  <div className="pt-2.5 border-t border-white/10">
+                                    <Link
+                                      href="/servicos/gestao-acompanhamento-de-obra"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center gap-2 text-sm font-semibold py-1',
+                                        isDark ? 'text-white hover:text-araca-dourado-ocre' : 'text-neutral-900 hover:text-araca-mineral-green'
+                                      )}
+                                    >
+                                      <HardHat className="h-4 w-4 text-araca-mineral-green" />
+                                      <span>Gestão de Obras de Interiores</span>
+                                    </Link>
+                                  </div>
+
+                                  {/* Link Geral */}
+                                  <div className="pt-2 border-t border-white/10 text-center">
+                                    <Link
+                                      href="/servicos"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'inline-flex items-center gap-1 text-xs font-semibold py-1',
+                                        isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
+                                      )}
+                                    >
+                                      Ver Todos os Serviços <ArrowRight className="h-3 w-3" />
+                                    </Link>
+                                  </div>
+                                </motion.div>
                               )}
                             </AnimatePresence>
                           </div>

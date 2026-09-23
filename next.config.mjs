@@ -81,6 +81,12 @@ const nextConfig = {
         destination: '/arquitetura-interiores-:city',
         permanent: true,
       },
+      // 3. Serviços: Rota comercial legada redirecionada para a nova LP com foco corporativo
+      {
+        source: '/servicos/comercial',
+        destination: '/servicos/comercial-corporativo',
+        permanent: true,
+      },
     ]
   },
   /**
