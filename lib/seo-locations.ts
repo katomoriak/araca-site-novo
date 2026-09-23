@@ -11,6 +11,9 @@ export interface CityLocation {
     label: string
     region: string
     neighborhood?: string
+    title?: string
+    description?: string
+    customPath?: string
 }
 
 export const LOCATIONS: CityLocation[] = [
@@ -19,6 +22,10 @@ export const LOCATIONS: CityLocation[] = [
         label: 'Santo André',
         region: 'ABC Paulista',
         neighborhood: 'Centro, Vila Bastos, Jardim',
+        customPath: '/design-de-interiores-santo-andre',
+        title: 'Design de Interiores em Santo André e ABC | Aracá Interiores',
+        description:
+            'Escritório de design de interiores em Santo André. Projetos residenciais, biofílicos e reformas de alto padrão no ABC. Agende sua consultoria.',
     },
     {
         slug: 'sao-caetano',
@@ -36,6 +43,10 @@ export const LOCATIONS: CityLocation[] = [
         slug: 'sao-paulo',
         label: 'São Paulo',
         region: 'Grande São Paulo',
+        customPath: '/design-de-interiores-sao-paulo',
+        title: 'Designer de Interiores em São Paulo SP | Aracá Interiores',
+        description:
+            'Escritório especializado em projetos de interiores e reformas de alto padrão em São Paulo (Jardins, Moema, Pinheiros, Itaim). Fale conosco.',
     },
     {
         slug: 'moema',
@@ -62,6 +73,11 @@ export const LOCATIONS: CityLocation[] = [
         neighborhood: 'Campo Belo, Santo Amaro, Saúde',
     },
 ]
+
+/** Retorna a URL pública correta para a localização (usando customPath se houver). */
+export function getLocationHref(loc: CityLocation): string {
+    return loc.customPath || `/arquitetura-interiores-${loc.slug}`
+}
 
 /** Retorna uma CityLocation pelo slug, ou undefined se não encontrado. */
 export function getLocationBySlug(slug: string): CityLocation | undefined {

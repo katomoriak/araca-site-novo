@@ -15,7 +15,7 @@ const rubik = Rubik({
 
 const siteName = 'Aracá Interiores'
 const siteDescription =
-  'A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.'
+  'Projetos autorais de design de interiores e reformas residenciais de alto padrão em SP e ABC. Solicite sua proposta comercial.'
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 const jsonLdOrganization = {
@@ -40,16 +40,15 @@ const jsonLdWebSite = {
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
+    default: 'Aracá Interiores | Design de Interiores em SP e ABC',
     template: `%s | Aracá Interiores`,
   },
-  description: 'A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.',
+  description: siteDescription,
   keywords: [
     'aracá interiores',
     'escritório aracá interiores santo andré',
-    'arquitetos em santo andré',
-    'arquitetura de interiores são paulo sp',
-    'arquitetura e design de interiores',
+    'decoradores e designers de interiores no grande abc e em são paulo',
+    'escritório de decoração e design de interiores',
     'design de interiores santo andré',
     'projeto de interiores sp'
   ],
@@ -62,7 +61,7 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     url: baseUrl,
     siteName,
-    title: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
+    title: 'Aracá Interiores | Design de Interiores em SP e ABC',
     description: siteDescription,
     images: [
       {
@@ -81,7 +80,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP',
+    title: 'Aracá Interiores | Design de Interiores em SP e ABC',
     description: siteDescription,
     images: ['/hero-interiores.jpg'],
   },

@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 import { useParallax, useParallaxController } from 'react-scroll-parallax'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { Container } from '@/components/layout/Container'
-import { GlassCard, ProgressiveImage, TypewriterEffect } from '@/components/ui'
+import { GlassCard, ProgressiveImage, Badge } from '@/components/ui'
 import { TestimonialsMarquee } from '@/components/home/TestimonialsMarquee'
 import { sobreContent } from '@/content/sobre'
 import { getBlurPlaceholderUrl, getProxiedImageUrlWithResize } from '@/lib/transform-content-images'
@@ -27,7 +27,7 @@ const stagger = {
 }
 
 export function SobrePageContent() {
-  const { hero, quemSomos, valores, processo, depoimentos, cta } = sobreContent
+  const { hero, quemSomos, equipe, valores, processo, depoimentos, cta } = sobreContent
   const parallaxController = useParallaxController()
   const { ref: parallaxRef } = useParallax<HTMLDivElement>({
     translateY: [-30, 30],
@@ -82,17 +82,11 @@ export function SobrePageContent() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
           >
-            <h1>
-              <TypewriterEffect
-                words={hero.title.split(' ').map((w) => ({ text: w }))}
-              />
+            <h1 className="font-display text-4xl font-bold text-center sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-foreground">
+              {hero.title}
             </h1>
-            <p className="mt-6 max-w-3xl mx-auto leading-relaxed">
-              <TypewriterEffect
-                words={hero.subtitle.split(' ').map((w) => ({ text: w }))}
-                className="!text-base sm:!text-lg md:!text-lg lg:!text-lg font-body font-normal text-muted-foreground min-h-[4rem] md:min-h-[5rem]"
-                cursorClassName="h-4 sm:h-5 md:h-6 bg-muted-foreground"
-              />
+            <p className="mt-6 max-w-3xl mx-auto leading-relaxed text-base sm:text-lg md:text-lg lg:text-lg font-body font-normal text-muted-foreground">
+              {hero.subtitle}
             </p>
           </motion.div>
           {(hero.heroCardImage ?? hero.heroImage) && (
@@ -136,6 +130,83 @@ export function SobrePageContent() {
           </motion.div>
         </Container>
       </section>
+
+      {/* Fundadores & Equipe */}
+      {equipe && (
+        <section className="py-12 sm:py-16 md:py-20 bg-araca-bege-claro/40" aria-labelledby="equipe-heading">
+          <Container>
+            <motion.div className="mx-auto max-w-3xl text-center mb-12 sm:mb-16" {...fadeInUp}>
+              <h2
+                id="equipe-heading"
+                className="font-display text-3xl font-bold text-foreground sm:text-4xl"
+              >
+                {equipe.title}
+              </h2>
+              <p className="mt-3 font-body text-muted-foreground text-base sm:text-lg">
+                {equipe.subtitle}
+              </p>
+            </motion.div>
+
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2 md:gap-10">
+              {equipe.membros.map((membro, i) => (
+                <motion.div
+                  key={membro.nome}
+                  {...fadeInUp}
+                  transition={{ delay: i * 0.15, duration: 0.5 }}
+                  className="h-full"
+                >
+                  <GlassCard
+                    variant="subtle"
+                    className="flex h-full flex-col overflow-hidden p-6 sm:p-8 transition-all duration-300 hover:shadow-lg hover:border-primary/30"
+                  >
+                    <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                      {/* Foto única com moldura elegante */}
+                      <div className="group relative h-44 w-44 sm:h-48 sm:w-48 shrink-0 overflow-hidden rounded-2xl border-2 border-border/80 bg-muted shadow-md">
+                        <ProgressiveImage
+                          src={membro.foto}
+                          alt={membro.fotoAlt}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 640px) 176px, 192px"
+                          blurPlaceholderUrl={getBlurPlaceholderUrl(membro.foto)}
+                        />
+                      </div>
+
+                      {/* Dados principais */}
+                      <div className="flex-1 text-center sm:text-left">
+                        <div className="flex flex-wrap gap-2 justify-center sm:justify-start mb-2">
+                          <Badge variant="outline" className="border-primary/40 text-primary text-xs font-medium">
+                            Co-fundador(a)
+                          </Badge>
+                          <Badge variant="secondary" className="text-[11px] font-normal">
+                            FSA · 2028
+                          </Badge>
+                        </div>
+                        <h3 className="font-display text-2xl font-bold text-foreground">
+                          {membro.nome}
+                        </h3>
+                        <p className="font-display text-base font-semibold text-primary mt-0.5">
+                          {membro.cargo}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground font-body">
+                          Graduando(a) em Arquitetura e Urbanismo (Fundação Santo André)
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Biografia / Perfil */}
+                    <div className="mt-6 pt-5 border-t border-border/60">
+                      <p className="font-body text-sm text-muted-foreground leading-relaxed">
+                        {membro.bio}
+                      </p>
+                    </div>
+                  </GlassCard>
+                </motion.div>
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Valores */}
       <section className="py-12 sm:py-16 md:py-20" aria-labelledby="valores-heading">
@@ -221,6 +292,16 @@ export function SobrePageContent() {
       >
         <Container>
           <div className="mx-auto max-w-3xl text-center">
+            <motion.div
+              className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/60 backdrop-blur-md px-3.5 py-1 text-xs text-foreground mb-4 shadow-sm"
+              {...fadeInUp}
+            >
+              <span className="flex items-center gap-1 text-[#d4a853] font-semibold">
+                ★ 5.0
+              </span>
+              <span className="text-muted-foreground/60">•</span>
+              <span className="text-muted-foreground">Avaliações 5 estrelas no Google</span>
+            </motion.div>
             <motion.h2
               id="depoimentos-heading"
               className="font-display text-3xl font-bold text-foreground sm:text-4xl"
@@ -229,7 +310,7 @@ export function SobrePageContent() {
               O que dizem sobre nós
             </motion.h2>
             <motion.p className="mt-3 text-muted-foreground" {...fadeInUp}>
-              Avaliações que resumem a experiência Aracá.
+              Avaliações reais que resumem a experiência Aracá Interiores.
             </motion.p>
           </div>
           <TestimonialsMarquee className="mt-10" items={[...depoimentos]} />

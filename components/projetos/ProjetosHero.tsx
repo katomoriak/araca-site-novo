@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useParallax, useParallaxController } from 'react-scroll-parallax'
 import { Container } from '@/components/layout/Container'
-import { ProgressiveImage, TypewriterEffect } from '@/components/ui'
+import { ProgressiveImage } from '@/components/ui'
 import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 
 interface ProjetosHeroProps {
@@ -64,17 +64,11 @@ export function ProjetosHero({ title, subtitle, heroImage }: ProjetosHeroProps) 
           transition={{ duration: 0.6, ease: 'easeOut' }}
         >
           <h1 className="font-display text-3xl font-bold text-foreground sm:text-4xl md:text-5xl">
-            <TypewriterEffect
-              words={title.split(' ').map((w) => ({ text: w }))}
-            />
+            {title}
           </h1>
-          <div className="mt-6 max-w-3xl mx-auto leading-relaxed">
-            <TypewriterEffect
-              words={subtitle.split(' ').map((w) => ({ text: w }))}
-              className="!text-base sm:!text-lg md:!text-lg font-body font-normal text-muted-foreground min-h-[4rem] md:min-h-[5rem]"
-              cursorClassName="h-4 sm:h-5 md:h-6 bg-muted-foreground"
-            />
-          </div>
+          <p className="mt-6 max-w-3xl mx-auto leading-relaxed text-base sm:text-lg md:text-lg font-body font-normal text-muted-foreground">
+            {subtitle}
+          </p>
         </motion.div>
       </Container>
     </section>

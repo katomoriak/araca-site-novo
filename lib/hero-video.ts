@@ -1,4 +1,4 @@
-const DEFAULT_HERO_VIDEO_KEY = 'FJO__VIDEOFACHADA_01_R00.mp4'
+const DEFAULT_HERO_VIDEO_KEY = 'video_designinteriores_arq_classica_neoclassica_maximalista.mp4'
 
 /**
  * Retorna a URL final (R2, Supabase ou externa) de forma síncrona

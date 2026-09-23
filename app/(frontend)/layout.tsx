@@ -24,7 +24,8 @@ export default function FrontendLayout({
   const isHomePage = pathname === '/'
   const isBlogPage = pathname === '/blog'
   const isServicePage = pathname.startsWith('/servicos')
-  const showHeader = !isHomePage && !isBlogPage && !isServicePage
+  const isClassicoPage = pathname === '/design-de-interiores-classico-neoclassico'
+  const showHeader = !isHomePage && !isBlogPage && !isServicePage && !isClassicoPage
 
   return (
     <ParallaxProvider>

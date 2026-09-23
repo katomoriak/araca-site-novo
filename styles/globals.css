@@ -374,3 +374,6 @@ body:not([data-payload-admin]) {
     @apply bg-background text-foreground;
   }
 }
+
+/* A desaceleração suave no hover agora é controlada via Web Animations API (playbackRate)
+   no componente TestimonialsMarquee para evitar saltos bruscos na linha do tempo da animação. */

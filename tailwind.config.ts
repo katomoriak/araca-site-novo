@@ -160,8 +160,8 @@ const config: Config = {
   			'pulse-dot': 'pulse-dot 1.5s ease-in-out infinite',
   			marquee: 'marquee 40s linear infinite',
   			'marquee-reverse': 'marquee 40s linear infinite reverse',
-  			'marquee-vertical': 'marquee-vertical 30s linear infinite',
-  			'marquee-vertical-reverse': 'marquee-vertical-reverse 30s linear infinite'
+  			'marquee-vertical': 'marquee-vertical 140s linear infinite',
+  			'marquee-vertical-reverse': 'marquee-vertical-reverse 140s linear infinite'
   		},
   		keyframes: {
   			marquee: {

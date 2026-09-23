@@ -18,8 +18,8 @@ const rubik = Rubik({
 })
 
 export const metadata: Metadata = {
-  title: 'Aracá Interiores',
-  description: 'Site Aracá Interiores - Blog e Design System',
+  title: 'Aracá Interiores | Design de Interiores em SP e ABC',
+  description: 'Projetos autorais de design de interiores e reformas residenciais de alto padrão em SP e ABC. Solicite sua proposta comercial.',
 }
 
 export default function RootLayout({

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Linkedin, Instagram, ArrowRight, Mail, Phone } from 'lucide-react'
 import { Container } from './Container'
-import { LOCATIONS } from '@/lib/seo-locations'
+import { LOCATIONS, getLocationHref } from '@/lib/seo-locations'
 
 /* Navegação do site (sem locais sensíveis). Equipe acessa pelo Dashboard. */
 const footerNavColumns = [
@@ -15,6 +15,8 @@ const footerNavColumns = [
       { href: '/', label: 'Home' },
       { href: '/sobre', label: 'Sobre nós' },
       { href: '/servicos/residencial', label: 'Arquitetura Residencial' },
+      { href: '/reforma-de-interiores-residencial', label: 'Reforma de Interiores' },
+      { href: '/design-de-interiores-classico-neoclassico', label: 'Clássico & Neoclássico' },
       { href: '/servicos/comercial', label: 'Arquitetura Comercial' },
       { href: '/projetos', label: 'Projetos' },
       { href: '/contato', label: 'Contato' },
@@ -209,7 +211,7 @@ export function Footer() {
                   {LOCATIONS.map((loc) => (
                     <li key={loc.slug}>
                       <Link
-                        href={`/arquitetura-interiores-${loc.slug}`}
+                        href={getLocationHref(loc)}
                         className="text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
                       >
                         {loc.label}

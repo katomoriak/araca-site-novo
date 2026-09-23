@@ -73,10 +73,10 @@ Se o domínio estiver na Cloudflare:
 Arquivo: [`app/layout.tsx`](file:///c:/Users/Marco/Desktop/projetos/araca-site-novo/app/layout.tsx)
 
 * **Domínio Base (`metadataBase`):** `https://www.araca.arq.br`
-* **Título Padrão:** `Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP`
+* **Título Padrão:** `Aracá Interiores | Design de Interiores em SP e ABC`
 * **Template de Título:** `%s | Aracá Interiores`
 * **Meta Description Geral:**  
-  > *"A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível."*
+  > *"Projetos autorais de design de interiores e reformas residenciais de alto padrão em SP e ABC. Solicite sua proposta comercial."*
 * **Palavras-chave Globais (`keywords`):**
   * `aracá interiores`
   * `escritório aracá interiores santo andré`
@@ -120,27 +120,30 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 | URL | Prioridade | Frequência |
 | :--- | :---: | :---: |
 | `https://www.araca.arq.br` (Home) | `1.0` | Semanal |
+| `https://www.araca.arq.br/design-de-interiores-sao-paulo` (LP 1 - Capital) | `0.95` | Semanal |
+| `https://www.araca.arq.br/design-de-interiores-santo-andre` (LP 2 - Local) | `0.95` | Semanal |
+| `https://www.araca.arq.br/reforma-de-interiores-residencial` (LP 3 - Obra) | `0.95` | Mensal |
+| `https://www.araca.arq.br/design-de-interiores-classico-neoclassico` (LP 4 - Nicho) | `0.90` | Mensal |
 | `https://www.araca.arq.br/projetos` | `0.9` | Semanal |
 | `https://www.araca.arq.br/servicos/residencial` | `0.9` | Mensal |
 | `https://www.araca.arq.br/servicos/comercial` | `0.9` | Mensal |
 | `https://www.araca.arq.br/blog` | `0.9` | Semanal |
-| `https://www.araca.arq.br/arquiteto-em-santo-andre` | `0.9` | Mensal |
 | `https://www.araca.arq.br/sobre` | `0.8` | Mensal |
 | `https://www.araca.arq.br/contato` | `0.8` | Mensal |
 | `https://www.araca.arq.br/politica-privacidade` | `0.5` | Mensal |
 | `https://www.araca.arq.br/termos` | `0.5` | Mensal |
 
-### 5.2. Páginas de SEO Local (Cidades & Bairros)
+### 5.2. Páginas de SEO Local Secundárias (Cidades & Bairros)
 * Prioridade: `0.85` | Frequência: Mensal
 * URLs:
-  * `https://www.araca.arq.br/arquitetura-interiores-santo-andre`
   * `https://www.araca.arq.br/arquitetura-interiores-sao-caetano`
   * `https://www.araca.arq.br/arquitetura-interiores-sao-bernardo`
-  * `https://www.araca.arq.br/arquitetura-interiores-sao-paulo`
   * `https://www.araca.arq.br/arquitetura-interiores-moema`
   * `https://www.araca.arq.br/arquitetura-interiores-brooklyn`
   * `https://www.araca.arq.br/arquitetura-interiores-pinheiros`
   * `https://www.araca.arq.br/arquitetura-interiores-zona-sul-sao-paulo`
+
+*(Nota: Santo André e São Paulo possuem LPs prioritárias dedicadas acima; as antigas rotas `/arquitetura-interiores-santo-andre`, `/arquiteto-em-santo-andre` e `/arquitetura-interiores-sao-paulo` possuem redirecionamento 301 definitivo para suas respectivas novas LPs).*
 
 ### 5.3. Portfólio de Projetos & Blog Dinâmico
 * `https://www.araca.arq.br/projetos/[id]` (Prioridade 0.7)
@@ -154,8 +157,12 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 
 | Rota / Página | Tag Title Final | Meta Description | Canonical URL |
 | :--- | :--- | :--- | :--- |
-| `/` (Home) | `Aracá Interiores \| Escritório de Arquitetura e Design de Interiores em Santo André e SP` | *A Aracá Interiores é um escritório de arquitetura e design de interiores em Santo André e SP focado em arquitetura de interiores com modelo flexível.* | `https://www.araca.arq.br` |
-| `/sobre` | `Sobre a Aracá Interiores \| Arquitetos em Santo André \| Aracá Interiores` | *Conheça a Aracá Interiores, seu escritório de arquitetura e designer de interiores em Santo André e São Paulo SP. Especialistas em projetos residenciais e comerciais sob medida.* | `https://www.araca.arq.br/sobre` |
+| `/` (Home) | `Aracá Interiores \| Design de Interiores em SP e ABC` | *Projetos autorais de design de interiores e reformas residenciais de alto padrão em SP e ABC. Solicite sua proposta comercial.* | `https://www.araca.arq.br` |
+| `/design-de-interiores-sao-paulo` (LP 1) | `Designer de Interiores em São Paulo SP \| Aracá Interiores` | *Escritório de design de interiores em São Paulo. Projetos residenciais de alto padrão e reformas executivas nos Jardins, Moema, Pinheiros e Itaim. Fale conosco.* | `https://www.araca.arq.br/design-de-interiores-sao-paulo` |
+| `/design-de-interiores-santo-andre` (LP 2) | `Design de Interiores em Santo André e ABC \| Aracá Interiores` | *Escritório de design de interiores em Santo André. Projetos residenciais biofílicos e reformas de alto padrão no Bairro Jardim, Campestre e ABC. Fale conosco.* | `https://www.araca.arq.br/design-de-interiores-santo-andre` |
+| `/reforma-de-interiores-residencial` (LP 3) | `Reforma de Interiores Residencial de Alto Padrão \| Aracá Interiores` | *Reforma completa de apartamentos e casas com projeto executivo detalhado e acompanhamento de obra. Gestão total sem estresse ou atrasos em SP e ABC.* | `https://www.araca.arq.br/reforma-de-interiores-residencial` |
+| `/design-de-interiores-classico-neoclassico` (LP 4) | `Design de Interiores Clássico e Neoclássico \| Aracá Interiores` | *Especialistas em design de interiores clássico e neoclássico contemporâneo em SP. Boiserie, marcenaria tradicional refinada, proporções elegantes e alto luxo.* | `https://www.araca.arq.br/design-de-interiores-classico-neoclassico` |
+| `/sobre` | `Sobre a Aracá Interiores \| Decoradores e Designers de Interiores no Grande ABC e em São Paulo \| Aracá Interiores` | *Conheça a Aracá Interiores, seu escritório de Decoração e Design de Interiores no Grande ABC e em São Paulo. Especialistas em projetos residenciais e comerciais sob medida.* | `https://www.araca.arq.br/sobre` |
 | `/projetos` | `Projetos \| Aracá Interiores` | *Projetos de interiores residenciais e comerciais da Aracá. Do conceito ao acabamento.* | `https://www.araca.arq.br/projetos` |
 | `/projetos/[slug]` | `[Título do Projeto] \| Aracá Interiores` | *Descrição específica cadastrada no projeto.* | `https://www.araca.arq.br/projetos/[slug]` |
 | `/servicos/residencial` | `Arquitetura Residencial \| Aracá Interiores` | *Projetos de interiores residenciais sob medida em Santo André e SP. Transformamos seu apartamento ou casa em um refúgio funcional com alma e estilo.* | `https://www.araca.arq.br/servicos/residencial` |
@@ -165,7 +172,6 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 | `/blog/[slug]` | `[Título do Artigo] \| Aracá Interiores` | *Meta description personalizada do artigo ou resumo (excerpt).* | `https://www.araca.arq.br/blog/[slug]` |
 | `/blog/categoria/[slug]` | `[Nome da Categoria] \| Blog \| Aracá Interiores` | *Posts da categoria [Categoria] no blog da Aracá Interiores.* | `https://www.araca.arq.br/blog/categoria/[slug]` |
 | `/blog/autor/[id]` | `[Nome do Autor] \| Blog \| Aracá Interiores` | *Bio do autor ou "Posts de [Nome] no blog."* | `https://www.araca.arq.br/blog/autor/[id]` |
-| `/arquiteto-em-santo-andre` | `Arquiteto em Santo André \| Aracá Interiores — Design Biofílico` | *Aracá Interiores atua em Santo André com projetos de design de interiores, arquitetura biofílica e sustentável. Residencial, comercial, reforma e construção. Solicite seu orçamento.* | `https://www.araca.arq.br/arquiteto-em-santo-andre` |
 | `/arquitetura-interiores-[city]` | `Arquiteto de Interiores em [Cidade] \| Aracá Interiores` | *Projetos de arquitetura e design de interiores em [Cidade]. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.* | `https://www.araca.arq.br/arquitetura-interiores-[city]` |
 | `/politica-privacidade` | `Política de Privacidade \| Aracá Interiores` | *Saiba como a Aracá Interiores coleta e protege seus dados de acordo com a LGPD.* | `https://www.araca.arq.br/politica-privacidade` |
 | `/termos` | `Termos de Uso \| Aracá Interiores` | *Leia os termos de uso do site da Aracá Interiores.* | `https://www.araca.arq.br/termos` |
@@ -176,7 +182,7 @@ Todas as URLs agora estão padronizadas no domínio canônico com prioridades ad
 ## 7. Dados Estruturados (Schema.org / JSON-LD)
 
 1. **`Organization` e `WebSite` (Global):** Reconhecimento de marca e logotipo nos buscadores.
-2. **`InteriorDesigner` / `LocalBusiness`:** Configurado nas páginas de cidades e `/arquiteto-em-santo-andre` com telefone `+5511997458464`, endereço, área atendida e redes sociais.
+2. **`InteriorDesigner` / `LocalBusiness`:** Configurado nas páginas de cidades e `/arquiteto-em-santo-andre` com telefone `+5511939155979`, endereço, área atendida e redes sociais.
 3. **`FAQPage` (`/arquiteto-em-santo-andre`):** 5 perguntas e respostas para gerar Rich Snippets sanfonados nos resultados do Google.
 4. **`BlogPosting` & `BreadcrumbList`:** Em todos os artigos do blog com autor, datas e navegação estruturada.
 

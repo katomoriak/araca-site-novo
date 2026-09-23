@@ -33,7 +33,7 @@ export default function ArquitetoSantoAndrePage() {
     "@type": "InteriorDesigner",
     "name": "Aracá Interiores",
     "url": `${baseUrl}/arquiteto-em-santo-andre`,
-    "telephone": "+5511997458464",
+    "telephone": "+5511939155979",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Santo André",

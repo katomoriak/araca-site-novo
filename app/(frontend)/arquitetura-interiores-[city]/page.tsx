@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { LOCATIONS, getLocationBySlug } from '@/lib/seo-locations'
+import { LOCATIONS, getLocationBySlug, getLocationHref } from '@/lib/seo-locations'
 import { Container } from '@/components/layout/Container'
 
 /* ─────────────────────────────────────────────
@@ -26,29 +26,36 @@ export async function generateMetadata({
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
     const canonical = `${baseUrl}/arquitetura-interiores-${loc.slug}`
 
+    const pageTitle = loc.title || `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`
+    const pageDescription =
+        loc.description ||
+        `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.`
+
     return {
-        title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-        description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.`,
+        title: {
+            absolute: pageTitle,
+        },
+        description: pageDescription,
         alternates: { canonical },
         openGraph: {
             type: 'website',
             locale: 'pt_BR',
             url: canonical,
-            title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos. Agende sua consultoria com a Aracá Interiores.`,
+            title: pageTitle,
+            description: pageDescription,
             images: [
                 {
                     url: '/hero-interiores.jpg',
                     width: 1200,
                     height: 630,
-                    alt: `Arquiteto de Interiores em ${loc.label} — Aracá Interiores`,
+                    alt: `${pageTitle} — Aracá Interiores`,
                 },
             ],
         },
         twitter: {
             card: 'summary_large_image',
-            title: `Arquiteto de Interiores em ${loc.label} | Aracá Interiores`,
-            description: `Projetos de arquitetura e design de interiores em ${loc.label}. Especialistas em alto padrão e apartamentos.`,
+            title: pageTitle,
+            description: pageDescription,
             images: ['/hero-interiores.jpg'],
         },
     }
@@ -75,8 +82,8 @@ export default async function CidadePage({
         '@type': 'InteriorDesigner',
         name: 'Aracá Interiores',
         url: baseUrl,
-        description: `Escritório de arquitetura de interiores em ${loc.label}. Projetos residenciais e comerciais com foco em estilo alto padrão e apartamentos.`,
-        telephone: '+5511997458464',
+        description: loc.description || `Escritório de arquitetura de interiores em ${loc.label}. Projetos residenciais e comerciais com foco em estilo alto padrão e apartamentos.`,
+        telephone: '+5511939155979',
         email: 'contato@araca.arq.br',
         areaServed: {
             '@type': 'City',
@@ -140,7 +147,7 @@ export default async function CidadePage({
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                         <a
-                            href="https://wa.me/5511997458464"
+                            href="https://wa.me/5511939155979"
                             target="_blank"
                             rel="noopener noreferrer"
                             id="cta-whatsapp-hero"
@@ -248,7 +255,7 @@ export default async function CidadePage({
                         projeto ideal para você.
                     </p>
                     <a
-                        href="https://wa.me/5511997458464"
+                        href="https://wa.me/5511939155979"
                         target="_blank"
                         rel="noopener noreferrer"
                         id="cta-whatsapp-bottom"
@@ -269,7 +276,7 @@ export default async function CidadePage({
                         {outrasLocais.map((l) => (
                             <li key={l.slug}>
                                 <Link
-                                    href={`/arquitetura-interiores-${l.slug}`}
+                                    href={getLocationHref(l)}
                                     className="rounded-full border border-araca-cafe-medio/30 bg-white px-4 py-2 font-body text-sm text-araca-chocolate-amargo/85 transition hover:border-araca-laranja-queimado hover:text-araca-laranja-queimado"
                                 >
                                     {l.label}

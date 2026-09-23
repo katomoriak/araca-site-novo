@@ -429,7 +429,7 @@ export function ArquitetoSantoAndreClient() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href="https://wa.me/5511997458464"
+              href="https://wa.me/5511939155979"
               target="_blank"
               rel="noopener noreferrer"
               className={cn(

@@ -43,28 +43,53 @@ const nextConfig = {
     ],
   },
   /**
-   * Redirects: Garante que a versão "interna" (/arquitetura-interiores/cidade)
-   * sempre redirecione para a versão de ranqueamento (/arquitetura-interiores-cidade) com 301.
-   * Isso evita conteúdo duplicado e consolida o "link juice".
+   * Redirects: Consolida o "link juice" e evita canibalização de SEO.
+   * Redireciona 301 as URLs antigas e variações para as 4 LPs prioritárias.
    */
   async redirects() {
     return [
+      // 1. LP Santo André (Base Local - Proximidade & Urgência)
+      {
+        source: '/arquiteto-em-santo-andre',
+        destination: '/design-de-interiores-santo-andre',
+        permanent: true,
+      },
+      {
+        source: '/arquitetura-interiores-santo-andre',
+        destination: '/design-de-interiores-santo-andre',
+        permanent: true,
+      },
+      {
+        source: '/arquitetura-interiores/santo-andre',
+        destination: '/design-de-interiores-santo-andre',
+        permanent: true,
+      },
+      // 2. LP São Paulo (Capital - Alto Padrão)
+      {
+        source: '/arquitetura-interiores-sao-paulo',
+        destination: '/design-de-interiores-sao-paulo',
+        permanent: true,
+      },
+      {
+        source: '/arquitetura-interiores/sao-paulo',
+        destination: '/design-de-interiores-sao-paulo',
+        permanent: true,
+      },
+      // Demais cidades secundárias: padroniza a URL com hífen
       {
         source: '/arquitetura-interiores/:city',
         destination: '/arquitetura-interiores-:city',
-        permanent: true, // 301 Redirect
+        permanent: true,
       },
     ]
   },
   /**
    * Rewrites: Expõe /arquitetura-interiores-{slug} publicamente,
    * mapeando internamente para a pasta /arquitetura-interiores/[city].
-   * Como o redirecionamento acima acontece antes do rewrite, o Google
-   * vê apenas a URL com hífen como a oficial.
    */
   async rewrites() {
     const locations = [
-      'santo-andre', 'sao-caetano', 'sao-bernardo', 'sao-paulo',
+      'sao-caetano', 'sao-bernardo',
       'moema', 'brooklyn', 'pinheiros', 'zona-sul-sao-paulo'
     ]
     return locations.map((slug) => ({

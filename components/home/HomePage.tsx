@@ -35,6 +35,7 @@ const ProjectGallery = dynamic(
 )
 
 import { getHeroVideoUrl } from '@/lib/hero-video'
+import { avaliacoesGoogle } from '@/content/depoimentos'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
@@ -227,10 +228,10 @@ export function HomePage({ initialProjects }: HomePageProps) {
               ARACÁ INTERIORES
             </p>
             <h1 className="mt-5 font-display text-4xl font-bold sm:text-5xl md:text-6xl">
-              {"Aracá Interiores | Escritório de Arquitetura e Design de Interiores em Santo André e SP"}
+              {"Aracá Interiores | Escritório de Decoração e Design de Interiores em Santo André e SP"}
             </h1>
-            <p className="mt-6 text-lg text-white/90 sm:text-xl">
-              {"Arquitetura de interiores com um modelo flexível: você escolhe o que quer contratar. Do projeto criativo ao acompanhamento de obra."}
+            <p className="mt-6 text-lg text-white/95 sm:text-xl font-body leading-relaxed max-w-2xl mx-auto">
+              {"Design de interiores para espaços com vida. Criamos ambientes envolventes que combinam a imponência do estilo neoclássico à rica personalidade do maximalismo contemporâneo."}
             </p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <Link
@@ -264,26 +265,73 @@ export function HomePage({ initialProjects }: HomePageProps) {
         />
       </section>
 
-      {/* SOBRE NÓS - Scroll Text Reveal */}
-      <section className="relative bg-araca-bege-claro">
-        <ScrollTextReveal
-          texts={[
-            'Somos a Aracá Interiores.',
-            'Criamos espaços com alma em toda São Paulo.',
-          ]}
-          highlights={{
-            0: ['Aracá', 'Interiores'],
-            1: ['espaços', 'alma', 'São Paulo'],
-          }}
-          highlightColors={{
-            gradient1: '#3C5945',
-            gradient2: '#4A6B54',
-            gradient3: '#658972',
-          }}
-          className="max-w-7xl text-center"
-        />
+      {/* SOBRE NÓS - Apresentação Aracá & Fundadores */}
+      <section className="relative bg-araca-bege-claro py-20 md:py-28 overflow-hidden">
+        <Container className="relative z-10">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-14 items-center">
+              {/* Coluna da Imagem */}
+              <div className="lg:col-span-5 order-2 lg:order-1 flex justify-center">
+                <div className="relative group w-full max-w-md">
+                  {/* Borda decorativa atrás */}
+                  <div
+                    className="absolute -inset-2 sm:-inset-3 rounded-3xl bg-gradient-to-tr from-primary/20 via-araca-laranja-queimado/20 to-transparent blur-sm -z-10 group-hover:blur-md transition-all duration-300"
+                    aria-hidden
+                  />
+                  <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border-2 border-border/60 bg-muted shadow-2xl">
+                    <Image
+                      src="/equipe/marco-e-rafa-color.jpg"
+                      alt="Marcos e Rafa — Fundadores da Aracá Interiores"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 420px"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
 
-        {/* Gradiente de transição para o marrom */}
+              {/* Coluna de Texto */}
+              <div className="lg:col-span-7 order-1 lg:order-2 text-center lg:text-left">
+                <span className="inline-block text-xs uppercase tracking-[0.25em] font-semibold text-primary/80 mb-3">
+                  Marcos & Rafaela · Fundadores
+                </span>
+                <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-araca-cafe-escuro tracking-tight leading-[1.1]">
+                  Somos a Aracá.
+                </h2>
+                <div className="mt-6 space-y-4 font-body text-araca-cafe-escuro/80 text-lg sm:text-xl leading-relaxed">
+                  <p>
+                    Acreditamos que uma casa precisa ter história, camadas e presença. Amamos criar <strong>espaços com vida</strong> — onde cada detalhe desperta sentimentos e convida a ficar.
+                  </p>
+                  <p className="text-base sm:text-lg">
+                    Nossa essência transita pela sofisticação atemporal dos <strong>projetos neoclássicos</strong> e pela rica expressividade do <strong>design maximalista</strong>: ambientes envolventes, repletos de arte, texturas nobres, iluminação cênica e personalidade autêntica.
+                  </p>
+                </div>
+
+                <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                  <Link
+                    href="/sobre"
+                    className={cn(
+                      buttonVariants({ size: 'default' }),
+                      'bg-araca-cafe-escuro text-araca-bege-claro hover:bg-araca-cafe-escuro/90 shadow-md font-medium'
+                    )}
+                  >
+                    Conheça nossa trajetória
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                  <Link
+                    href="#projetos"
+                    className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80 transition-colors underline-offset-4 hover:underline"
+                  >
+                    Explorar nossos projetos
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+
+        {/* Gradiente sutil de transição para a próxima seção */}
         <div
           className="absolute bottom-0 left-0 right-0 z-0 h-32 pointer-events-none"
           style={{
@@ -292,110 +340,97 @@ export function HomePage({ initialProjects }: HomePageProps) {
         />
       </section>
 
-      {/* NOSSOS PROJETOS - Com Scroll Text Reveal */}
-      <section id="projetos" className="relative z-20 bg-araca-cafe-escuro overflow-visible">
-        {/* Textos que rolam normalmente */}
-        <ScrollTextReveal
-          texts={[
-            'Da ideia ao acabamento final.',
-          ]}
-          highlights={{
-            0: ['ideia', 'acabamento'],
-          }}
-          textColor="text-araca-bege-claro"
-          highlightColors={{
-            gradient1: '#1a0a05',
-            gradient2: '#0f0502',
-            gradient3: '#251208'
-          }}
-          className="max-w-7xl text-center"
-          backgroundLogo="/logotipos/utilitaries/U_CAETE.svg"
-        />
-
-        {/* Seção com scroll para o texto sticky */}
-        <div className="relative bg-araca-cafe-escuro overflow-visible" style={{ minHeight: '150vh' }}>
-          {/* Logos decorativos (z-20 para ficarem acima da seção da galeria e não serem cortados) */}
-          <div className="absolute inset-0 overflow-visible pointer-events-none z-20" aria-hidden>
-            {/* Logo à esquerda — parallax lento */}
-            <div
-              className="absolute left-0 top-1/2"
-              style={{ transform: 'translate(-40%, -50%)' }}
-            >
-              <Parallax speed={2}>
-                <img
-                  src="/logotipos/utilitaries/U_CAETE.svg"
-                  alt=""
-                  width={840}
-                  height={840}
-                  className="h-[min(140vh,840px)] w-auto opacity-30 object-contain object-left"
-                />
-              </Parallax>
-            </div>
-            {/* Logo à direita, mais acima — parallax lento */}
-            <div
-              className="absolute right-0 top-[15%]"
-              style={{ transform: 'translate(40%, -50%)' }}
-            >
-              <Parallax speed={2}>
-                <img
-                  src="/logotipos/utilitaries/U_CAETE.svg"
-                  alt=""
-                  width={840}
-                  height={840}
-                  className="h-[min(140vh,840px)] w-auto opacity-30 object-contain object-right"
-                />
-              </Parallax>
-            </div>
+      {/* NOSSOS PROJETOS - Transição mais ágil e compacta */}
+      <section id="projetos" className="relative z-20 bg-araca-cafe-escuro overflow-hidden pt-16 pb-6 md:pt-20 md:pb-8">
+        {/* Logos decorativos sutis */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-10" aria-hidden>
+          <div
+            className="absolute left-0 top-1/2"
+            style={{ transform: 'translate(-35%, -50%)' }}
+          >
+            <Parallax speed={1}>
+              <img
+                src="/logotipos/utilitaries/U_CAETE.svg"
+                alt=""
+                width={700}
+                height={700}
+                className="h-[min(80vh,600px)] w-auto opacity-20 object-contain object-left"
+              />
+            </Parallax>
           </div>
-          {/* Texto sticky que acompanha o scroll */}
-          <div className="sticky top-1/2 py-20 pointer-events-none z-50 overflow-visible" style={{ marginTop: '-80px' }}>
-            <Container className="relative w-full overflow-visible">
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6 }}
-                className="text-center font-display text-4xl font-bold leading-tight text-araca-bege-claro px-[10%] sm:text-5xl md:text-6xl lg:text-7xl relative z-50"
-              >
-                Veja o que já <span className="relative inline-block mx-2">
-                  <span className="relative z-10">criamos</span>
-                  <motion.span
-                    className="absolute inset-x-[-0.2em] bottom-[0.05em] h-[0.65em] -z-10"
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    whileInView={{ opacity: 1, scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{
-                      duration: 0.5,
-                      delay: 0.3,
-                      ease: "easeOut"
-                    }}
-                    style={{ transformOrigin: 'left' }}
-                  >
-                    <span
-                      className="absolute inset-0 opacity-60 rounded-[40%_60%_45%_55%]"
-                      style={{
-                        background: 'linear-gradient(to bottom, transparent 0%, #1a0a05 15%, #0f0502 85%, transparent 100%)',
-                      }}
-                    />
-                    <span
-                      className="absolute inset-[-0.1em] opacity-70 rounded-[50%_40%_55%_45%]"
-                      style={{
-                        background: 'linear-gradient(90deg, #251208 0%, #1a0a05 20%, #0f0502 40%, #1a0a05 60%, #251208 80%, #0f0502 100%)',
-                      }}
-                    />
-                  </motion.span>
-                </span>.
-              </motion.p>
-            </Container>
+          <div
+            className="absolute right-0 top-1/3"
+            style={{ transform: 'translate(35%, -50%)' }}
+          >
+            <Parallax speed={1}>
+              <img
+                src="/logotipos/utilitaries/U_CAETE.svg"
+                alt=""
+                width={700}
+                height={700}
+                className="h-[min(80vh,600px)] w-auto opacity-20 object-contain object-right"
+              />
+            </Parallax>
           </div>
         </div>
+
+        <Container className="relative z-20 text-center">
+          {/* Frase 1: Da ideia ao acabamento final */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5 }}
+            className="font-display text-2xl sm:text-3xl md:text-4xl text-araca-bege-claro/70 tracking-wide font-normal"
+          >
+            Da ideia ao acabamento final.
+          </motion.p>
+
+          {/* Frase 2: Veja o que já criamos (logo abaixo com destaque) */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="mt-4 sm:mt-6 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-araca-bege-claro tracking-tight"
+          >
+            Veja o que já <span className="relative inline-block mx-1 sm:mx-2">
+              <span className="relative z-10 text-white">criamos</span>
+              <motion.span
+                className="absolute inset-x-[-0.2em] bottom-[0.05em] h-[0.65em] -z-10"
+                initial={{ opacity: 0, scaleX: 0 }}
+                whileInView={{ opacity: 1, scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.5,
+                  delay: 0.35,
+                  ease: "easeOut"
+                }}
+                style={{ transformOrigin: 'left' }}
+              >
+                <span
+                  className="absolute inset-0 opacity-60 rounded-[40%_60%_45%_55%]"
+                  style={{
+                    background: 'linear-gradient(to bottom, transparent 0%, #1a0a05 15%, #0f0502 85%, transparent 100%)',
+                  }}
+                />
+                <span
+                  className="absolute inset-[-0.1em] opacity-70 rounded-[50%_40%_55%_45%]"
+                  style={{
+                    background: 'linear-gradient(90deg, #251208 0%, #1a0a05 20%, #0f0502 40%, #1a0a05 60%, #251208 80%, #0f0502 100%)',
+                  }}
+                />
+              </motion.span>
+            </span>.
+          </motion.h2>
+        </Container>
       </section>
 
-      {/* GALERIA DE PROJETOS - fundo atrás de "Veja o que já criamos", só o carrossel acima */}
-      <section className="relative -mt-32 sm:-mt-40">
-        {/* Fundo da seção em z-0 para não sobrepor o bloco acima (z-20) */}
+      {/* GALERIA DE PROJETOS - carrossel logo na sequência sem espaço vazio */}
+      <section className="relative">
+        {/* Fundo da seção */}
         <div className="absolute inset-0 bg-araca-cafe-escuro z-0" aria-hidden />
-        <div className="relative pt-20 pb-20 sm:pb-32">
+        <div className="relative pt-6 pb-20 sm:pb-32">
           {/* Só o carrossel fica acima de tudo (z-30 > z-20 da section #projetos) */}
           <div className="relative w-full z-[30]">
             <GalleryCarousel
@@ -456,11 +491,11 @@ export function HomePage({ initialProjects }: HomePageProps) {
           </div>
         </div>
         <Container className="relative z-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-4xl font-bold text-araca-chocolate-amargo sm:text-5xl">
-              Arquitetos em Santo André e Região
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-araca-chocolate-amargo leading-tight">
+              Decoradores e Designers de Interiores no Grande ABC e em São Paulo
             </h2>
-            <p className="mt-3 text-araca-chocolate-amargo/90">
+            <p className="mt-3 text-araca-chocolate-amargo/90 text-base sm:text-lg">
               Soluções completas para diferentes escalas e necessidades.
             </p>
           </div>
@@ -520,33 +555,24 @@ export function HomePage({ initialProjects }: HomePageProps) {
       <section className="relative py-20 sm:py-24 overflow-hidden bg-araca-bege-claro/50">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/60 backdrop-blur-md px-3.5 py-1 text-xs text-foreground mb-4 shadow-sm">
+              <span className="flex items-center gap-1 text-[#d4a853] font-semibold">
+                ★ 5.0
+              </span>
+              <span className="text-muted-foreground/60">•</span>
+              <span className="text-muted-foreground">Avaliações 5 estrelas no Google</span>
+            </div>
             <h2 className="font-display text-3xl font-bold text-foreground sm:text-4xl">
               O que dizem sobre nós
             </h2>
             <p className="mt-3 text-muted-foreground">
-              Avaliações que resumem a experiência Aracá.
+              Avaliações reais que resumem a experiência Aracá Interiores.
             </p>
           </div>
 
           <TestimonialsMarquee
             className="mt-10"
-            items={[
-              {
-                name: 'Mariana S.',
-                quote:
-                  'Processo claro e leve. O resultado ficou acima do que imaginamos — e a obra fluiu sem sustos.',
-              },
-              {
-                name: 'Rafael C.',
-                quote:
-                  'Detalhamento impecável. A equipe traduziu nossas referências em um espaço com personalidade.',
-              },
-              {
-                name: 'Camila L.',
-                quote:
-                  'Flexível de verdade: escolhemos o que precisávamos e tivemos suporte no momento certo.',
-              },
-            ]}
+            items={avaliacoesGoogle}
           />
         </Container>
         {/* Gradiente de transição para a seção Contato */}
@@ -640,10 +666,10 @@ export function HomePage({ initialProjects }: HomePageProps) {
                     <div>
                       <h3 className="font-display font-semibold text-white">Contato</h3>
                       <a
-                        href="tel:+5511997458464"
-                        className="mt-1 text-sm text-white/90 hover:text-white underline underline-offset-2"
+                        href="tel:+5511939155979"
+                        className="text-stone-300 hover:text-amber-500 transition-colors"
                       >
-                        (11) 99745-8464
+                        (11) 93915-5979
                       </a>
                     </div>
                   </div>
@@ -824,7 +850,7 @@ export function HomePage({ initialProjects }: HomePageProps) {
 
       {/* Botão flutuante WhatsApp */}
       <a
-        href="https://wa.me/5511997458464"
+        href="https://wa.me/5511939155979"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Fale conosco no WhatsApp"
