@@ -863,7 +863,7 @@ export function calculateRenovationEstimate(state: SimulationState): SimulationR
       wetAreaRatio,
       standard,
       activeServices: [],
-      serviceDetails: {},
+      serviceDetails: {} as Record<ServiceId, ServiceExecutionDetail>,
       servicesScopeRatio: 0,
       baseCost: 0,
       minCost: 0,

@@ -78,7 +78,6 @@ export const CUSTO_CONFIG = {
       'Valor final validado pela nossa equipe conforme a complexidade do projeto.',
   },
 
-  // Preços base de Obra Civil por m² conforme o padrão de acabamento
   padroesObra: Object.defineProperty(
     {
       essencial: {
@@ -163,7 +162,12 @@ export const CUSTO_CONFIG = {
       enumerable: false,
       configurable: true,
     }
-  ),
+  ) as Record<PadraoAcabamentoId, {
+    id: string; titulo: string; badge: string; precoBasePorM2: number;
+    minPorM2: number; maxPorM2: number; projetoMinPorM2: number;
+    projetoMaxPorM2: number; descricao: string; destaques: string[];
+    destaque?: boolean;
+  }>,
 
   // Número de WhatsApp de destino (DDI + DDD + Número sem caracteres especiais)
   whatsappNumero:

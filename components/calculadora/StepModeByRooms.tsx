@@ -34,7 +34,7 @@ interface StepModeByRoomsProps {
   onStandardChange: (standard: FinishStandardId) => void
 }
 
-const ROOM_ICONS: Record<RoomTypeId, LucideIcon> = {
+const ROOM_ICONS: Partial<Record<RoomTypeId, LucideIcon>> = {
   sala: Sofa,
   quarto: Bed,
   cozinha: UtensilsCrossed,
