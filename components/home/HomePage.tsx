@@ -21,6 +21,11 @@ import { ScrollTextReveal } from '@/components/home/ScrollTextReveal'
 import type { ProjectGalleryItem } from '@/components/home/ProjectGallery'
 import { Parallax } from 'react-scroll-parallax'
 import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
+import { getHeroVideoUrl } from '@/lib/hero-video'
+import { avaliacoesGoogle } from '@/content/depoimentos'
+import { LatestBlogSection } from '@/components/home/LatestBlogSection'
+import { HomeCalculatorCtaSection } from '@/components/home/HomeCalculatorCtaSection'
+import type { Post } from '@/lib/blog-mock'
 
 const GalleryCarousel = dynamic(
   () => import('@/components/home/GalleryCarousel').then((m) => ({ default: m.GalleryCarousel })),
@@ -34,11 +39,6 @@ const ProjectGallery = dynamic(
   () => import('@/components/home/ProjectGallery').then((m) => ({ default: m.ProjectGallery })),
   { ssr: false }
 )
-
-import { getHeroVideoUrl } from '@/lib/hero-video'
-import { avaliacoesGoogle } from '@/content/depoimentos'
-import { LatestBlogSection } from '@/components/home/LatestBlogSection'
-import type { Post } from '@/lib/blog-mock'
 
 function HeroVideo() {
   const posterUrl = getHeroVideoUrl('poster') || '/api/hero-video?quality=poster'
@@ -547,14 +547,17 @@ export function HomePage({ initialProjects, latestPosts }: HomePageProps) {
           </div>
         </Container>
 
-        {/* Gradiente de transição para a próxima section (Depoimentos) — fica atrás dos logos (z-0) */}
+        {/* Gradiente de transição suave */}
         <div
           className="absolute bottom-0 left-0 right-0 z-0 h-40 sm:h-48 pointer-events-none overflow-visible"
           style={{
-            background: 'linear-gradient(to bottom, #ECE5DB 0%, rgba(236, 229, 219, 0.85) 35%, rgba(236, 229, 219, 0.5) 65%, #F1EDE9 100%)'
+            background: 'linear-gradient(to bottom, #ECE5DB 0%, rgba(236, 229, 219, 0.85) 35%, rgba(236, 229, 219, 0.5) 65%, #ECE5DB 100%)'
           }}
         />
       </section>
+
+      {/* CHAMADA DESTACADA: ESTIMATIVA DE CUSTO E CALCULADORA DE PROJETOS */}
+      <HomeCalculatorCtaSection />
 
       {/* DEPOIMENTOS — marquee vertical estilo "Loved by thousands" */}
       <section className="relative py-20 sm:py-24 overflow-hidden bg-araca-bege-claro/50">

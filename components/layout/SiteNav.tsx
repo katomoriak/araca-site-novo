@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat } from 'lucide-react'
+import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat, Calculator, Compass } from 'lucide-react'
 import { Container } from './Container'
 import { cn } from '@/lib/utils'
 import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
@@ -78,6 +78,8 @@ const DEFAULT_LINKS: SiteNavLink[] = [
       { href: '/servicos/residencial', label: 'Projetos Residenciais' },
       { href: '/servicos/comercial-corporativo', label: 'Projetos Comerciais & Corporativos' },
       { href: '/servicos/gestao-acompanhamento-de-obra', label: 'Gestão de Obras de Interiores' },
+      { href: '/calculadora-custo-projeto-design-interiores', label: 'Calculadora: Projeto de Interiores' },
+      { href: '/quanto-custa-reformar', label: 'Calculadora: Custo de Reforma' },
     ],
   },
   { href: '/projetos', label: 'Projetos' },
@@ -415,12 +417,59 @@ export function SiteNav({
                               </div>
                             </div>
 
+                            {/* Seção Destaque: Simuladores de Custo & Projeto */}
+                            <div className={cn(
+                              'mx-4 sm:mx-5 mb-3 p-3 rounded-2xl border transition-all flex flex-col sm:flex-row items-center justify-between gap-3',
+                              isDark ? 'bg-white/10 border-white/15' : 'bg-[var(--araca-mineral-green)]/10 border-[var(--araca-mineral-green)]/30'
+                            )}>
+                              <div className="flex items-center gap-2.5">
+                                <div className="h-8 w-8 rounded-xl bg-[var(--araca-mineral-green)] text-white flex items-center justify-center shrink-0 shadow-xs">
+                                  <Calculator className="h-4 w-4" />
+                                </div>
+                                <div>
+                                  <div className={cn('text-xs font-bold', isDark ? 'text-white' : 'text-[var(--araca-cafe-escuro)]')}>
+                                    Simuladores & Estimativas de Custo
+                                  </div>
+                                  <div className={cn('text-[11px]', isDark ? 'text-neutral-300' : 'text-[var(--araca-chocolate-amargo)]/75')}>
+                                    Estime valores de projeto e obra em tempo real
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <Link
+                                  href="/calculadora-custo-projeto-design-interiores"
+                                  onClick={() => setActiveDropdown(null)}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[var(--araca-cafe-escuro)] hover:bg-[var(--araca-bege-claro)] border border-[var(--araca-bege-medio)] shadow-2xs transition-all"
+                                >
+                                  Projeto de Interiores
+                                </Link>
+                                <Link
+                                  href="/quanto-custa-reformar"
+                                  onClick={() => setActiveDropdown(null)}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--araca-mineral-green)] text-white hover:bg-[var(--araca-mineral-green-hover)] shadow-xs transition-all"
+                                >
+                                  Reforma & Obra
+                                </Link>
+                              </div>
+                            </div>
+
                             {/* Rodapé do Menu */}
                             <div className={cn(
                               'px-5 py-2.5 border-t flex items-center justify-between text-xs',
                               isDark ? 'border-white/10 bg-white/5 text-neutral-400' : 'border-black/5 bg-black/5 text-neutral-600'
                             )}>
-                              <span>Aracá Interiores · Projetos sob medida</span>
+                              <Link
+                                href="/tabela-cub-sinapi"
+                                onClick={() => setActiveDropdown(null)}
+                                className={cn(
+                                  'hover:underline flex items-center gap-1 font-medium text-[11px]',
+                                  isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-neutral-950'
+                                )}
+                              >
+                                <span>Tabelas CUB / SINAPI</span>
+                                <ArrowRight className="h-3 w-3 opacity-60" />
+                              </Link>
                               <Link
                                 href="/servicos"
                                 onClick={() => setActiveDropdown(null)}
@@ -694,6 +743,46 @@ export function SiteNav({
                                     >
                                       <HardHat className="h-4 w-4 text-araca-mineral-green" />
                                       <span>Gestão de Obras de Interiores</span>
+                                    </Link>
+                                  </div>
+
+                                  {/* Bloco Simuladores */}
+                                  <div className="pt-2.5 border-t border-white/10 space-y-1.5">
+                                    <div className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                      Simuladores & Estimativas
+                                    </div>
+                                    <Link
+                                      href="/calculadora-custo-projeto-design-interiores"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                      )}
+                                    >
+                                      <span>Calculadora de Projeto</span>
+                                      <ArrowRight className="h-3 w-3" />
+                                    </Link>
+                                    <Link
+                                      href="/quanto-custa-reformar"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                      )}
+                                    >
+                                      <span>Calculadora de Reforma</span>
+                                      <ArrowRight className="h-3 w-3" />
+                                    </Link>
+                                    <Link
+                                      href="/tabela-cub-sinapi"
+                                      onClick={() => setMobileOpen(false)}
+                                      className={cn(
+                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                      )}
+                                    >
+                                      <span>Tabelas CUB / SINAPI</span>
+                                      <ArrowRight className="h-3 w-3" />
                                     </Link>
                                   </div>
 

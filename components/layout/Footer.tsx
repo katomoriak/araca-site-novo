@@ -26,6 +26,14 @@ const footerNavColumns = [
     ],
   },
   {
+    title: 'Simuladores & Custos',
+    links: [
+      { href: '/calculadora-custo-projeto-design-interiores', label: 'Calculadora: Projeto de Interiores' },
+      { href: '/quanto-custa-reformar', label: 'Calculadora: Custo de Reforma' },
+      { href: '/tabela-cub-sinapi', label: 'Tabelas CUB & SINAPI' },
+    ],
+  },
+  {
     title: 'Institucional',
     links: [
       { href: '/', label: 'Home' },
@@ -163,11 +171,10 @@ export function Footer() {
         >
           <Image
             src="/logotipos/LOGOTIPO_PRINCIPAL.svg"
-            alt="Marca d'água Aracá Interiores"
-            width={400}
-            height={200}
-            className="h-auto max-h-[60%] w-auto max-w-[80%] opacity-10"
-            style={{ width: 'auto', height: 'auto', objectFit: 'contain', objectPosition: 'bottom center' }}
+            alt=""
+            width={500}
+            height={191}
+            className="h-auto max-h-[60%] w-[500px] max-w-[80%] opacity-10 object-contain object-bottom"
           />
         </div>
 
@@ -180,9 +187,9 @@ export function Footer() {
                   src="/logotipos/LOGOTIPO_PRINCIPAL.svg"
                   alt="Aracá Interiores"
                   width={180}
-                  height={60}
-                  className="h-auto w-44"
-                  style={{ width: 'auto', height: 'auto' }}
+                  height={69}
+                  className="h-auto w-44 object-contain"
+                  priority
                 />
               </Link>
               <p className="mt-3 text-sm text-araca-chocolate-amargo/90">
@@ -313,9 +320,9 @@ export function Footer() {
                   <Image
                     src="/assets/naut-logotipo-mono-branco.svg"
                     alt="Naut"
-                    width={120}
+                    width={97}
                     height={40}
-                    className="h-6 w-auto"
+                    className="h-5 w-auto object-contain"
                   />
                 </a>
               </div>

@@ -25,7 +25,17 @@ export default function FrontendLayout({
   const isBlogPage = pathname === '/blog'
   const isServicePage = pathname.startsWith('/servicos')
   const isClassicoPage = pathname === '/design-de-interiores-classico-neoclassico'
-  const showHeader = !isHomePage && !isBlogPage && !isServicePage && !isClassicoPage
+  const isCalculadoraPage =
+    pathname === '/quanto-custa-reformar' ||
+    pathname === '/calculadora-custo-projeto-design-interiores' ||
+    pathname === '/calculadora-projeto' ||
+    pathname === '/tabela-cub-sinapi'
+  const showHeader =
+    !isHomePage &&
+    !isBlogPage &&
+    !isServicePage &&
+    !isClassicoPage &&
+    !isCalculadoraPage
 
   return (
     <ParallaxProvider>

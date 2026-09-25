@@ -87,6 +87,22 @@ const nextConfig = {
         destination: '/servicos/comercial-corporativo',
         permanent: true,
       },
+      // 4. Calculadora de Reforma: aliases e variações redirecionam para a URL oficial otimizada
+      {
+        source: '/calculadora-reforma',
+        destination: '/quanto-custa-reformar',
+        permanent: true,
+      },
+      {
+        source: '/calculadora-de-reforma',
+        destination: '/quanto-custa-reformar',
+        permanent: true,
+      },
+      {
+        source: '/calculadora-custo-reforma',
+        destination: '/quanto-custa-reformar',
+        permanent: true,
+      },
     ]
   },
   /**

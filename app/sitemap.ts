@@ -28,10 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/servicos/comercial-corporativo/clinicas-consultorios`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${baseUrl}/servicos/comercial-corporativo/lojas-varejo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
-    // 4 Landing Pages Estratégicas de Fundo de Funil (Alta Conversão)
+    // 5 Landing Pages Estratégicas de Fundo de Funil & Ferramentas (Alta Conversão)
     { url: `${baseUrl}/design-de-interiores-sao-paulo`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/design-de-interiores-santo-andre`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/reforma-de-interiores-residencial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${baseUrl}/quanto-custa-reformar`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${baseUrl}/calculadora-custo-projeto-design-interiores`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/design-de-interiores-classico-neoclassico`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.90 },
     { url: `${baseUrl}/politica-privacidade`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${baseUrl}/termos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
