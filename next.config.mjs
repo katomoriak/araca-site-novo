@@ -209,16 +209,6 @@ const nextConfig = {
         ],
       },
       {
-        // Cache imútavel para assets estáticos Next.js (CSS/JS com hash no nome)
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
         // Cache imútavel para fontes locais (Bellamora woff2 — 30 KiB no caminho crítico)
         source: '/fonts/:path*',
         headers: [

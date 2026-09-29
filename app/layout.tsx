@@ -10,7 +10,6 @@ const rubik = Rubik({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
-  weight: ['300', '400', '500', '600', '700'],
 })
 
 const siteName = 'Aracá Interiores'
