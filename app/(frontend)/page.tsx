@@ -134,8 +134,9 @@ const homeSchema = {
           {
             '@type': 'Offer',
             itemOffered: {
-              '@type': 'WebApplication',
+              '@type': 'Service',
               name: 'Calculadora de Custo de Reforma',
+              serviceType: 'Simulador de Custos Online',
               url: 'https://www.araca.arq.br/quanto-custa-reformar',
               description: 'Simulador interativo de custo de reforma por m² e ambientes em SP e ABC.',
             },
@@ -143,8 +144,9 @@ const homeSchema = {
           {
             '@type': 'Offer',
             itemOffered: {
-              '@type': 'WebApplication',
+              '@type': 'Service',
               name: 'Calculadora de Projeto de Interiores',
+              serviceType: 'Simulador de Investimento Online',
               url: 'https://www.araca.arq.br/calculadora-custo-projeto-design-interiores',
               description: 'Simulador online de investimento para projeto executivo de interiores.',
             },
