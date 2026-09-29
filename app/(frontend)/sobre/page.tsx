@@ -42,8 +42,9 @@ const sobreSchema = {
       inLanguage: 'pt-BR',
     },
     {
-      '@type': ['HomeAndConstructionBusiness', 'ProfessionalService'],
+      '@type': ['LocalBusiness', 'Organization'],
       '@id': 'https://www.araca.arq.br/#organization',
+      additionalType: 'https://en.wikipedia.org/wiki/Interior_design',
       name: 'Aracá Interiores',
       alternateName: [
         'Aracá Interiores Santo André',
@@ -51,6 +52,14 @@ const sobreSchema = {
       ],
       description:
         'Estúdio de design de interiores e reformas residenciais de alto padrão no Grande ABC e em São Paulo, unindo estética com significado, projetos executivos precisos e acompanhamento de obra.',
+      knowsAbout: [
+        'Design de Interiores',
+        'Arquitetura de Interiores',
+        'Decoração de Ambientes',
+        'Reformas Residenciais de Alto Padrão',
+        'Marcenaria Sob Medida',
+        'Gestão de Obras de Interiores',
+      ],
       url: 'https://www.araca.arq.br/',
       logo: 'https://www.araca.arq.br/logotipos/LOGOTIPO%20REDONDO@300x.png',
       image: 'https://www.araca.arq.br/projetos/areasocial_residencia-ninhoverce/cover.png',

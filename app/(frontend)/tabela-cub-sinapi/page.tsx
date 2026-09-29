@@ -124,8 +124,69 @@ const ETAPAS_PESO = [
 ]
 
 export default function TabelaCubSinapiPage() {
+  const cubSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${canonical}#webpage`,
+        url: canonical,
+        name: 'Tabelas CUB e SINAPI de Reformas SP | Aracá Interiores',
+        description:
+          'Tabela CUB e SINAPI da construção civil e reforma em SP. Compare custos de materiais e mão de obra com Aracá Interiores!',
+        isPartOf: {
+          '@id': `${baseUrl}/#website`,
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: baseUrl,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Simuladores & Custos',
+            item: `${baseUrl}/quanto-custa-reformar`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: 'Tabelas CUB & SINAPI',
+            item: canonical,
+          },
+        ],
+      },
+      {
+        '@type': 'Article',
+        headline: 'Tabelas CUB e SINAPI da Construção Civil e Reforma em SP',
+        description:
+          'Guia paramétrico comparativo dos custos oficiais por m² da construção civil (CUB SindusCon-SP e SINAPI Caixa/IBGE) e estimativa de reformas residenciais de alto padrão.',
+        author: {
+          '@type': 'Organization',
+          name: 'Aracá Interiores',
+          url: baseUrl,
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Aracá Interiores',
+          url: baseUrl,
+        },
+        mainEntityOfPage: canonical,
+      },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(cubSchema) }}
+      />
       {/* 1. HERO SECTION COM FOTO DE FUNDO, MENU INTEGRADO E TRANSIÇÃO EM DEGRADÊ */}
       <section className="relative -mt-6 sm:-mt-8 mb-8 sm:mb-14 min-h-[580px] sm:min-h-[640px] lg:min-h-[680px] flex flex-col justify-between overflow-hidden text-white">
         <div className="absolute inset-0 z-0 bg-neutral-950">

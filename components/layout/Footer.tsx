@@ -202,7 +202,7 @@ export function Footer() {
                     <a
                       href={href}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       aria-label={label}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-araca-cafe-escuro/30 text-araca-cafe-escuro transition hover:border-araca-laranja-queimado hover:bg-araca-laranja-queimado hover:text-white"
                     >
@@ -262,7 +262,7 @@ export function Footer() {
                     <a
                       href={footerContact.whatsappHref}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel="noopener noreferrer nofollow"
                       className="inline-flex items-center gap-2 text-sm text-araca-chocolate-amargo/85 transition hover:text-araca-laranja-queimado"
                       aria-label="WhatsApp: (11) 93915-5979"
                     >
@@ -305,6 +305,7 @@ export function Footer() {
                 </Link>
                 <Link
                   href="/dashboard"
+                  rel="nofollow"
                   className="text-sm text-araca-chocolate-amargo/80 transition hover:text-araca-laranja-queimado"
                 >
                   Dashboard
@@ -312,7 +313,7 @@ export function Footer() {
                 <a
                   href="https://www.agencianaut.com.br"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow"
                   className="inline-flex items-center gap-1.5 text-araca-chocolate-amargo/70 hover:text-araca-laranja-queimado transition"
                   aria-label="Naut - Design e Desenvolvimento"
                 >

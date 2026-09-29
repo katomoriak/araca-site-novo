@@ -103,6 +103,22 @@ const nextConfig = {
         destination: '/quanto-custa-reformar',
         permanent: true,
       },
+      // 5. Páginas Institucionais Legais
+      {
+        source: '/termos-de-uso',
+        destination: '/termos',
+        permanent: true,
+      },
+      {
+        source: '/politica-de-privacidade',
+        destination: '/politica-privacidade',
+        permanent: true,
+      },
+      {
+        source: '/politica',
+        destination: '/politica-privacidade',
+        permanent: true,
+      },
     ]
   },
   /**
