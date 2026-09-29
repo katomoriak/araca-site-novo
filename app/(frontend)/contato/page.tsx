@@ -3,9 +3,9 @@ import { ContatoPageContent } from '@/components/contato/ContatoPageContent'
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 export const metadata = {
-  title: 'Contato e Orçamento | Aracá Interiores',
+  title: { absolute: 'Contato e Orçamento de Projetos | Aracá Interiores' },
   description:
-    'Entre em contato com a Aracá Interiores. Envie sua mensagem ou fale por e-mail e WhatsApp. Projetos de interiores residenciais e comerciais.',
+    'Fale com a Aracá Interiores e solicite uma proposta personalizada de projeto de interiores residencial ou comercial em São Paulo e no ABC.',
   alternates: {
     canonical: `${baseUrl}/contato`,
   },

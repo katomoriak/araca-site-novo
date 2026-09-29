@@ -21,9 +21,9 @@ function toCategoryLabel(cat: unknown): string {
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
 export const metadata = {
-  title: 'Blog',
+  title: { absolute: 'Blog de Decoração e Interiores | Aracá Interiores' },
   description:
-    'Blog da Aracá Interiores: design de interiores, projetos residenciais e comerciais, dicas e inspirações.',
+    'Inspirações, tendências e guias práticos de decoração e design de interiores para transformar seu lar ou espaço comercial com a Aracá.',
   alternates: {
     canonical: `${baseUrl}/blog`,
   },

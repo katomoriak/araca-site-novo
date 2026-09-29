@@ -5,17 +5,17 @@ const canonical = `${baseUrl}/servicos/residencial/apartamentos`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Design de Interiores para Apartamentos em SP e ABC | Aracá Interiores',
+    absolute: 'Design de Apartamentos em SP e ABC | Aracá Interiores',
   },
   description:
-    'Projetos de interiores para apartamentos novos e na planta em SP e Grande ABC. Integração de varanda gourmet, marcenaria milimétrica e layout inteligente.',
+    'Projetos de interiores para apartamentos em SP e Grande ABC. Varanda integrada, marcenaria sob medida e layout funcional para seu lar.',
   alternates: {
     canonical,
   },
   openGraph: {
-    title: 'Design de Interiores para Apartamentos em SP e ABC | Aracá Interiores',
+    title: 'Design de Apartamentos em SP e ABC | Aracá Interiores',
     description:
-      'Projetos de interiores para apartamentos novos e na planta em SP e Grande ABC. Integração de varanda gourmet, marcenaria milimétrica e layout inteligente.',
+      'Projetos de interiores para apartamentos em SP e Grande ABC. Varanda integrada, marcenaria sob medida e layout funcional para seu lar.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

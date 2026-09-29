@@ -26,6 +26,18 @@ const footerNavColumns = [
     ],
   },
   {
+    title: 'Projetos em Destaque',
+    links: [
+      { href: '/projetos/resindencia_feijo', label: 'Residência Feijó' },
+      { href: '/projetos/apto_elysee', label: 'Apto. Elysée' },
+      { href: '/projetos/veraneio-ninho-verde', label: 'Veraneio Ninho Verde' },
+      { href: '/projetos/casa-alinho', label: 'Casa Alinho' },
+      { href: '/projetos/cozinha_oxala', label: 'Cozinha Oxalá' },
+      { href: '/projetos/projetoaptoblack', label: 'Projeto Apto. Black' },
+      { href: '/projetos', label: '• Galeria de Projetos' },
+    ],
+  },
+  {
     title: 'Simuladores & Custos',
     links: [
       { href: '/calculadora-custo-projeto-design-interiores', label: 'Calculadora: Projeto de Interiores' },
@@ -38,7 +50,7 @@ const footerNavColumns = [
     links: [
       { href: '/', label: 'Home' },
       { href: '/sobre', label: 'Sobre a Aracá' },
-      { href: '/projetos', label: 'Projetos Autorais' },
+      { href: '/projetos', label: 'Portfólio Completo' },
       { href: '/blog', label: 'Blog de Decoração' },
       { href: '/contato', label: 'Contato & Propostas' },
     ],

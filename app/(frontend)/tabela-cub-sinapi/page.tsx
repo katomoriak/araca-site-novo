@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     absolute: 'Tabelas CUB e SINAPI de Reformas SP | Aracá Interiores',
   },
   description:
-    'Tabela CUB e SINAPI da construção civil e reforma em SP. Compare custos de materiais e mão de obra com Aracá Interiores!',
+    'Tabelas CUB e SINAPI atualizadas da construção civil e reformas em SP. Compare índices de custos e mão de obra com a Aracá Interiores.',
   keywords: [
     'tabela cub sp',
     'tabela sinapi sao paulo',

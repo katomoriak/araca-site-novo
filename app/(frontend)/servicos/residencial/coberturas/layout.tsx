@@ -5,17 +5,17 @@ const canonical = `${baseUrl}/servicos/residencial/coberturas`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Design de Interiores para Coberturas e Penthouses | Aracá Interiores',
+    absolute: 'Design de Coberturas e Penthouses | Aracá Interiores',
   },
   description:
-    'Projetos exclusivos para coberturas duplex e penthouses em SP e ABC. Áreas externas com piscina privativa, espaço gourmet e livings integrados.',
+    'Projetos para coberturas e penthouses em SP e ABC. Áreas externas com lazer privativo, espaço gourmet e livings integrados exclusivos.',
   alternates: {
     canonical,
   },
   openGraph: {
-    title: 'Design de Interiores para Coberturas e Penthouses | Aracá Interiores',
+    title: 'Design de Coberturas e Penthouses | Aracá Interiores',
     description:
-      'Projetos exclusivos para coberturas duplex e penthouses em SP e ABC. Áreas externas com piscina privativa, espaço gourmet e livings integrados.',
+      'Projetos para coberturas e penthouses em SP e ABC. Áreas externas com lazer privativo, espaço gourmet e livings integrados exclusivos.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

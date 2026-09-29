@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat, Calculator, Compass } from 'lucide-react'
+import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat, Calculator, Compass, Sparkles } from 'lucide-react'
 import { Container } from './Container'
 import { cn } from '@/lib/utils'
 import { useGalleryOpen } from '@/components/context/GalleryOpenContext'
@@ -68,6 +68,57 @@ export const COMERCIAL_SUBITEMS = [
   },
 ]
 
+export const PROJETOS_NAV_ITEMS = [
+  {
+    slug: 'resindencia_feijo',
+    href: '/projetos/resindencia_feijo',
+    title: 'Residência Feijó',
+    location: 'Jardim São Caetano • 460 m²',
+    tag: 'Contemporâneo',
+    desc: 'Arquitetura contemporânea de alto padrão com integração total',
+  },
+  {
+    slug: 'apto_elysee',
+    href: '/projetos/apto_elysee',
+    title: 'Apto. Elysée',
+    location: 'Bairro Jardim, Santo André • 210 m²',
+    tag: 'Neoclássico',
+    desc: 'Design de interiores clássico e boiseries contemporâneas nobres',
+  },
+  {
+    slug: 'veraneio-ninho-verde',
+    href: '/projetos/veraneio-ninho-verde',
+    title: 'Veraneio Ninho Verde',
+    location: 'Ninho Verde II, Pardinho • 230 m²',
+    tag: 'Casa de Campo',
+    desc: 'Refúgio de campo com integração e espaço de lazer biofílico',
+  },
+  {
+    slug: 'casa-alinho',
+    href: '/projetos/casa-alinho',
+    title: 'Casa Alinho',
+    location: 'Parque João Ramalho, Santo André • 150 m²',
+    tag: 'Pet-Friendly',
+    desc: 'Gatificação arquitetônica e design afetivo para toda a família',
+  },
+  {
+    slug: 'cozinha_oxala',
+    href: '/projetos/cozinha_oxala',
+    title: 'Cozinha Oxalá',
+    location: 'São Paulo • 28 m²',
+    tag: 'Rústico Nobre',
+    desc: 'Ladrilho português, marcenaria acolhedora e ilha central',
+  },
+  {
+    slug: 'projetoaptoblack',
+    href: '/projetos/projetoaptoblack',
+    title: 'Projeto Apto. Black',
+    location: 'Brooklin, São Paulo • 82 m²',
+    tag: 'Contemporâneo',
+    desc: 'Estética escura intimista com iluminação cenográfica refinada',
+  },
+]
+
 const DEFAULT_LINKS: SiteNavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/sobre', label: 'Sobre nós' },
@@ -82,7 +133,14 @@ const DEFAULT_LINKS: SiteNavLink[] = [
       { href: '/quanto-custa-reformar', label: 'Calculadora: Custo de Reforma' },
     ],
   },
-  { href: '/projetos', label: 'Projetos' },
+  {
+    href: '/projetos',
+    label: 'Projetos',
+    children: PROJETOS_NAV_ITEMS.map((p) => ({
+      href: p.href,
+      label: p.title,
+    })),
+  },
   { href: '/contato', label: 'Contato' },
   { href: '/blog', label: 'Blog' },
 ]
@@ -284,203 +342,309 @@ export function SiteNav({
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.97 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute left-1/2 top-full mt-2 w-[580px] lg:w-[620px] -translate-x-1/2 overflow-hidden rounded-2xl shadow-2xl z-50 text-left"
+                            className={cn(
+                              "absolute left-1/2 top-full mt-2 -translate-x-1/2 overflow-hidden rounded-2xl shadow-2xl z-50 text-left",
+                              link.label === 'Projetos' ? 'w-[640px] lg:w-[700px]' : 'w-[580px] lg:w-[620px]'
+                            )}
                             style={dropStyle}
                           >
-                            <div className="grid grid-cols-2 gap-5 p-4 sm:p-5">
-                              {/* Coluna 1: Residencial */}
-                              <div className="flex flex-col justify-between">
-                                <div>
-                                  <Link
-                                    href="/servicos/residencial"
-                                    onClick={() => setActiveDropdown(null)}
-                                    className={cn(
-                                      'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
-                                      isDark
-                                        ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
-                                        : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
-                                    )}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Home className="h-4 w-4" />
-                                      <span className="text-xs font-bold uppercase tracking-wider">Projetos Residenciais</span>
-                                    </div>
-                                    <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                                  </Link>
-
-                                  <div className="space-y-1">
-                                    {RESIDENCIAL_SUBITEMS.map((item) => (
+                            {link.label === 'Serviços' && (
+                              <>
+                                <div className="grid grid-cols-2 gap-5 p-4 sm:p-5">
+                                  {/* Coluna 1: Residencial */}
+                                  <div className="flex flex-col justify-between">
+                                    <div>
                                       <Link
-                                        key={item.href}
-                                        href={item.href}
+                                        href="/servicos/residencial"
                                         onClick={() => setActiveDropdown(null)}
                                         className={cn(
-                                          'group block rounded-xl px-3 py-2 transition-all',
+                                          'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
                                           isDark
-                                            ? 'hover:bg-white/10 text-white'
-                                            : 'hover:bg-black/5 text-neutral-900',
-                                          pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
+                                            ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
+                                            : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
                                         )}
                                       >
-                                        <div className={cn(
-                                          'text-[13.5px] font-medium transition-colors',
-                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
-                                        )}>
-                                          {item.title}
+                                        <div className="flex items-center gap-2">
+                                          <Home className="h-4 w-4" />
+                                          <span className="text-xs font-bold uppercase tracking-wider">Projetos Residenciais</span>
                                         </div>
-                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-                                          {item.desc}
-                                        </div>
+                                        <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                                       </Link>
-                                    ))}
+
+                                      <div className="space-y-1">
+                                        {RESIDENCIAL_SUBITEMS.map((item) => (
+                                          <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setActiveDropdown(null)}
+                                            className={cn(
+                                              'group block rounded-xl px-3 py-2 transition-all',
+                                              isDark
+                                                ? 'hover:bg-white/10 text-white'
+                                                : 'hover:bg-black/5 text-neutral-900',
+                                              pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
+                                            )}
+                                          >
+                                            <div className={cn(
+                                              'text-[13.5px] font-medium transition-colors',
+                                              isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                            )}>
+                                              {item.title}
+                                            </div>
+                                            <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                              {item.desc}
+                                            </div>
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Coluna 2: Comercial & Obras */}
+                                  <div className="flex flex-col justify-between">
+                                    <div>
+                                      <Link
+                                        href="/servicos/comercial-corporativo"
+                                        onClick={() => setActiveDropdown(null)}
+                                        className={cn(
+                                          'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
+                                          isDark
+                                            ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
+                                            : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
+                                        )}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Briefcase className="h-4 w-4" />
+                                          <span className="text-xs font-bold uppercase tracking-wider">Comercial & Corporativo</span>
+                                        </div>
+                                        <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                                      </Link>
+
+                                      <div className="space-y-1">
+                                        {COMERCIAL_SUBITEMS.map((item) => (
+                                          <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setActiveDropdown(null)}
+                                            className={cn(
+                                              'group block rounded-xl px-3 py-2 transition-all',
+                                              isDark
+                                                ? 'hover:bg-white/10 text-white'
+                                                : 'hover:bg-black/5 text-neutral-900',
+                                              pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
+                                            )}
+                                          >
+                                            <div className={cn(
+                                              'text-[13.5px] font-medium transition-colors',
+                                              isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                            )}>
+                                              {item.title}
+                                            </div>
+                                            <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                              {item.desc}
+                                            </div>
+                                          </Link>
+                                        ))}
+                                      </div>
+
+                                      {/* Card Gestão de Obras */}
+                                      <div className="mt-2.5 pt-2.5 border-t border-white/10">
+                                        <Link
+                                          href="/servicos/gestao-acompanhamento-de-obra"
+                                          onClick={() => setActiveDropdown(null)}
+                                          className={cn(
+                                            'group flex items-start gap-2.5 rounded-xl p-2.5 transition-all',
+                                            isDark
+                                              ? 'bg-white/5 hover:bg-white/10 text-white'
+                                              : 'bg-black/5 hover:bg-black/10 text-neutral-900',
+                                            pathname === '/servicos/gestao-acompanhamento-de-obra' && (isDark ? 'bg-white/20' : 'bg-black/10')
+                                          )}
+                                        >
+                                          <div className="h-7 w-7 rounded-lg bg-araca-mineral-green/20 flex items-center justify-center shrink-0 text-araca-mineral-green mt-0.5">
+                                            <HardHat className="h-3.5 w-3.5" />
+                                          </div>
+                                          <div>
+                                            <div className={cn(
+                                              'text-xs font-semibold transition-colors',
+                                              isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                            )}>
+                                              Gestão de Obras de Interiores
+                                            </div>
+                                            <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                              Acompanhamento técnico presencial
+                                            </div>
+                                          </div>
+                                        </Link>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              {/* Coluna 2: Comercial & Obras */}
-                              <div className="flex flex-col justify-between">
-                                <div>
-                                  <Link
-                                    href="/servicos/comercial-corporativo"
-                                    onClick={() => setActiveDropdown(null)}
-                                    className={cn(
-                                      'group flex items-center justify-between pb-2.5 mb-2.5 border-b transition-colors',
-                                      isDark
-                                        ? 'border-white/10 text-araca-dourado-ocre hover:text-white'
-                                        : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
-                                    )}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      <Briefcase className="h-4 w-4" />
-                                      <span className="text-xs font-bold uppercase tracking-wider">Comercial & Corporativo</span>
+                                {/* Seção Destaque: Simuladores de Custo & Projeto */}
+                                <div className={cn(
+                                  'mx-4 sm:mx-5 mb-3 p-3 rounded-2xl border transition-all flex flex-col sm:flex-row items-center justify-between gap-3',
+                                  isDark ? 'bg-white/10 border-white/15' : 'bg-[var(--araca-mineral-green)]/10 border-[var(--araca-mineral-green)]/30'
+                                )}>
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="h-8 w-8 rounded-xl bg-[var(--araca-mineral-green)] text-white flex items-center justify-center shrink-0 shadow-xs">
+                                      <Calculator className="h-4 w-4" />
                                     </div>
-                                    <ArrowRight className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                                  </Link>
-
-                                  <div className="space-y-1">
-                                    {COMERCIAL_SUBITEMS.map((item) => (
-                                      <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setActiveDropdown(null)}
-                                        className={cn(
-                                          'group block rounded-xl px-3 py-2 transition-all',
-                                          isDark
-                                            ? 'hover:bg-white/10 text-white'
-                                            : 'hover:bg-black/5 text-neutral-900',
-                                          pathname === item.href && (isDark ? 'bg-white/15' : 'bg-black/5')
-                                        )}
-                                      >
-                                        <div className={cn(
-                                          'text-[13.5px] font-medium transition-colors',
-                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
-                                        )}>
-                                          {item.title}
-                                        </div>
-                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-                                          {item.desc}
-                                        </div>
-                                      </Link>
-                                    ))}
+                                    <div>
+                                      <div className={cn('text-xs font-bold', isDark ? 'text-white' : 'text-[var(--araca-cafe-escuro)]')}>
+                                        Simuladores & Estimativas de Custo
+                                      </div>
+                                      <div className={cn('text-[11px]', isDark ? 'text-neutral-300' : 'text-[var(--araca-chocolate-amargo)]/75')}>
+                                        Estime valores de projeto e obra em tempo real
+                                      </div>
+                                    </div>
                                   </div>
 
-                                  {/* Card Gestão de Obras */}
-                                  <div className="mt-2.5 pt-2.5 border-t border-white/10">
+                                  <div className="flex items-center gap-2 shrink-0">
                                     <Link
-                                      href="/servicos/gestao-acompanhamento-de-obra"
+                                      href="/calculadora-custo-projeto-design-interiores"
                                       onClick={() => setActiveDropdown(null)}
-                                      className={cn(
-                                        'group flex items-start gap-2.5 rounded-xl p-2.5 transition-all',
-                                        isDark
-                                          ? 'bg-white/5 hover:bg-white/10 text-white'
-                                          : 'bg-black/5 hover:bg-black/10 text-neutral-900',
-                                        pathname === '/servicos/gestao-acompanhamento-de-obra' && (isDark ? 'bg-white/20' : 'bg-black/10')
-                                      )}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[var(--araca-cafe-escuro)] hover:bg-[var(--araca-bege-claro)] border border-[var(--araca-bege-medio)] shadow-2xs transition-all"
                                     >
-                                      <div className="h-7 w-7 rounded-lg bg-araca-mineral-green/20 flex items-center justify-center shrink-0 text-araca-mineral-green mt-0.5">
-                                        <HardHat className="h-3.5 w-3.5" />
-                                      </div>
-                                      <div>
-                                        <div className={cn(
-                                          'text-xs font-semibold transition-colors',
-                                          isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
-                                        )}>
-                                          Gestão de Obras de Interiores
-                                        </div>
-                                        <div className={cn('text-[11px] leading-snug mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-                                          Acompanhamento técnico presencial
-                                        </div>
-                                      </div>
+                                      Projeto de Interiores
+                                    </Link>
+                                    <Link
+                                      href="/quanto-custa-reformar"
+                                      onClick={() => setActiveDropdown(null)}
+                                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--araca-mineral-green)] text-white hover:bg-[var(--araca-mineral-green-hover)] shadow-xs transition-all"
+                                    >
+                                      Reforma & Obra
                                     </Link>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
 
-                            {/* Seção Destaque: Simuladores de Custo & Projeto */}
-                            <div className={cn(
-                              'mx-4 sm:mx-5 mb-3 p-3 rounded-2xl border transition-all flex flex-col sm:flex-row items-center justify-between gap-3',
-                              isDark ? 'bg-white/10 border-white/15' : 'bg-[var(--araca-mineral-green)]/10 border-[var(--araca-mineral-green)]/30'
-                            )}>
-                              <div className="flex items-center gap-2.5">
-                                <div className="h-8 w-8 rounded-xl bg-[var(--araca-mineral-green)] text-white flex items-center justify-center shrink-0 shadow-xs">
-                                  <Calculator className="h-4 w-4" />
+                                {/* Rodapé do Menu Serviços */}
+                                <div className={cn(
+                                  'px-5 py-2.5 border-t flex items-center justify-between text-xs',
+                                  isDark ? 'border-white/10 bg-white/5 text-neutral-400' : 'border-black/5 bg-black/5 text-neutral-600'
+                                )}>
+                                  <Link
+                                    href="/tabela-cub-sinapi"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'hover:underline flex items-center gap-1 font-medium text-[11px]',
+                                      isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-neutral-950'
+                                    )}
+                                  >
+                                    <span>Tabelas CUB / SINAPI</span>
+                                    <ArrowRight className="h-3 w-3 opacity-60" />
+                                  </Link>
+                                  <Link
+                                    href="/servicos"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'font-semibold flex items-center gap-1 transition-colors hover:underline',
+                                      isDark ? 'text-araca-dourado-ocre' : 'text-araca-mineral-green'
+                                    )}
+                                  >
+                                    Conhecer todos os serviços <ArrowRight className="h-3 w-3" />
+                                  </Link>
                                 </div>
-                                <div>
-                                  <div className={cn('text-xs font-bold', isDark ? 'text-white' : 'text-[var(--araca-cafe-escuro)]')}>
-                                    Simuladores & Estimativas de Custo
+                              </>
+                            )}
+
+                            {link.label === 'Projetos' && (
+                              <div>
+                                {/* Cabeçalho do Dropdown de Projetos */}
+                                <div className={cn(
+                                  'px-5 py-3 border-b flex items-center justify-between',
+                                  isDark ? 'border-white/10 bg-white/5' : 'border-black/5 bg-black/5'
+                                )}>
+                                  <div className="flex items-center gap-2">
+                                    <Sparkles className="h-4 w-4 text-araca-laranja-queimado" />
+                                    <span className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                      Projetos Autorais em Destaque
+                                    </span>
                                   </div>
-                                  <div className={cn('text-[11px]', isDark ? 'text-neutral-300' : 'text-[var(--araca-chocolate-amargo)]/75')}>
-                                    Estime valores de projeto e obra em tempo real
-                                  </div>
+                                  <Link
+                                    href="/projetos"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'text-xs font-semibold flex items-center gap-1 transition-colors hover:underline',
+                                      isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-neutral-950'
+                                    )}
+                                  >
+                                    <span>Ver galeria completa</span>
+                                    <ArrowRight className="h-3 w-3" />
+                                  </Link>
+                                </div>
+
+                                {/* Grid com os 6 Projetos */}
+                                <div className="grid grid-cols-2 gap-3 p-4 sm:p-5">
+                                  {PROJETOS_NAV_ITEMS.map((item) => (
+                                    <Link
+                                      key={item.href}
+                                      href={item.href}
+                                      onClick={() => setActiveDropdown(null)}
+                                      className={cn(
+                                        'group flex flex-col justify-between rounded-xl p-3 border transition-all duration-200',
+                                        isDark
+                                          ? 'border-white/10 bg-white/[0.03] hover:bg-white/10 hover:border-araca-dourado-ocre/40 text-white'
+                                          : 'border-black/5 bg-black/[0.02] hover:bg-black/5 hover:border-araca-mineral-green/40 text-neutral-900',
+                                        pathname === item.href && (isDark ? 'bg-white/15 border-araca-dourado-ocre' : 'bg-black/10 border-araca-mineral-green')
+                                      )}
+                                    >
+                                      <div>
+                                        <div className="flex items-start justify-between gap-2">
+                                          <h4 className={cn(
+                                            'text-[13.5px] font-semibold transition-colors',
+                                            isDark ? 'group-hover:text-araca-dourado-ocre text-white' : 'group-hover:text-araca-mineral-green text-neutral-900'
+                                          )}>
+                                            {item.title}
+                                          </h4>
+                                          <span className={cn(
+                                            'text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0',
+                                            item.tag === 'Em Execução'
+                                              ? (isDark ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-amber-100 text-amber-900 border border-amber-200')
+                                              : (isDark ? 'bg-white/10 text-neutral-300' : 'bg-black/5 text-neutral-700')
+                                          )}>
+                                            {item.tag}
+                                          </span>
+                                        </div>
+                                        <div className={cn('text-[11px] font-medium mt-0.5', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                          {item.location}
+                                        </div>
+                                        <p className={cn('text-[11px] leading-snug mt-1.5 line-clamp-1', isDark ? 'text-neutral-300/80' : 'text-neutral-600')}>
+                                          {item.desc}
+                                        </p>
+                                      </div>
+
+                                      <div className={cn(
+                                        'mt-3 pt-2 border-t flex items-center justify-between text-[11px] font-semibold transition-colors',
+                                        isDark ? 'border-white/10 text-neutral-400 group-hover:text-araca-dourado-ocre' : 'border-black/5 text-neutral-500 group-hover:text-araca-mineral-green'
+                                      )}>
+                                        <span>Página dedicada</span>
+                                        <ArrowRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-1" />
+                                      </div>
+                                    </Link>
+                                  ))}
+                                </div>
+
+                                {/* Rodapé do Menu de Projetos */}
+                                <div className={cn(
+                                  'px-5 py-2.5 border-t flex items-center justify-between text-xs',
+                                  isDark ? 'border-white/10 bg-white/5 text-neutral-400' : 'border-black/5 bg-black/5 text-neutral-600'
+                                )}>
+                                  <span className="text-[11px]">
+                                    Arquitetura autoral, interiores de alto padrão e gestão de obras
+                                  </span>
+                                  <Link
+                                    href="/projetos"
+                                    onClick={() => setActiveDropdown(null)}
+                                    className={cn(
+                                      'font-semibold flex items-center gap-1 transition-colors hover:underline',
+                                      isDark ? 'text-araca-dourado-ocre' : 'text-araca-mineral-green'
+                                    )}
+                                  >
+                                    Ver todos os 6 projetos <ArrowRight className="h-3 w-3" />
+                                  </Link>
                                 </div>
                               </div>
-
-                              <div className="flex items-center gap-2 shrink-0">
-                                <Link
-                                  href="/calculadora-custo-projeto-design-interiores"
-                                  onClick={() => setActiveDropdown(null)}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-[var(--araca-cafe-escuro)] hover:bg-[var(--araca-bege-claro)] border border-[var(--araca-bege-medio)] shadow-2xs transition-all"
-                                >
-                                  Projeto de Interiores
-                                </Link>
-                                <Link
-                                  href="/quanto-custa-reformar"
-                                  onClick={() => setActiveDropdown(null)}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--araca-mineral-green)] text-white hover:bg-[var(--araca-mineral-green-hover)] shadow-xs transition-all"
-                                >
-                                  Reforma & Obra
-                                </Link>
-                              </div>
-                            </div>
-
-                            {/* Rodapé do Menu */}
-                            <div className={cn(
-                              'px-5 py-2.5 border-t flex items-center justify-between text-xs',
-                              isDark ? 'border-white/10 bg-white/5 text-neutral-400' : 'border-black/5 bg-black/5 text-neutral-600'
-                            )}>
-                              <Link
-                                href="/tabela-cub-sinapi"
-                                onClick={() => setActiveDropdown(null)}
-                                className={cn(
-                                  'hover:underline flex items-center gap-1 font-medium text-[11px]',
-                                  isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-neutral-950'
-                                )}
-                              >
-                                <span>Tabelas CUB / SINAPI</span>
-                                <ArrowRight className="h-3 w-3 opacity-60" />
-                              </Link>
-                              <Link
-                                href="/servicos"
-                                onClick={() => setActiveDropdown(null)}
-                                className={cn(
-                                  'font-semibold flex items-center gap-1 transition-colors hover:underline',
-                                  isDark ? 'text-araca-dourado-ocre' : 'text-araca-mineral-green'
-                                )}
-                              >
-                                Conhecer todos os serviços <ArrowRight className="h-3 w-3" />
-                              </Link>
-                            </div>
+                            )}
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -671,134 +835,194 @@ export function SiteNav({
                                       : 'bg-neutral-100/90 border border-neutral-300'
                                   )}
                                 >
-                                  {/* Bloco Residencial */}
-                                  <div>
-                                    <Link
-                                      href="/servicos/residencial"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
-                                        isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
-                                      )}
-                                    >
-                                      <Home className="h-3.5 w-3.5" />
-                                      <span>Projetos Residenciais</span>
-                                    </Link>
-                                    <div className="pl-5 space-y-2 border-l-2 border-white/15">
-                                      {RESIDENCIAL_SUBITEMS.map((item) => (
+                                  {link.label === 'Serviços' && (
+                                    <>
+                                      {/* Bloco Residencial */}
+                                      <div>
                                         <Link
-                                          key={item.href}
-                                          href={item.href}
+                                          href="/servicos/residencial"
                                           onClick={() => setMobileOpen(false)}
                                           className={cn(
-                                            'block text-sm py-0.5 transition-colors font-medium',
-                                            isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                            'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
+                                            isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
                                           )}
                                         >
-                                          {item.title}
+                                          <Home className="h-3.5 w-3.5" />
+                                          <span>Projetos Residenciais</span>
                                         </Link>
-                                      ))}
-                                    </div>
-                                  </div>
+                                        <div className="pl-5 space-y-2 border-l-2 border-white/15">
+                                          {RESIDENCIAL_SUBITEMS.map((item) => (
+                                            <Link
+                                              key={item.href}
+                                              href={item.href}
+                                              onClick={() => setMobileOpen(false)}
+                                              className={cn(
+                                                'block text-sm py-0.5 transition-colors font-medium',
+                                                isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                              )}
+                                            >
+                                              {item.title}
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      </div>
 
-                                  {/* Bloco Comercial */}
-                                  <div>
-                                    <Link
-                                      href="/servicos/comercial-corporativo"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
-                                        isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
-                                      )}
-                                    >
-                                      <Briefcase className="h-3.5 w-3.5" />
-                                      <span>Comercial & Corporativo</span>
-                                    </Link>
-                                    <div className="pl-5 space-y-2 border-l-2 border-white/15">
-                                      {COMERCIAL_SUBITEMS.map((item) => (
+                                      {/* Bloco Comercial */}
+                                      <div>
                                         <Link
-                                          key={item.href}
-                                          href={item.href}
+                                          href="/servicos/comercial-corporativo"
                                           onClick={() => setMobileOpen(false)}
                                           className={cn(
-                                            'block text-sm py-0.5 transition-colors font-medium',
-                                            isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                            'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
+                                            isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
                                           )}
                                         >
-                                          {item.title}
+                                          <Briefcase className="h-3.5 w-3.5" />
+                                          <span>Comercial & Corporativo</span>
                                         </Link>
-                                      ))}
+                                        <div className="pl-5 space-y-2 border-l-2 border-white/15">
+                                          {COMERCIAL_SUBITEMS.map((item) => (
+                                            <Link
+                                              key={item.href}
+                                              href={item.href}
+                                              onClick={() => setMobileOpen(false)}
+                                              className={cn(
+                                                'block text-sm py-0.5 transition-colors font-medium',
+                                                isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
+                                              )}
+                                            >
+                                              {item.title}
+                                            </Link>
+                                          ))}
+                                        </div>
+                                      </div>
+
+                                      {/* Bloco Gestão de Obra */}
+                                      <div className="pt-2.5 border-t border-white/10">
+                                        <Link
+                                          href="/servicos/gestao-acompanhamento-de-obra"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'flex items-center gap-2 text-sm font-semibold py-1',
+                                            isDark ? 'text-white hover:text-araca-dourado-ocre' : 'text-neutral-900 hover:text-araca-mineral-green'
+                                          )}
+                                        >
+                                          <HardHat className="h-4 w-4 text-araca-mineral-green" />
+                                          <span>Gestão de Obras de Interiores</span>
+                                        </Link>
+                                      </div>
+
+                                      {/* Bloco Simuladores */}
+                                      <div className="pt-2.5 border-t border-white/10 space-y-1.5">
+                                        <div className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                          Simuladores & Estimativas
+                                        </div>
+                                        <Link
+                                          href="/calculadora-custo-projeto-design-interiores"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                          )}
+                                        >
+                                          <span>Calculadora de Projeto</span>
+                                          <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                        <Link
+                                          href="/quanto-custa-reformar"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                          )}
+                                        >
+                                          <span>Calculadora de Reforma</span>
+                                          <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                        <Link
+                                          href="/tabela-cub-sinapi"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
+                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                          )}
+                                        >
+                                          <span>Tabelas CUB / SINAPI</span>
+                                          <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                      </div>
+
+                                      {/* Link Geral */}
+                                      <div className="pt-2 border-t border-white/10 text-center">
+                                        <Link
+                                          href="/servicos"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'inline-flex items-center gap-1 text-xs font-semibold py-1',
+                                            isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
+                                          )}
+                                        >
+                                          Ver Todos os Serviços <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                      </div>
+                                    </>
+                                  )}
+
+                                  {link.label === 'Projetos' && (
+                                    <div className="space-y-3">
+                                      <div className="flex items-center justify-between border-b border-white/15 pb-2">
+                                        <span className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                          Projetos Autorais
+                                        </span>
+                                        <span className={cn('text-[10px] font-medium opacity-70', isDark ? 'text-neutral-300' : 'text-neutral-600')}>6 projetos</span>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        {PROJETOS_NAV_ITEMS.map((item) => (
+                                          <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className={cn(
+                                              'block rounded-xl p-2.5 transition-all text-left',
+                                              isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-black/5 hover:bg-black/10',
+                                              pathname === item.href && (isDark ? 'bg-white/20' : 'bg-black/10')
+                                            )}
+                                          >
+                                            <div className="flex items-center justify-between gap-2">
+                                              <span className={cn('text-sm font-semibold', isDark ? 'text-white' : 'text-neutral-900')}>
+                                                {item.title}
+                                              </span>
+                                              <span className={cn(
+                                                'text-[9px] px-1.5 py-0.5 rounded-full font-medium shrink-0',
+                                                item.tag === 'Em Execução'
+                                                  ? 'bg-amber-500/20 text-amber-300'
+                                                  : isDark ? 'bg-white/10 text-neutral-300' : 'bg-neutral-200 text-neutral-700'
+                                              )}>
+                                                {item.tag}
+                                              </span>
+                                            </div>
+                                            <div className={cn('text-[11px] mt-0.5 font-medium', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                              {item.location}
+                                            </div>
+                                          </Link>
+                                        ))}
+                                      </div>
+
+                                      <div className="pt-2 border-t border-white/10 text-center">
+                                        <Link
+                                          href="/projetos"
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'inline-flex items-center gap-1 text-xs font-semibold py-1',
+                                            isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
+                                          )}
+                                        >
+                                          Ver Galeria Completa <ArrowRight className="h-3 w-3" />
+                                        </Link>
+                                      </div>
                                     </div>
-                                  </div>
-
-                                  {/* Bloco Gestão de Obra */}
-                                  <div className="pt-2.5 border-t border-white/10">
-                                    <Link
-                                      href="/servicos/gestao-acompanhamento-de-obra"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center gap-2 text-sm font-semibold py-1',
-                                        isDark ? 'text-white hover:text-araca-dourado-ocre' : 'text-neutral-900 hover:text-araca-mineral-green'
-                                      )}
-                                    >
-                                      <HardHat className="h-4 w-4 text-araca-mineral-green" />
-                                      <span>Gestão de Obras de Interiores</span>
-                                    </Link>
-                                  </div>
-
-                                  {/* Bloco Simuladores */}
-                                  <div className="pt-2.5 border-t border-white/10 space-y-1.5">
-                                    <div className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
-                                      Simuladores & Estimativas
-                                    </div>
-                                    <Link
-                                      href="/calculadora-custo-projeto-design-interiores"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
-                                      )}
-                                    >
-                                      <span>Calculadora de Projeto</span>
-                                      <ArrowRight className="h-3 w-3" />
-                                    </Link>
-                                    <Link
-                                      href="/quanto-custa-reformar"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
-                                      )}
-                                    >
-                                      <span>Calculadora de Reforma</span>
-                                      <ArrowRight className="h-3 w-3" />
-                                    </Link>
-                                    <Link
-                                      href="/tabela-cub-sinapi"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                        isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
-                                      )}
-                                    >
-                                      <span>Tabelas CUB / SINAPI</span>
-                                      <ArrowRight className="h-3 w-3" />
-                                    </Link>
-                                  </div>
-
-                                  {/* Link Geral */}
-                                  <div className="pt-2 border-t border-white/10 text-center">
-                                    <Link
-                                      href="/servicos"
-                                      onClick={() => setMobileOpen(false)}
-                                      className={cn(
-                                        'inline-flex items-center gap-1 text-xs font-semibold py-1',
-                                        isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
-                                      )}
-                                    >
-                                      Ver Todos os Serviços <ArrowRight className="h-3 w-3" />
-                                    </Link>
-                                  </div>
+                                  )}
                                 </motion.div>
                               )}
                             </AnimatePresence>

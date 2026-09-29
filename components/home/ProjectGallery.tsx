@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, Play } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Play, ArrowRight } from 'lucide-react'
 import { ProgressiveImage } from '@/components/ui'
 import { getBlurPlaceholderUrl } from '@/lib/transform-content-images'
 
@@ -251,7 +252,7 @@ export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGa
           onClick={(e) => e.stopPropagation()}
         >
           {/* Cabeçalho */}
-          <div className="mb-6 flex items-start justify-between">
+          <div className="mb-6 flex items-start justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl font-bold text-araca-creme sm:text-4xl">
                 {project.title}
@@ -260,13 +261,25 @@ export function ProjectGallery({ project, onClose, initialIndex = 0 }: ProjectGa
                 {project.description}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-araca-bege-claro backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-110"
-              aria-label="Fechar galeria"
-            >
-              <X className="h-6 w-6" />
-            </button>
+            <div className="flex items-center gap-3 shrink-0">
+              {project.id && (
+                <Link
+                  href={`/projetos/${project.id}`}
+                  onClick={onClose}
+                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-medium text-white backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-105"
+                >
+                  <span>Ver página do projeto</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              )}
+              <button
+                onClick={onClose}
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-araca-bege-claro backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:scale-110"
+                aria-label="Fechar galeria"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
           </div>
 
           {/* Área da Imagem Principal */}

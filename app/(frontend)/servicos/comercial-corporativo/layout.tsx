@@ -5,17 +5,17 @@ const canonical = `${baseUrl}/servicos/comercial-corporativo`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Design de Interiores Comercial | Aracá Interiores',
+    absolute: 'Design de Interiores Comercial e Corporativo | Aracá',
   },
   description:
-    'Projetos de interiores para escritórios, clínicas e lojas no ABC e SP. Espaços corporativos que valorizam a sua marca.',
+    'Projetos de interiores para escritórios, clínicas e lojas no ABC e SP. Ambientes corporativos modernos que valorizam a sua marca.',
   alternates: {
     canonical,
   },
   openGraph: {
-    title: 'Design de Interiores Comercial | Aracá Interiores',
+    title: 'Design de Interiores Comercial e Corporativo | Aracá',
     description:
-      'Projetos de interiores para escritórios, clínicas e lojas no ABC e SP. Espaços corporativos que valorizam a sua marca.',
+      'Projetos de interiores para escritórios, clínicas e lojas no ABC e SP. Ambientes corporativos modernos que valorizam a sua marca.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

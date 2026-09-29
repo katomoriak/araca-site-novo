@@ -5,17 +5,17 @@ const canonical = `${baseUrl}/servicos/residencial/casas`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Design de Interiores para Casas no ABC e SP | Aracá Interiores',
+    absolute: 'Design de Interiores para Casas em SP | Aracá Interiores',
   },
   description:
-    'Projetos de interiores para casas e sobrados de alto padrão em SP e Grande ABC. Ambientes integrados, espaço gourmet, suítes e marcenaria sob medida.',
+    'Projetos de interiores para casas de alto padrão em SP e Grande ABC. Ambientes integrados, marcenaria autoral e espaços acolhedores.',
   alternates: {
     canonical,
   },
   openGraph: {
-    title: 'Design de Interiores para Casas no ABC e SP | Aracá Interiores',
+    title: 'Design de Interiores para Casas em SP | Aracá Interiores',
     description:
-      'Projetos de interiores para casas e sobrados de alto padrão em SP e Grande ABC. Ambientes integrados, espaço gourmet, suítes e marcenaria sob medida.',
+      'Projetos de interiores para casas de alto padrão em SP e Grande ABC. Ambientes integrados, marcenaria autoral e espaços acolhedores.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

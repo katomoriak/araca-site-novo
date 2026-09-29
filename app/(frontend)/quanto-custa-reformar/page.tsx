@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     absolute: 'Quanto Custa Reformar? Simule Agora | Aracá Interiores',
   },
   description:
-    'Descubra quanto custa fazer reforma em São Paulo e no ABC. Simule custos por m² ou cômodos com a Aracá Interiores online!',
+    'Descubra quanto custa a reforma do seu imóvel em SP e no ABC. Simule custos por metro quadrado e cômodos com a Aracá Interiores.',
   keywords: [
     'quanto custa fazer uma reforma',
     'quanto custa reformar',

@@ -7,7 +7,7 @@ export const metadata = {
     absolute: 'Sobre a Aracá | Design de Interiores no Grande ABC e SP',
   },
   description:
-    'Conheça a Aracá: estúdio de design de interiores no Grande ABC e São Paulo focado em afeto, história e bem-viver.',
+    'Conheça a Aracá: estúdio de design de interiores no Grande ABC e São Paulo focado em afeto, funcionalidade e espaços que acolhem a vida.',
   alternates: {
     canonical: `${baseUrl}/sobre`,
   },

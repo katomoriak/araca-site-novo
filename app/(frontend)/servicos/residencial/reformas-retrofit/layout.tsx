@@ -5,17 +5,17 @@ const canonical = `${baseUrl}/servicos/residencial/reformas-retrofit`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Reforma e Retrofit de Interiores Residencial | Aracá Interiores',
+    absolute: 'Reforma e Retrofit de Interiores | Aracá Interiores',
   },
   description:
-    'Projetos de reforma completa e retrofit para casas e apartamentos no ABC e SP. Modernização estrutural, acabamentos nobres e gestão sem imprevistos.',
+    'Reforma e retrofit residencial para casas e apartamentos no ABC e SP. Modernização técnica, acabamentos nobres e obra sem surpresas.',
   alternates: {
     canonical,
   },
   openGraph: {
-    title: 'Reforma e Retrofit de Interiores Residencial | Aracá Interiores',
+    title: 'Reforma e Retrofit de Interiores | Aracá Interiores',
     description:
-      'Projetos de reforma completa e retrofit para casas e apartamentos no ABC e SP. Modernização estrutural, acabamentos nobres e gestão sem imprevistos.',
+      'Reforma e retrofit residencial para casas e apartamentos no ABC e SP. Modernização técnica, acabamentos nobres e obra sem surpresas.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

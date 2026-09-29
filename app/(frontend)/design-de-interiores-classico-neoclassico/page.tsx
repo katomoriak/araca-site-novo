@@ -6,10 +6,10 @@ const canonical = `${baseUrl}/design-de-interiores-classico-neoclassico`
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Design de Interiores Clássico e Neoclássico | Aracá Interiores',
+    absolute: 'Design Clássico e Neoclássico em SP | Aracá Interiores',
   },
   description:
-    'Especialistas em design de interiores clássico e neoclássico contemporâneo em SP.',
+    'Interiores no estilo clássico e neoclássico contemporâneo em SP e ABC. Boiseries, molduras nobres e projetos sofisticados sob medida.',
   keywords: [
     'design de interiores classico',
     'interiores neoclassico',

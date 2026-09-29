@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     absolute: 'Quanto Custa Projeto de Interiores? | Aracá Interiores',
   },
   description:
-    'Descubra quanto custa o projeto de interiores e reforma em São Paulo e no ABC. Simule estimativas com a Aracá Interiores!',
+    'Descubra quanto custa um projeto de interiores completo em São Paulo e no ABC. Simule valores por m² online com a Aracá Interiores.',
   keywords: [
     'quanto custa um projeto de interiores',
     'quanto custa uma obra de interiores',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Quanto Custa Projeto de Interiores? | Aracá Interiores',
     description:
-      'Descubra quanto custa o projeto de interiores e reforma em São Paulo e no ABC. Simule estimativas com a Aracá Interiores!',
+      'Descubra quanto custa um projeto de interiores completo em São Paulo e no ABC. Simule valores por m² online com a Aracá Interiores.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',

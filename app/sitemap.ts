@@ -3,6 +3,7 @@ import { getPosts } from '@/lib/payload'
 import { getProjetosCached } from '@/lib/projetos-server'
 import { MOCK_POSTS } from '@/lib/blog-mock'
 import { LOCATIONS } from '@/lib/seo-locations'
+import { PROJECTS_RICH_DATA } from '@/content/projetos-rich-data'
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.araca.arq.br'
 
@@ -28,16 +29,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/servicos/comercial-corporativo/clinicas-consultorios`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${baseUrl}/servicos/comercial-corporativo/lojas-varejo`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.85 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
-    // 5 Landing Pages Estratégicas de Fundo de Funil & Ferramentas (Alta Conversão)
+    // Ferramentas & Páginas Estratégicas de Conversão
     { url: `${baseUrl}/design-de-interiores-sao-paulo`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/design-de-interiores-santo-andre`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/reforma-de-interiores-residencial`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.95 },
     { url: `${baseUrl}/quanto-custa-reformar`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/calculadora-custo-projeto-design-interiores`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${baseUrl}/design-de-interiores-classico-neoclassico`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.90 },
+    { url: `${baseUrl}/tabela-cub-sinapi`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.90 },
     { url: `${baseUrl}/politica-privacidade`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${baseUrl}/termos`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
-    // SEO Local — demais cidades secundárias (excluindo as que possuem LP dedicada)
+    // SEO Local — cidades secundárias
     ...LOCATIONS.filter((loc) => !loc.customPath).map((loc) => ({
       url: `${baseUrl}/arquitetura-interiores-${loc.slug}`,
       lastModified: new Date(),
@@ -55,7 +57,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  let projetoUrls: MetadataRoute.Sitemap = []
+  const allProjectSlugs = new Set<string>(Object.keys(PROJECTS_RICH_DATA))
+
+  try {
+    const projetos = await getProjetosCached()
+    projetos.forEach((p) => {
+      if (p.id) allProjectSlugs.add(p.id)
+    })
+  } catch {
+    // fallback
+  }
+
+  const projetoUrls: MetadataRoute.Sitemap = Array.from(allProjectSlugs).map((slug) => ({
+    url: `${baseUrl}/projetos/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.85,
+  }))
+
   try {
     const posts = await getPosts()
     blogUrls = posts.map((p) => ({
@@ -90,17 +109,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }))
     }
-  }
-  try {
-    const projetos = await getProjetosCached()
-    projetoUrls = projetos.map((p) => ({
-      url: `${baseUrl}/projetos/${p.id}`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    }))
-  } catch {
-    // fallback
   }
 
   return [...staticPages, ...projetoUrls, ...blogUrls, ...categoryUrls, ...authorUrls]

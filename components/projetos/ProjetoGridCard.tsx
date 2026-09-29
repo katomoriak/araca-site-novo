@@ -8,18 +8,11 @@ import type { ProjectGalleryItem } from '@/components/home/ProjectGallery'
 
 interface ProjetoGridCardProps {
   project: ProjectGalleryItem
-  /** Ao clicar em "Ver galeria", abre o modal da galeria em vez de navegar. */
   onOpenGallery?: (project: ProjectGalleryItem) => void
   priority?: boolean
 }
 
-export function ProjetoGridCard({ project, onOpenGallery, priority = false }: ProjetoGridCardProps) {
-  const handleVerGaleriaClick = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (project.media?.length) onOpenGallery?.(project)
-  }
-
+export function ProjetoGridCard({ project, priority = false }: ProjetoGridCardProps) {
   return (
     <Link
       href={`/projetos/${project.id}`}
@@ -32,7 +25,6 @@ export function ProjetoGridCard({ project, onOpenGallery, priority = false }: Pr
         .projeto-card-link:focus-visible { outline: none !important; }
         .projeto-card-link:hover { box-shadow: 0 0 0 2px rgba(148, 75, 32, 0.4), 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important; }
         .projeto-card-link *:focus, .projeto-card-link *:focus-visible { outline: none !important; box-shadow: none !important; }
-        .projeto-card-gallery-trigger:focus, .projeto-card-gallery-trigger:focus-visible { outline: none !important; box-shadow: none !important; }
         .projeto-card-link { width: 100%; transition: grid-template-columns 0.38s cubic-bezier(0.22,1,0.36,1) 0.5s, width 0.38s cubic-bezier(0.22,1,0.36,1) 0.5s, box-shadow 0.28s 0.5s; }
         .projeto-card-link:hover { width: calc(100% + 14rem); transition: grid-template-columns 0.38s cubic-bezier(0.22,1,0.36,1) 0.28s, width 0.38s cubic-bezier(0.22,1,0.36,1) 0.28s, box-shadow 0.28s 0.28s; }
         .projeto-card-overlay { transition: opacity 0.2s ease-out 0.5s; }
@@ -72,25 +64,15 @@ export function ProjetoGridCard({ project, onOpenGallery, priority = false }: Pr
               {project.description}
             </p>
           </div>
-          {/* Botão: entrada por último; saída primeiro. Sem outline azul. */}
+          {/* Botão indicador visual (não bloqueia clique): convida o usuário à página do projeto */}
           <div
-            className="projeto-card-gallery-trigger absolute inset-0 flex flex-col items-center justify-center bg-black/0 opacity-0 outline-none transition-all duration-220 ease-out group-hover:bg-black/20 group-hover:opacity-100 group-hover:delay-1000 focus:outline-none focus-visible:outline-none focus:shadow-none focus-visible:shadow-none"
+            className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center bg-black/0 opacity-0 transition-all duration-220 ease-out group-hover:bg-black/20 group-hover:opacity-100 group-hover:delay-1000"
             style={{ transitionDelay: '0s' }}
-            onClick={handleVerGaleriaClick}
-            onKeyDown={(e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && onOpenGallery && project.media?.length) {
-                e.preventDefault()
-                e.stopPropagation()
-                onOpenGallery(project)
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label={`Ver galeria de imagens de ${project.title}`}
+            aria-hidden="true"
           >
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-5 py-2.5 text-sm font-medium text-araca-cafe-escuro shadow-lg pointer-events-none">
-              <Images className="h-4 w-4" />
-              Ver galeria
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/95 px-5 py-2.5 text-sm font-semibold text-araca-cafe-escuro shadow-lg transition-transform duration-200 group-hover:scale-105">
+              Conhecer projeto
+              <Images className="h-4 w-4 text-araca-laranja-queimado" />
             </span>
           </div>
         </div>
@@ -101,27 +83,37 @@ export function ProjetoGridCard({ project, onOpenGallery, priority = false }: Pr
         className="flex min-w-0 flex-col overflow-hidden rounded-r-2xl bg-araca-bege-claro opacity-0 transition-opacity duration-280 ease-out group-hover:opacity-100 group-hover:delay-300"
         style={{ transitionDelay: '0.28s' }}
       >
-        <div className="flex h-full min-h-0 flex-col justify-center p-5">
-          {project.tag && (
-            <span
-              className="mb-2 inline-block w-fit rounded-full bg-araca-cafe-escuro/10 px-3 py-1 text-xs font-medium text-araca-cafe-escuro opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-1000"
-              style={{ transitionDelay: '0.2s' }}
+        <div className="flex h-full min-h-0 flex-col justify-between p-5">
+          <div>
+            {project.tag && (
+              <span
+                className="mb-2 inline-block w-fit rounded-full bg-araca-cafe-escuro/10 px-3 py-1 text-xs font-medium text-araca-cafe-escuro opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-1000"
+                style={{ transitionDelay: '0.2s' }}
+              >
+                {project.tag}
+              </span>
+            )}
+            <h3
+              className="font-display text-lg font-bold text-araca-cafe-escuro opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-700"
+              style={{ transitionDelay: '0.18s' }}
             >
-              {project.tag}
-            </span>
-          )}
-          <h3
-            className="font-display text-lg font-bold text-araca-cafe-escuro opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-700"
-            style={{ transitionDelay: '0.18s' }}
+              {project.title}
+            </h3>
+            <p
+              className="mt-2 overflow-y-auto text-sm leading-relaxed text-araca-cafe-escuro/90 opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-1000"
+              style={{ transitionDelay: '0.22s' }}
+            >
+              {project.description}
+            </p>
+          </div>
+
+          <div
+            className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-araca-laranja-queimado opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-1000"
+            style={{ transitionDelay: '0.25s' }}
           >
-            {project.title}
-          </h3>
-          <p
-            className="mt-2 overflow-y-auto text-sm leading-relaxed text-araca-cafe-escuro/90 opacity-0 transition-opacity duration-220 ease-out group-hover:opacity-100 group-hover:delay-1000"
-            style={{ transitionDelay: '0.22s' }}
-          >
-            {project.description}
-          </p>
+            <span>Ver projeto completo</span>
+            <span aria-hidden="true">&rarr;</span>
+          </div>
         </div>
       </div>
     </Link>

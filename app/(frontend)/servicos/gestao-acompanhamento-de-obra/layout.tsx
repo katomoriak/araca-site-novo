@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     absolute: 'Gestão e Acompanhamento de Obra | Aracá Interiores',
   },
   description:
-    'Acompanhamento presencial e gestão técnica de obras no ABC e SP. Controle de prazos, acabamentos e fidelidade ao projeto.',
+    'Acompanhamento presencial e gestão técnica de obras residenciais no ABC e SP. Controle de prazos, acabamentos e fidelidade ao projeto.',
   alternates: {
     canonical,
   },
   openGraph: {
     title: 'Gestão e Acompanhamento de Obra | Aracá Interiores',
     description:
-      'Acompanhamento presencial e gestão técnica de obras no ABC e SP. Controle de prazos, acabamentos e fidelidade ao projeto.',
+      'Acompanhamento presencial e gestão técnica de obras residenciais no ABC e SP. Controle de prazos, acabamentos e fidelidade ao projeto.',
     url: canonical,
     siteName: 'Aracá Interiores',
     locale: 'pt_BR',
