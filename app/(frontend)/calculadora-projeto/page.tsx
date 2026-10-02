@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 }
 
 export default function CalculadoraProjetoPage() {
-  const whatsappUrl = `https://wa.me/5511914659204?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/5511939155979?text=${encodeURIComponent(
     'Olá! Estava na calculadora do site da Aracá e gostaria de solicitar um orçamento específico para o meu Projeto de Interiores.'
   )}`
 

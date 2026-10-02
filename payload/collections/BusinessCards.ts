@@ -74,7 +74,7 @@ export const BusinessCards: CollectionConfig = {
             type: 'text',
             label: { en: 'Phone/WhatsApp', pt: 'Telefone / WhatsApp' },
             admin: {
-                description: { pt: 'Ex: (11) 99745-8464' }
+                description: { pt: 'Ex: (11) 93915-5979' }
             }
         },
         {

@@ -58,10 +58,11 @@ END:VCARD`
   }
 
   // Se for celular (tem q limpar), direcionar por wa.me ou tel:
-  const isCelular = card.phone.replace(/\D/g, '').length >= 10
-  const cleanPhone = card.phone.replace(/\D/g, '')
+  const rawPhone = card.phone ? card.phone.replace(/\D/g, '') : ''
+  const cleanPhone = rawPhone.length >= 10 ? rawPhone : '11939155979'
+  const isCelular = true
   const whatsappMessage = encodeURIComponent(`Olá ${card.name}, vim pelo Cartão de Visitas Virtual.`)
-  const phoneHref = isCelular ? `https://wa.me/55${cleanPhone}?text=${whatsappMessage}` : `tel:${cleanPhone}`
+  const phoneHref = `https://wa.me/55${cleanPhone}?text=${whatsappMessage}`
 
   return (
     <div className="min-h-screen bg-araca-bege-claro/30 flex flex-col items-center font-body animate-fade-in relative selection:bg-araca-verde-pinho-escuro/20 selection:text-araca-verde-pinho-escuro">

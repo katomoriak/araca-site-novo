@@ -154,6 +154,14 @@ export function ResultCostCard({
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('araca_obra_unlocked', 'true')
         sessionStorage.setItem('araca_obra_lead_info', JSON.stringify({ nome, telefone, email }))
+        if ((window as any).gtag) {
+          ;(window as any).gtag('event', 'generate_lead', {
+            event_category: 'calculadora_obra',
+            event_label: 'desbloqueio_estimativa',
+            value: result.averageCost,
+            currency: 'BRL',
+          })
+        }
       }
 
       setInternalRevealed(true)

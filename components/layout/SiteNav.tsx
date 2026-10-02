@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronDown, ArrowRight, Home, Briefcase, HardHat, Calculator, Compass, Sparkles } from 'lucide-react'
 import { Container } from './Container'
@@ -224,6 +224,24 @@ export function SiteNav({
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null)
   const { galleryOpen } = useGalleryOpen()
   const allLinks = extraLinks ? [...links, ...extraLinks] : links
+
+  // Trava a rolagem da página quando o menu mobile estiver aberto
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [mobileOpen])
+
+  // Fecha o menu mobile e acordeons ao mudar de rota
+  useEffect(() => {
+    setMobileOpen(false)
+    setMobileAccordion(null)
+  }, [pathname])
 
   if (galleryOpen) return null
 
@@ -709,15 +727,23 @@ export function SiteNav({
             </div>
           </div>
 
-          {/* Mobile - Logo + Toggle */}
-          <div className="flex w-full items-center justify-between md:hidden">
+          {/* Mobile - Liquid Glass capsule bar */}
+          <div
+            className="flex w-full items-center justify-between rounded-full px-4 py-2 md:hidden"
+            style={barStyle}
+          >
             <Link href="/" className="relative flex items-center">
               <Image
                 src="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg"
                 alt="Aracá Interiores"
-                width={60}
-                height={50}
-                className="h-auto w-[55px]"
+                width={64}
+                height={52}
+                className={cn(
+                  'h-auto w-[58px]',
+                  isDark
+                    ? 'drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]'
+                    : 'drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]'
+                )}
                 style={mobileLogoStyle}
                 priority={true}
                 fetchPriority="high"
@@ -726,325 +752,459 @@ export function SiteNav({
             <button
               type="button"
               className={cn(
-                'flex h-10 w-10 items-center justify-center rounded-lg backdrop-blur-sm transition',
-                isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/15'
+                'inline-flex h-10 items-center gap-2 rounded-full px-3.5 font-medium text-xs transition-all active:scale-95',
+                isDark
+                  ? 'bg-white/15 hover:bg-white/25 text-white border border-white/20 shadow-xs'
+                  : 'bg-black/5 hover:bg-black/10 text-neutral-800 border border-black/10 shadow-xs'
               )}
-              aria-label="Menu"
+              aria-label="Abrir menu de navegação"
               onClick={() => setMobileOpen(true)}
             >
-              <div className="space-y-1.5">
-                <span className={cn('block h-0.5 w-5', isDark ? 'bg-white' : 'bg-neutral-800')} />
-                <span className={cn('block h-0.5 w-5', isDark ? 'bg-white' : 'bg-neutral-800')} />
-                <span className={cn('block h-0.5 w-5', isDark ? 'bg-white' : 'bg-neutral-800')} />
+              <span className="font-semibold tracking-wider uppercase text-[11px]">Menu</span>
+              <div className="space-y-1">
+                <span className={cn('block h-0.5 w-4 rounded-full', isDark ? 'bg-white' : 'bg-neutral-800')} />
+                <span className={cn('block h-0.5 w-4 rounded-full', isDark ? 'bg-white' : 'bg-neutral-800')} />
+                <span className={cn('block h-0.5 w-4 rounded-full', isDark ? 'bg-white' : 'bg-neutral-800')} />
               </div>
             </button>
           </div>
         </nav>
       </Container>
 
-      {/* Mobile fullscreen menu */}
+      {/* Mobile fullscreen menu com scroll nativo e header fixo */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className={cn(
-              'fixed inset-0 z-50 backdrop-blur-md md:hidden',
-              isDark ? 'bg-araca-cafe-escuro/95' : 'bg-araca-bege-claro/98'
+              'fixed inset-0 z-50 flex flex-col md:hidden overflow-hidden',
+              isDark ? 'bg-[#18110c]/98 text-white' : 'bg-[#FAF8F5]/98 text-neutral-900',
+              'backdrop-blur-2xl'
             )}
           >
-            <div className="flex min-h-screen flex-col">
-              <div className="flex items-center justify-between p-6">
-                <Link href="/" className="relative flex items-center" onClick={() => setMobileOpen(false)}>
-                  <Image
-                    src="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg"
-                    alt="Aracá Interiores"
-                    width={70}
-                    height={60}
-                    className="h-auto w-[65px]"
-                    style={mobileLogoStyle}
-                    priority
-                    fetchPriority="high"
-                  />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'flex h-10 w-10 items-center justify-center rounded-lg transition',
-                    isDark ? 'bg-white/10 hover:bg-white/20' : 'bg-black/10 hover:bg-black/15'
-                  )}
-                  aria-label="Fechar menu"
-                >
-                  <X className={cn('h-6 w-6', isDark ? 'text-white' : 'text-neutral-800')} />
-                </button>
-              </div>
+            {/* Header fixo no topo do menu mobile */}
+            <div
+              className={cn(
+                'sticky top-0 z-30 flex items-center justify-between px-5 py-4 border-b shrink-0 backdrop-blur-xl',
+                isDark ? 'border-white/10 bg-[#18110c]/90' : 'border-neutral-200/80 bg-[#FAF8F5]/90'
+              )}
+            >
+              <Link href="/" className="relative flex items-center" onClick={() => setMobileOpen(false)}>
+                <Image
+                  src="/logotipos/LOGOTIPO_PRINCIPAL_COMTAGLINE.svg"
+                  alt="Aracá Interiores"
+                  width={68}
+                  height={54}
+                  className="h-auto w-[62px]"
+                  style={mobileLogoStyle}
+                  priority
+                />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  'flex h-11 w-11 items-center justify-center rounded-full transition-all active:scale-95 shadow-2xs',
+                  isDark
+                    ? 'bg-white/10 hover:bg-white/20 text-white border border-white/15'
+                    : 'bg-black/5 hover:bg-black/10 text-neutral-800 border border-black/10'
+                )}
+                aria-label="Fechar menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
 
-              <nav className="flex flex-1 items-center justify-center">
-                <ul className="space-y-6 text-center">
-                  {allLinks.map((link, i) => {
-                    const hasChildren = !!link.children?.length
-                    const isExpanded = mobileAccordion === link.label
+            {/* Conteúdo com rolagem fluida e confortável */}
+            <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-5 pb-32">
+              <nav className="mx-auto max-w-md w-full space-y-2">
+                {allLinks.map((link) => {
+                  const hasChildren = !!link.children?.length
+                  const isExpanded = mobileAccordion === link.label
+                  const active = isActive(link.href)
 
+                  if (hasChildren) {
                     return (
-                      <motion.li
-                        key={link.href}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.05 * (i + 1) }}
-                        className="w-full"
-                      >
-                        {hasChildren ? (
-                          <div className="flex flex-col items-center">
-                            <div className="flex items-center gap-2">
-                              <Link
-                                href={link.href}
-                                className={cn(
-                                  'font-display text-3xl font-semibold transition-colors',
-                                  isDark
-                                    ? 'text-white hover:text-araca-dourado-ocre'
-                                    : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
-                                )}
-                                onClick={() => setMobileOpen(false)}
-                              >
-                                {link.label}
-                              </Link>
-                              <button
-                                type="button"
-                                onClick={() => setMobileAccordion(isExpanded ? null : link.label)}
-                                className={cn(
-                                  'p-1.5 rounded-full transition-colors',
-                                  isDark ? 'text-white/80 hover:bg-white/10' : 'text-neutral-700 hover:bg-black/5'
-                                )}
-                                aria-label="Expandir submenu"
-                              >
-                                <ChevronDown className={cn("h-6 w-6 transition-transform duration-300", isExpanded && "rotate-180")} />
-                              </button>
-                            </div>
-                            <AnimatePresence>
-                              {isExpanded && (
-                                <motion.div
-                                  initial={{ height: 0, opacity: 0 }}
-                                  animate={{ height: 'auto', opacity: 1 }}
-                                  exit={{ height: 0, opacity: 0 }}
-                                  className={cn(
-                                    'mt-4 rounded-2xl p-4 text-left max-w-sm mx-auto space-y-4 overflow-hidden shadow-lg',
-                                    isDark
-                                      ? 'bg-neutral-900/90 border border-white/15'
-                                      : 'bg-neutral-100/90 border border-neutral-300'
-                                  )}
-                                >
-                                  {link.label === 'Serviços' && (
-                                    <>
-                                      {/* Bloco Residencial */}
-                                      <div>
-                                        <Link
-                                          href="/servicos/residencial"
-                                          onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
-                                            isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
-                                          )}
-                                        >
-                                          <Home className="h-3.5 w-3.5" />
-                                          <span>Projetos Residenciais</span>
-                                        </Link>
-                                        <div className="pl-5 space-y-2 border-l-2 border-white/15">
-                                          {RESIDENCIAL_SUBITEMS.map((item) => (
-                                            <Link
-                                              key={item.href}
-                                              href={item.href}
-                                              onClick={() => setMobileOpen(false)}
-                                              className={cn(
-                                                'block text-sm py-0.5 transition-colors font-medium',
-                                                isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
-                                              )}
-                                            >
-                                              {item.title}
-                                            </Link>
-                                          ))}
-                                        </div>
-                                      </div>
+                      <div key={link.href} className="w-full">
+                        {/* Linha principal com clique em toda a extensão */}
+                        <button
+                          type="button"
+                          onClick={() => setMobileAccordion(isExpanded ? null : link.label)}
+                          className={cn(
+                            'group flex items-center justify-between w-full px-4 py-3.5 rounded-2xl transition-all duration-200 text-left',
+                            isDark
+                              ? 'hover:bg-white/10 active:bg-white/15 text-white'
+                              : 'hover:bg-black/5 active:bg-black/10 text-neutral-900',
+                            (isExpanded || active) && (isDark ? 'bg-white/10' : 'bg-black/5')
+                          )}
+                          aria-expanded={isExpanded}
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className={cn(
+                              'font-display text-2xl font-semibold tracking-tight transition-colors',
+                              isExpanded
+                                ? (isDark ? 'text-araca-dourado-ocre' : 'text-araca-mineral-green')
+                                : ''
+                            )}>
+                              {link.label}
+                            </span>
+                            <span className={cn(
+                              'text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full',
+                              isDark ? 'bg-white/10 text-neutral-300' : 'bg-neutral-200/80 text-neutral-700'
+                            )}>
+                              {link.label === 'Serviços' ? 'Categorias' : 'Projetos'}
+                            </span>
+                          </div>
+                          <div className={cn(
+                            'flex h-9 w-9 items-center justify-center rounded-full transition-transform duration-300 shrink-0',
+                            isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-neutral-700',
+                            isExpanded && 'rotate-180'
+                          )}>
+                            <ChevronDown className="h-5 w-5" />
+                          </div>
+                        </button>
 
-                                      {/* Bloco Comercial */}
-                                      <div>
-                                        <Link
-                                          href="/servicos/comercial-corporativo"
-                                          onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'flex items-center gap-2 text-xs font-bold uppercase tracking-wider mb-2.5',
-                                            isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo'
-                                          )}
-                                        >
-                                          <Briefcase className="h-3.5 w-3.5" />
-                                          <span>Comercial & Corporativo</span>
-                                        </Link>
-                                        <div className="pl-5 space-y-2 border-l-2 border-white/15">
-                                          {COMERCIAL_SUBITEMS.map((item) => (
-                                            <Link
-                                              key={item.href}
-                                              href={item.href}
-                                              onClick={() => setMobileOpen(false)}
-                                              className={cn(
-                                                'block text-sm py-0.5 transition-colors font-medium',
-                                                isDark ? 'text-neutral-200 hover:text-white' : 'text-neutral-800 hover:text-neutral-950'
-                                              )}
-                                            >
-                                              {item.title}
-                                            </Link>
-                                          ))}
+                        {/* Conteúdo do Submenu Desdobrável */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.25, ease: 'easeInOut' }}
+                              className="overflow-hidden"
+                            >
+                              <div className={cn(
+                                'mt-2 mb-3 rounded-2xl p-3.5 space-y-4 shadow-sm border',
+                                isDark
+                                  ? 'bg-neutral-900/90 border-white/15'
+                                  : 'bg-white border-neutral-200'
+                              )}>
+                                {link.label === 'Serviços' && (
+                                  <>
+                                    {/* Bloco Residencial */}
+                                    <div>
+                                      <Link
+                                        href="/servicos/residencial"
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                          'flex items-center justify-between pb-2 mb-2 border-b transition-colors group',
+                                          isDark ? 'border-white/10 text-araca-dourado-ocre hover:text-white' : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
+                                        )}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Home className="h-4 w-4" />
+                                          <span className="text-xs font-bold uppercase tracking-wider">Projetos Residenciais</span>
                                         </div>
+                                        <span className="text-[11px] font-semibold flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                          Ver todos <ArrowRight className="h-3 w-3" />
+                                        </span>
+                                      </Link>
+                                      <div className="space-y-1.5">
+                                        {RESIDENCIAL_SUBITEMS.map((item) => (
+                                          <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className={cn(
+                                              'flex items-center justify-between p-3 rounded-xl min-h-[46px] transition-all',
+                                              isDark
+                                                ? 'hover:bg-white/10 text-neutral-100'
+                                                : 'hover:bg-black/5 text-neutral-900',
+                                              pathname === item.href && (isDark ? 'bg-white/15 text-araca-dourado-ocre' : 'bg-black/5 text-araca-mineral-green')
+                                            )}
+                                          >
+                                            <div>
+                                              <div className="text-[13.5px] font-semibold">{item.title}</div>
+                                              <div className={cn('text-[11px] mt-0.5 line-clamp-1', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                                {item.desc}
+                                              </div>
+                                            </div>
+                                            <ArrowRight className="h-3.5 w-3.5 opacity-40 shrink-0 ml-2" />
+                                          </Link>
+                                        ))}
                                       </div>
+                                    </div>
 
-                                      {/* Bloco Gestão de Obra */}
-                                      <div className="pt-2.5 border-t border-white/10">
-                                        <Link
-                                          href="/servicos/gestao-acompanhamento-de-obra"
-                                          onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'flex items-center gap-2 text-sm font-semibold py-1',
-                                            isDark ? 'text-white hover:text-araca-dourado-ocre' : 'text-neutral-900 hover:text-araca-mineral-green'
-                                          )}
-                                        >
-                                          <HardHat className="h-4 w-4 text-araca-mineral-green" />
-                                          <span>Gestão de Obras de Interiores</span>
-                                        </Link>
-                                      </div>
-
-                                      {/* Bloco Simuladores */}
-                                      <div className="pt-2.5 border-t border-white/10 space-y-1.5">
-                                        <div className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
-                                          Simuladores & Estimativas
+                                    {/* Bloco Comercial */}
+                                    <div className="pt-2 border-t border-white/10">
+                                      <Link
+                                        href="/servicos/comercial-corporativo"
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                          'flex items-center justify-between pb-2 mb-2 border-b transition-colors group',
+                                          isDark ? 'border-white/10 text-araca-dourado-ocre hover:text-white' : 'border-black/10 text-araca-chocolate-amargo hover:text-araca-mineral-green'
+                                        )}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Briefcase className="h-4 w-4" />
+                                          <span className="text-xs font-bold uppercase tracking-wider">Comercial & Corporativo</span>
                                         </div>
+                                        <span className="text-[11px] font-semibold flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                          Ver todos <ArrowRight className="h-3 w-3" />
+                                        </span>
+                                      </Link>
+                                      <div className="space-y-1.5">
+                                        {COMERCIAL_SUBITEMS.map((item) => (
+                                          <Link
+                                            key={item.href}
+                                            href={item.href}
+                                            onClick={() => setMobileOpen(false)}
+                                            className={cn(
+                                              'flex items-center justify-between p-3 rounded-xl min-h-[46px] transition-all',
+                                              isDark
+                                                ? 'hover:bg-white/10 text-neutral-100'
+                                                : 'hover:bg-black/5 text-neutral-900',
+                                              pathname === item.href && (isDark ? 'bg-white/15 text-araca-dourado-ocre' : 'bg-black/5 text-araca-mineral-green')
+                                            )}
+                                          >
+                                            <div>
+                                              <div className="text-[13.5px] font-semibold">{item.title}</div>
+                                              <div className={cn('text-[11px] mt-0.5 line-clamp-1', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                                {item.desc}
+                                              </div>
+                                            </div>
+                                            <ArrowRight className="h-3.5 w-3.5 opacity-40 shrink-0 ml-2" />
+                                          </Link>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* Bloco Gestão de Obra */}
+                                    <div className="pt-2 border-t border-white/10">
+                                      <Link
+                                        href="/servicos/gestao-acompanhamento-de-obra"
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                          'flex items-center gap-3 p-3 rounded-xl min-h-[48px] transition-all',
+                                          isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900',
+                                          pathname === '/servicos/gestao-acompanhamento-de-obra' && (isDark ? 'bg-white/15' : 'bg-black/10')
+                                        )}
+                                      >
+                                        <div className="h-8 w-8 rounded-lg bg-araca-mineral-green/20 flex items-center justify-center shrink-0 text-araca-mineral-green">
+                                          <HardHat className="h-4 w-4" />
+                                        </div>
+                                        <div className="flex-1">
+                                          <div className="text-[13px] font-semibold">Gestão de Obras de Interiores</div>
+                                          <div className={cn('text-[11px]', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                            Acompanhamento técnico presencial
+                                          </div>
+                                        </div>
+                                        <ArrowRight className="h-4 w-4 opacity-40 shrink-0" />
+                                      </Link>
+                                    </div>
+
+                                    {/* Bloco Simuladores */}
+                                    <div className={cn(
+                                      'p-3.5 rounded-xl border space-y-2.5',
+                                      isDark ? 'bg-white/5 border-white/10' : 'bg-neutral-50 border-neutral-200 shadow-2xs'
+                                    )}>
+                                      <div className="flex items-center gap-2">
+                                        <div className="h-6 w-6 rounded-md bg-[var(--araca-mineral-green)] text-white flex items-center justify-center shrink-0">
+                                          <Calculator className="h-3.5 w-3.5" />
+                                        </div>
+                                        <span className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                          Simuladores de Custo
+                                        </span>
+                                      </div>
+                                      <div className="grid grid-cols-1 gap-2 pt-1">
                                         <Link
                                           href="/calculadora-custo-projeto-design-interiores"
                                           onClick={() => setMobileOpen(false)}
                                           className={cn(
-                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                            'flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-all',
+                                            isDark ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-white hover:bg-neutral-100 text-neutral-900 border border-neutral-200'
                                           )}
                                         >
-                                          <span>Calculadora de Projeto</span>
-                                          <ArrowRight className="h-3 w-3" />
+                                          <span>Calculadora: Projeto de Interiores</span>
+                                          <ArrowRight className="h-3 w-3 opacity-60" />
                                         </Link>
                                         <Link
                                           href="/quanto-custa-reformar"
                                           onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
-                                          )}
+                                          className="flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold bg-[var(--araca-mineral-green)] text-white hover:bg-[var(--araca-mineral-green-hover)] transition-all shadow-2xs"
                                         >
-                                          <span>Calculadora de Reforma</span>
+                                          <span>Calculadora: Custo de Reforma</span>
                                           <ArrowRight className="h-3 w-3" />
                                         </Link>
                                         <Link
                                           href="/tabela-cub-sinapi"
                                           onClick={() => setMobileOpen(false)}
                                           className={cn(
-                                            'flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg font-medium transition-colors',
-                                            isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-black/5 hover:bg-black/10 text-neutral-900'
+                                            'flex items-center justify-between px-3.5 py-2 rounded-lg text-xs font-medium transition-all',
+                                            isDark ? 'text-neutral-300 hover:text-white' : 'text-neutral-700 hover:text-neutral-950'
                                           )}
                                         >
-                                          <span>Tabelas CUB / SINAPI</span>
-                                          <ArrowRight className="h-3 w-3" />
-                                        </Link>
-                                      </div>
-
-                                      {/* Link Geral */}
-                                      <div className="pt-2 border-t border-white/10 text-center">
-                                        <Link
-                                          href="/servicos"
-                                          onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'inline-flex items-center gap-1 text-xs font-semibold py-1',
-                                            isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
-                                          )}
-                                        >
-                                          Ver Todos os Serviços <ArrowRight className="h-3 w-3" />
-                                        </Link>
-                                      </div>
-                                    </>
-                                  )}
-
-                                  {link.label === 'Projetos' && (
-                                    <div className="space-y-3">
-                                      <div className="flex items-center justify-between border-b border-white/15 pb-2">
-                                        <span className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
-                                          Projetos Autorais
-                                        </span>
-                                        <span className={cn('text-[10px] font-medium opacity-70', isDark ? 'text-neutral-300' : 'text-neutral-600')}>6 projetos</span>
-                                      </div>
-
-                                      <div className="space-y-2">
-                                        {PROJETOS_NAV_ITEMS.map((item) => (
-                                          <Link
-                                            key={item.href}
-                                            href={item.href}
-                                            onClick={() => setMobileOpen(false)}
-                                            className={cn(
-                                              'block rounded-xl p-2.5 transition-all text-left',
-                                              isDark ? 'bg-white/5 hover:bg-white/10' : 'bg-black/5 hover:bg-black/10',
-                                              pathname === item.href && (isDark ? 'bg-white/20' : 'bg-black/10')
-                                            )}
-                                          >
-                                            <div className="flex items-center justify-between gap-2">
-                                              <span className={cn('text-sm font-semibold', isDark ? 'text-white' : 'text-neutral-900')}>
-                                                {item.title}
-                                              </span>
-                                              <span className={cn(
-                                                'text-[9px] px-1.5 py-0.5 rounded-full font-medium shrink-0',
-                                                item.tag === 'Em Execução'
-                                                  ? 'bg-amber-500/20 text-amber-300'
-                                                  : isDark ? 'bg-white/10 text-neutral-300' : 'bg-neutral-200 text-neutral-700'
-                                              )}>
-                                                {item.tag}
-                                              </span>
-                                            </div>
-                                            <div className={cn('text-[11px] mt-0.5 font-medium', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-                                              {item.location}
-                                            </div>
-                                          </Link>
-                                        ))}
-                                      </div>
-
-                                      <div className="pt-2 border-t border-white/10 text-center">
-                                        <Link
-                                          href="/projetos"
-                                          onClick={() => setMobileOpen(false)}
-                                          className={cn(
-                                            'inline-flex items-center gap-1 text-xs font-semibold py-1',
-                                            isDark ? 'text-araca-dourado-ocre hover:underline' : 'text-araca-mineral-green hover:underline'
-                                          )}
-                                        >
-                                          Ver Galeria Completa <ArrowRight className="h-3 w-3" />
+                                          <span>Tabelas CUB / SINAPI 2026</span>
+                                          <ArrowRight className="h-3 w-3 opacity-50" />
                                         </Link>
                                       </div>
                                     </div>
-                                  )}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        ) : (
-                          <Link
-                            href={link.href.startsWith('#') ? `/${link.href}` : link.href}
-                            className={cn(
-                              'block font-display text-3xl font-semibold transition-colors',
-                              isDark
-                                ? 'text-white hover:text-araca-dourado-ocre'
-                                : 'text-araca-cafe-escuro hover:text-araca-mineral-green'
-                            )}
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            {link.label}
-                          </Link>
-                        )}
-                      </motion.li>
+
+                                    {/* Link Geral */}
+                                    <div className="pt-1 text-center">
+                                      <Link
+                                        href="/servicos"
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                          'inline-flex items-center gap-1.5 text-xs font-semibold py-2 px-4 rounded-full transition-colors',
+                                          isDark
+                                            ? 'text-araca-dourado-ocre hover:bg-white/10'
+                                            : 'text-araca-mineral-green hover:bg-black/5'
+                                        )}
+                                      >
+                                        <span>Conhecer todos os serviços e metodologia</span>
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                      </Link>
+                                    </div>
+                                  </>
+                                )}
+
+                                {link.label === 'Projetos' && (
+                                  <div className="space-y-3">
+                                    <div className="flex items-center justify-between pb-2 border-b border-white/15">
+                                      <div className="flex items-center gap-2">
+                                        <Sparkles className="h-4 w-4 text-araca-laranja-queimado" />
+                                        <span className={cn('text-xs font-bold uppercase tracking-wider', isDark ? 'text-araca-dourado-ocre' : 'text-araca-chocolate-amargo')}>
+                                          Projetos Autorais
+                                        </span>
+                                      </div>
+                                      <span className={cn('text-[11px] font-medium opacity-70', isDark ? 'text-neutral-300' : 'text-neutral-600')}>
+                                        6 projetos
+                                      </span>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      {PROJETOS_NAV_ITEMS.map((item) => (
+                                        <Link
+                                          key={item.href}
+                                          href={item.href}
+                                          onClick={() => setMobileOpen(false)}
+                                          className={cn(
+                                            'block rounded-xl p-3 min-h-[52px] transition-all text-left border',
+                                            isDark
+                                              ? 'border-white/10 bg-white/[0.03] hover:bg-white/10 text-white'
+                                              : 'border-black/5 bg-neutral-50 hover:bg-neutral-100 text-neutral-900',
+                                            pathname === item.href && (isDark ? 'bg-white/20 border-araca-dourado-ocre' : 'bg-black/5 border-araca-mineral-green')
+                                          )}
+                                        >
+                                          <div className="flex items-center justify-between gap-2">
+                                            <span className="text-sm font-semibold">{item.title}</span>
+                                            <span className={cn(
+                                              'text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0',
+                                              item.tag === 'Em Execução'
+                                                ? (isDark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-900')
+                                                : (isDark ? 'bg-white/10 text-neutral-300' : 'bg-neutral-100 text-neutral-700')
+                                            )}>
+                                              {item.tag}
+                                            </span>
+                                          </div>
+                                          <div className={cn('text-[11px] mt-0.5 font-medium flex items-center justify-between', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+                                            <span>{item.location}</span>
+                                            <ArrowRight className="h-3 w-3 opacity-40 shrink-0" />
+                                          </div>
+                                        </Link>
+                                      ))}
+                                    </div>
+
+                                    <div className="pt-2 text-center">
+                                      <Link
+                                        href="/projetos"
+                                        onClick={() => setMobileOpen(false)}
+                                        className={cn(
+                                          'inline-flex items-center gap-1.5 text-xs font-semibold py-2 px-4 rounded-full transition-colors',
+                                          isDark
+                                            ? 'text-araca-dourado-ocre hover:bg-white/10'
+                                            : 'text-araca-mineral-green hover:bg-black/5'
+                                        )}
+                                      >
+                                        <span>Ver galeria completa de projetos</span>
+                                        <ArrowRight className="h-3.5 w-3.5" />
+                                      </Link>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
                     )
-                  })}
-                </ul>
+                  }
+
+                  // Links normais (sem filhos)
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href.startsWith('#') ? `/${link.href}` : link.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={cn(
+                        'group flex items-center justify-between w-full px-4 py-3.5 rounded-2xl transition-all duration-200',
+                        isDark
+                          ? 'hover:bg-white/10 active:bg-white/15 text-white'
+                          : 'hover:bg-black/5 active:bg-black/10 text-neutral-900',
+                        active && (isDark ? 'bg-white/10 text-araca-dourado-ocre font-bold' : 'bg-black/5 text-araca-mineral-green font-bold')
+                      )}
+                    >
+                      <span className="font-display text-2xl font-semibold tracking-tight">{link.label}</span>
+                      {link.href === '/blog' ? (
+                        <span className="text-xs px-3 py-1 rounded-full font-medium bg-araca-mineral-green text-white shadow-2xs">
+                          Artigos
+                        </span>
+                      ) : (
+                        <div className={cn(
+                          'flex h-9 w-9 items-center justify-center rounded-full transition-transform duration-200 group-hover:translate-x-1 shrink-0',
+                          isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-neutral-700'
+                        )}>
+                          <ArrowRight className="h-4 w-4" />
+                        </div>
+                      )}
+                    </Link>
+                  )
+                })}
+
+                {/* Bloco de CTA no rodapé do menu mobile */}
+                <div className={cn(
+                  'pt-6 mt-6 border-t space-y-3',
+                  isDark ? 'border-white/10' : 'border-neutral-200'
+                )}>
+                  <Link
+                    href="/contato"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 px-6 rounded-full font-medium text-sm bg-araca-mineral-green hover:bg-araca-mineral-green-hover text-white shadow-md transition-all active:scale-[0.98]"
+                  >
+                    <span>Solicitar Proposta Comercial</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+
+                  <div className={cn(
+                    'flex items-center justify-center gap-5 pt-2 text-xs',
+                    isDark ? 'text-neutral-400' : 'text-neutral-600'
+                  )}>
+                    <a
+                      href="https://www.instagram.com/aracainteriores"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline transition-colors"
+                    >
+                      Instagram
+                    </a>
+                    <span>•</span>
+                    <a
+                      href="https://wa.me/5511939155979"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline transition-colors"
+                    >
+                      WhatsApp
+                    </a>
+                    <span>•</span>
+                    <span>São Paulo & ABC</span>
+                  </div>
+                </div>
               </nav>
             </div>
           </motion.div>

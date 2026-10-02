@@ -282,7 +282,7 @@ export function generateSimulationPdf(
 
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(cMineral[0], cMineral[1], cMineral[2])
-  doc.text('WhatsApp: (11) 91465-9204  •  E-mail: contato@araca.arq.br  •  Site: www.araca.arq.br', margin + 4, y + 14.5)
+  doc.text('WhatsApp: (11) 93915-5979  •  E-mail: contato@araca.arq.br  •  Site: www.araca.arq.br', margin + 4, y + 14.5)
 
   // Salva e faz download
   const sanitizedName = (clientData.nome || 'Cliente')

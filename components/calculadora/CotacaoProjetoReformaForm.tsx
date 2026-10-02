@@ -465,8 +465,24 @@ const ESTILOS_OPTIONS: EstiloVisualOption[] = [
    ========================================================================== */
 
 export function CotacaoProjetoReformaForm() {
+  const formTopRef = React.useRef<HTMLDivElement>(null)
+
   // Estado das Etapas (1 a 5)
   const [currentStep, setCurrentStep] = useState<number>(1)
+
+  // Auto-scroll suave para o início do formulário ao avançar ou voltar etapas
+  React.useEffect(() => {
+    if (formTopRef.current) {
+      const headerOffset = 90
+      const elementPosition = formTopRef.current.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      })
+    }
+  }, [currentStep])
 
   // Passo 1: Imóvel & Padrão
   const [tipoImovel, setTipoImovel] = useState<TipoImovelId>('apartamento')
@@ -887,6 +903,16 @@ Gostaria de agendar uma conversa com os designers de interiores da Aracá!`
     // Envia os dados para a planilha / ERP
     await sendLeadToBackend(payload)
 
+    // Dispara evento de conversão de lead no Google Analytics
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      ;(window as any).gtag('event', 'generate_lead', {
+        event_category: 'calculadora_projeto',
+        event_label: 'revelar_estimativa',
+        value: calculos.totalMin,
+        currency: 'BRL',
+      })
+    }
+
     setLeadEnviado(true)
     setIsEstimativaRevelada(true)
     setIsRevelando(false)
@@ -920,6 +946,16 @@ Gostaria de agendar uma conversa com os designers de interiores da Aracá!`
     // Garante sincronização dos dados no backend
     await sendLeadToBackend(payload)
 
+    // Dispara evento de conversão no GA4
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      ;(window as any).gtag('event', 'generate_lead', {
+        event_category: 'calculadora_projeto',
+        event_label: 'enviar_whatsapp_final',
+        value: calculos.totalMin,
+        currency: 'BRL',
+      })
+    }
+
     setSubmitSuccess(true)
     setIsSubmitting(false)
 
@@ -934,7 +970,7 @@ Gostaria de agendar uma conversa com os designers de interiores da Aracá!`
   const totalComodos = Object.values(ambientes).reduce((a, b) => a + b, 0)
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div ref={formTopRef} className="w-full max-w-4xl mx-auto scroll-mt-28">
       {/* ====================================================================
           CARD PRINCIPAL DO FORMULÁRIO COM DESIGN ELEGANTE & LUXO
           ==================================================================== */}
